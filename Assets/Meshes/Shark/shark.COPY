@@ -1,0 +1,9 @@
+Begin Object Class=/Script/DatasmithContent.DatasmithScene Name="shark"
+   Begin Object Class=/Script/DatasmithContent.DatasmithCADImportSceneData Name="DatasmithCADImportSceneData_0"
+   End Object
+   Begin Object Name="DatasmithCADImportSceneData_0"
+      BaseOptions=(AssetOptions=(PackagePath="/Game"))
+   End Object
+   AssetImportData=DatasmithCADImportSceneData'"DatasmithCADImportSceneData_0"'
+   BulkDataVersion=1
+End Object
