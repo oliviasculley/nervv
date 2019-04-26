@@ -4,17 +4,21 @@ using UnityEngine;
 
 public class Kuka : Machine
 {
+    [Header("Kuka Settings")]
+    public float lerpSpeed;             // Speed of lerping to correct position
+    public bool interpolation = true;   // Toggles lerping to correct position
+
     // Private Vars
     [SerializeField] private Transform[] components;
 
     private void Awake() {
         // Init arrays
-        angles = new double[AxisCount];
-        components = new Transform[AxisCount];
+        angles = new double[axisCount];
+        components = new Transform[axisCount];
 
         // Recursively populate components with Transform references
         Transform t = this.transform;
-        for (int i = 0; i < AxisCount; i++) {                   // For each component
+        for (int i = 0; i < axisCount; i++) {                   // For each component
             for (int j = 0; j < t.childCount; j++) {            // Go through current transform
                 if (t.GetChild(j).name == ("A" + (i + 1))) {    // If name matches
                     components[i] = (t = t.GetChild(j));        // Set new child and components
@@ -23,9 +27,13 @@ public class Kuka : Machine
             }
         }
 
-        // Safety check all components
-        for (int i = 0; i < AxisCount; i++)
+        // Safety checks
+        for (int i = 0; i < axisCount; i++)
             Debug.Assert(components[i] != null, "Could not find component " + i + "!");
+        if (lerpSpeed == 0)
+            Debug.LogWarning("LerpSpeed is 0, will never move!");
+        if (maxSpeed == 0)
+            Debug.LogWarning("MaxSpeed set to 0, will not be able to move!");
     }
 
     private void Start() {
@@ -34,13 +42,17 @@ public class Kuka : Machine
     }
 
     private void Update() {
-        // Continually lerp towards final position
-        Vector3 vel = Vector3.zero;
-        for (int i = 0; i < AxisCount; i++)
-            components[i].localEulerAngles = Vector3.SmoothDamp(components[i].localEulerAngles,
-                                                                GetAxis(i),
-                                                                ref vel,
-                                                                maxSpeed * Time.deltaTime);
+        if (interpolation) {
+            // Continually lerp towards final position
+            for (int i = 0; i < axisCount; i++)
+                components[i].localRotation = Quaternion.Lerp(components[i].localRotation,
+                                                                Quaternion.Euler(GetAxis(i)),
+                                                                Mathf.Clamp(lerpSpeed * Time.deltaTime, 0, 1));
+        } else {
+            // Get latest correct axis angle
+            for (int i = 0; i < axisCount; i++)
+                components[i].localEulerAngles = GetAxis(i);
+        }
     }
 
     /* Public Methods */
@@ -63,7 +75,7 @@ public class Kuka : Machine
             Debug.LogWarning("[Kuka] Could not parse axisName: \"" + axisName + "\"");
 
         // Safety check axisID
-        if (axis < 0 || axis > AxisCount) {
+        if (axis < 0 || axis > axisCount) {
             Debug.LogWarning("[Kuka] Invalid axisID to set: " + axis);
             return;
         }
@@ -81,21 +93,23 @@ public class Kuka : Machine
         // Switch based on axisID
         switch (axisID) {
 
+            // X rotation
+            case 1:
+                return new Vector3(-(float)angles[axisID] - 90f, 0, 0);
+            case 2:
+                return new Vector3(-(float)angles[axisID] + 90f, 0, 0);
+            case 4:
+                return new Vector3(-(float)angles[axisID], 0, 0);
+
             // Y rotation
             case 0:
-            case 3:
-            case 5:
-                return new Vector3(0, (float) angles[axisID], 0);
+                return new Vector3(0, (float)angles[axisID], 0);
 
             // Z rotation
-            case 1:
-                return new Vector3(0, 0, (float) angles[axisID] + 90f);
-            case 2:
-                return new Vector3(0, 0, (float) angles[axisID]);
-
-            // X rotation
-            case 4:
-                return new Vector3((float) angles[axisID], -90f, 0);
+            case 3:
+                return new Vector3(0, 0, -(float)angles[axisID]);
+            case 5:
+                return new Vector3(0, 0, -(float) angles[axisID]);
 
             default:
                 Debug.LogWarning("[Kuka] Could not find axisID: " + axisID);

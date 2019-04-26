@@ -10,17 +10,20 @@ public class MTConnect : MonoBehaviour
     [Header("Global")]
     public static MTConnect mtc;
 
+    [Header("Properties")]
+    public List<Machine> machines;
+
     [Header("Settings")]
     public string MTConnectURL;
     public float pollInterval;  // Interval in seconds to poll
     public char delim;
     public char[] trimChars;
 
-    [Header("References")]
-    public List<Machine> machines = new List<Machine>();
+    //[Header("References")]
 
     [Header("DEBUG")]
     public float[] debugAxes;
+    public bool useDebugString;
     readonly string example = "\"0,0,0,83.6589661,-77.2593613,121.867325,-3.48977657E-4,-5.92440701E-5,1.44744035E-6,\"";
 
     // Private vars
@@ -33,12 +36,18 @@ public class MTConnect : MonoBehaviour
     }
 
     private void Awake() {
-        Debug.Assert(!string.IsNullOrEmpty(MTConnectURL), "MTConnectURL is null or empty!");
+        // Add static reference to self
+        mtc = this;
 
+        // Safety checks
+        Debug.Assert(!string.IsNullOrEmpty(MTConnectURL), "MTConnectURL is null or empty!");
         if (pollInterval == 0)
             Debug.LogWarning("Poll interval set to 0, will send GET request every frame!");
+    }
 
-        mtc = this;
+    private void Start() {
+        // Init vals
+        machines = new List<Machine>();
     }
 
     private void Update()
@@ -87,11 +96,15 @@ public class MTConnect : MonoBehaviour
                 //Debug.Log("[INFO] GET request returned: " + www.downloadHandler.text);
 
                 // Get raw string
-                string raw = "\"";
-                foreach (float f in debugAxes)
-                    raw += f.ToString() + ",";
-                raw += "\"";
-                //string raw = www.downloadHandler.text;
+                string raw;
+                if (useDebugString) {
+                    raw = "\"";
+                    foreach (float f in debugAxes)
+                        raw += f.ToString() + ",";
+                    raw += "\"";
+                } else {
+                    raw = www.downloadHandler.text;
+                }
 
                 // Trim spaces and quotations
                 raw = raw.Trim(trimChars);

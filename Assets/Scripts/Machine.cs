@@ -4,14 +4,15 @@ using UnityEngine;
 
 public abstract class Machine : MonoBehaviour
 {
-    [Header("Properties")]
+    [Header("Machine Properties")]
     public double[] angles; // Angles for each axes
 
-    [Header("Settings")]
-    public int AxisCount;   // Number of axes on machine
-    public float maxSpeed;  // Max speed of machine
-    public string type;     // String with Model/Company
-    public string id;       // Individual ID
+    [Header("Machine Settings")]
+    public int axisCount;           // Number of axes on machine
+    public float maxSpeed;          // Max speed of machine
+    public string manufacturer,     // String with Model/Company
+                    model;
+    public new string name;         // Individual ID
 
     /* Public Methods */
 

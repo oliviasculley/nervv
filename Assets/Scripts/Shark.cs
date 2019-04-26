@@ -2,15 +2,27 @@
 
 public class Shark : Machine
 {
+    [Header("Shark Settings")]
+    public float lerpSpeed;             // Speed to lerp to correct position
+    public bool interpolation = true;   // Toggles lerping to final position
+
     // Private Vars
     [SerializeField] private Transform head;  // Location of Shark Head
 
+    // Constants
+    private readonly float scale = 0.0254f; // inches to mm
+
     private void Awake() {
         // Init arrays
-        angles = new double[AxisCount];
+        angles = new double[axisCount];
         head = transform.Find("Head");
 
+        // Safety checks
         Debug.Assert(head != null, "Could not find head!");
+        if (lerpSpeed == 0)
+            Debug.LogWarning("Lerp speed is 0, will never go to final position!");
+        if (maxSpeed == 0)
+            Debug.LogWarning("MaxSpeed set to 0, will not be able to move!");
     }
 
     private void Start() {
@@ -19,12 +31,16 @@ public class Shark : Machine
     }
 
     private void Update() {
-        // Continually lerp towards final position
-        Vector3 vel = Vector3.zero;
-        head.localPosition  = Vector3.SmoothDamp(   head.localPosition,
-                                                    GetAxis(0),
-                                                    ref vel,
-                                                    maxSpeed * Time.deltaTime);
+        if (interpolation) {
+            // Continually lerp towards final position
+            Vector3 vel = Vector3.zero;
+            head.localPosition = Vector3.Lerp(  head.localPosition,
+                                                GetAxis(0),
+                                                lerpSpeed * Time.deltaTime);
+        } else {
+            // Get latest correct axis angle
+            head.localPosition = GetAxis(0);
+        }
     }
 
     /* Public Methods */
@@ -47,7 +63,7 @@ public class Shark : Machine
             Debug.LogWarning("[Shark] Could not parse axisName: \"" + axisName + "\"");
 
         // Safety check axisID
-        if (axis < 0 || axis > AxisCount) {
+        if (axis < 0 || axis > axisCount) {
             Debug.LogWarning("[Shark] Invalid axisID to set: " + axis);
             return;
         }
@@ -66,6 +82,6 @@ public class Shark : Machine
             return Vector3.zero;
         }
 
-        return new Vector3((float) angles[0], (float) angles[1], (float) angles[2]);
+        return new Vector3(-(float)angles[1], (float) angles[2], (float)angles[0]) * scale;
     }
 }
