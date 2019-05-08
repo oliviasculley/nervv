@@ -5,12 +5,12 @@ using UnityEngine;
 public abstract class Machine : MonoBehaviour
 {
     [Header("Machine Properties")]
-    public double[] angles; // Angles for each axes
+    public float[] angles; // Angles for each axes
 
     [Header("Machine Settings")]
     public int axisCount;           // Number of axes on machine
     public float maxSpeed;          // Max speed of machine
-    public string manufacturer,     // String with Model/Company
+    public string   manufacturer,   // String with Model/Company
                     model;
     public new string name;         // Individual ID
 
@@ -26,6 +26,6 @@ public abstract class Machine : MonoBehaviour
     /// <summary>
     /// Sets the angle of a certain axis
     /// </summary>
-    /// <param name="s">Name of the axis to set</param>
-    public abstract void SetAxisAngle(string axisName, double angle);
+    /// <param name="s">Name of the axis to set (1 indexed)</param>
+    public abstract void SetAxisAngle(string axisName, float angle);
 }

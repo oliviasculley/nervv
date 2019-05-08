@@ -5,15 +5,16 @@ using UnityEngine;
 public class Kuka : Machine
 {
     [Header("Kuka Settings")]
-    public float lerpSpeed;             // Speed of lerping to correct position
-    public bool interpolation = true;   // Toggles lerping to correct position
+    public float lerpSpeed = 10f;           // Speed of lerping to correct position
+    public bool interpolation = true;       // Toggles lerping to correct position
+    public float[] minAngles, maxAngles;    // Min and max angles for each axis
 
     // Private Vars
-    [SerializeField] private Transform[] components;
+    private Transform[] components;
 
     private void Awake() {
         // Init arrays
-        angles = new double[axisCount];
+        angles = new float[axisCount];
         components = new Transform[axisCount];
 
         // Recursively populate components with Transform references
@@ -28,6 +29,8 @@ public class Kuka : Machine
         }
 
         // Safety checks
+        Debug.Assert(minAngles.Length == axisCount, "MinAngles count does not equal number of axis!");
+        Debug.Assert(maxAngles.Length == axisCount, "MaxAngles count does not equal number of axis!");
         for (int i = 0; i < axisCount; i++)
             Debug.Assert(components[i] != null, "Could not find component " + i + "!");
         if (lerpSpeed == 0)
@@ -60,8 +63,8 @@ public class Kuka : Machine
     /// <summary>
     /// Sets the angle of a certain axis
     /// </summary>
-    /// <param name="s">Name of the axis to set</param>
-    public override void SetAxisAngle(string axisName, double angle) {
+    /// <param name="s">Name of the axis to set (1 indexed)</param>
+    public override void SetAxisAngle(string axisName, float angle) {
         // String Err checking
         if (string.IsNullOrEmpty(axisName) ||               // Axis name cannot be null, empty
             axisName.Length < 2 ||                          // Must be at least 2 chars
@@ -78,10 +81,19 @@ public class Kuka : Machine
         if (axis < 0 || axis > axisCount) {
             Debug.LogWarning("[Kuka] Invalid axisID to set: " + axis);
             return;
+        } else {
+            // Decrement to 0 index axisID
+            axis -= 1;
         }
 
         // Set axis angle
-        angles[axis - 1] = angle;
+        if (minAngles[axis] == 0 && maxAngles[axis] == 0) {
+            // No min/max angle restriction
+            angles[axis] = angle % 360f;
+        } else {
+            angles[axis] = Mathf.Clamp(angle, minAngles[axis], maxAngles[axis]);
+        }
+
     }
 
     /// <summary>
@@ -95,21 +107,20 @@ public class Kuka : Machine
 
             // X rotation
             case 1:
-                return new Vector3(-(float)angles[axisID] - 90f, 0, 0);
+                return new Vector3(-angles[axisID] - 90f, 0, 0);
             case 2:
-                return new Vector3(-(float)angles[axisID] + 90f, 0, 0);
+                return new Vector3(-angles[axisID] + 90f, 0, 0);
             case 4:
-                return new Vector3(-(float)angles[axisID], 0, 0);
+                return new Vector3(-angles[axisID], 0, 0);
 
             // Y rotation
             case 0:
-                return new Vector3(0, (float)angles[axisID], 0);
+                return new Vector3(0, angles[axisID], 0);
 
             // Z rotation
             case 3:
-                return new Vector3(0, 0, -(float)angles[axisID]);
             case 5:
-                return new Vector3(0, 0, -(float) angles[axisID]);
+                return new Vector3(0, 0, -angles[axisID]);
 
             default:
                 Debug.LogWarning("[Kuka] Could not find axisID: " + axisID);

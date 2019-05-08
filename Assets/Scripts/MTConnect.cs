@@ -24,7 +24,7 @@ public class MTConnect : MonoBehaviour
     [Header("DEBUG")]
     public float[] debugAxes;
     public bool useDebugString;
-    readonly string example = "\"0,0,0,83.6589661,-77.2593613,121.867325,-3.48977657E-4,-5.92440701E-5,1.44744035E-6,\"";
+    //private readonly string example = "\"0,0,0,83.6589661,-77.2593613,121.867325,-3.48977657E-4,-5.92440701E-5,1.44744035E-6,\"";
 
     // Private vars
     float timeToTrigger = 0.0f;
@@ -121,10 +121,10 @@ public class MTConnect : MonoBehaviour
                 IFormatProvider provider = CultureInfo.CreateSpecificCulture("en-US");
 
                 // Parse to temp array
-                double[] temp = new double[split.Length];
+                float[] temp = new float[split.Length];
                 for (int i = 0; i < split.Length; i++)
-                    if (!double.TryParse(split[i].ToUpper(), style, provider, out temp[i]))
-                        Debug.LogError("[MTConnect] Could not parse string to double: \"" + split[i] + "\"");
+                    if (!float.TryParse(split[i].ToUpper(), style, provider, out temp[i]))
+                        Debug.LogError("[MTConnect] Could not parse string to float: \"" + split[i] + "\"");
 
                 // As of current, send values for Kuka and CNC
                 if (machines.Count >= 1 && machines[0] != null)

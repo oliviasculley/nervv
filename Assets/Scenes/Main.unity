@@ -571,7 +571,14 @@ MonoBehaviour:
   name: Shark 1
   lerpSpeed: 10
   interpolation: 1
-  head: {fileID: 1232360137}
+  minAngles:
+  - 0
+  - 0
+  - 0
+  maxAngles:
+  - 0
+  - 0
+  - 0
 --- !u!1 &1149192154
 GameObject:
   m_ObjectHideFlags: 0
@@ -1441,13 +1448,20 @@ MonoBehaviour:
   name: Kuka 1
   lerpSpeed: 10
   interpolation: 1
-  components:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  minAngles:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  maxAngles:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
 --- !u!4 &2001114577
 Transform:
   m_ObjectHideFlags: 0
