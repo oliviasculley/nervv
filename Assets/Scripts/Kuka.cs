@@ -12,6 +12,9 @@ public class Kuka : Machine
     // Private Vars
     private Transform[] components;
 
+    // DEBUG
+    private Color[] randomColors;
+
     private void Awake() {
         // Init arrays
         angles = new float[axisCount];
@@ -42,6 +45,11 @@ public class Kuka : Machine
     private void Start() {
         // Link to MTConnect updates
         MTConnect.mtc.AddMachine(this);
+
+        // DEBUG: Random colors
+        randomColors = new Color[axisCount];
+        for (int i = 0; i < axisCount; i++)
+            randomColors[i] = Random.ColorHSV();
     }
 
     private void Update() {
@@ -56,6 +64,8 @@ public class Kuka : Machine
             for (int i = 0; i < axisCount; i++)
                 components[i].localEulerAngles = GetAxis(i);
         }
+        ForwardKinematics(angles);
+        //Debug.Log("Test: " + ForwardKinematics(angles));
     }
 
     /* Public Methods */
@@ -74,44 +84,70 @@ public class Kuka : Machine
         }
 
         // Parse 2nd char to axis ID
-        if (!int.TryParse(axisName[1].ToString(), out int axis))
+        if (!int.TryParse(axisName[1].ToString(), out int axisID))
             Debug.LogWarning("[Kuka] Could not parse axisName: \"" + axisName + "\"");
 
         // Safety check axisID
-        if (axis < 0 || axis > axisCount) {
-            Debug.LogWarning("[Kuka] Invalid axisID to set: " + axis);
+        // Decrement to 0-indexed axisID
+        axisID -= 1;
+        if (axisID < 0 || axisID >= axisCount) {
+            Debug.LogWarning("[Kuka] Invalid axisID to set: " + axisID);
             return;
-        } else {
-            // Decrement to 0 index axisID
-            axis -= 1;
         }
 
         // Set axis angle
-        if (minAngles[axis] == 0 && maxAngles[axis] == 0) {
+        if (minAngles[axisID] == 0 && maxAngles[axisID] == 0) {
             // No min/max angle restriction
-            angles[axis] = angle % 360f;
+            angles[axisID] = angle;
         } else {
-            angles[axis] = Mathf.Clamp(angle, minAngles[axis], maxAngles[axis]);
+            angles[axisID] = Mathf.Clamp(angle, minAngles[axisID], maxAngles[axisID]);
         }
 
+        // Axis convention conversions
+        switch (axisID) {
+
+            // X rotation
+            case 1:
+                angles[axisID] = -(angles[axisID] % 360 + 90f);
+                break;
+            case 2:
+                angles[axisID] = -(angles[axisID] % 360 - 90f);
+                break;
+            case 4:
+                angles[axisID] = (angles[axisID] % 360);
+                break;
+
+            // Y rotation
+            case 0:
+                // Nothing
+                break;
+
+            // Z rotation
+            case 3:
+            case 5:
+                angles[axisID] = -(angles[axisID] % 360);
+                break;
+
+            default:
+                Debug.LogWarning("[Kuka] Could not find axisID: " + axisID);
+                break;
+        }
     }
 
     /// <summary>
     /// Returns the Vector3 for the associated axis
     /// </summary>
     /// <param name="axisID">ID of the axis to return Vector3</param>
-    /// <returns></returns>
+    /// <returns>Vector3 of rotation for selected axis</returns>
     public override Vector3 GetAxis(int axisID) {
         // Switch based on axisID
         switch (axisID) {
 
             // X rotation
             case 1:
-                return new Vector3(-angles[axisID] - 90f, 0, 0);
             case 2:
-                return new Vector3(-angles[axisID] + 90f, 0, 0);
             case 4:
-                return new Vector3(-angles[axisID], 0, 0);
+                return new Vector3(angles[axisID], 0, 0);
 
             // Y rotation
             case 0:
@@ -120,7 +156,7 @@ public class Kuka : Machine
             // Z rotation
             case 3:
             case 5:
-                return new Vector3(0, 0, -angles[axisID]);
+                return new Vector3(0, 0, angles[axisID]);
 
             default:
                 Debug.LogWarning("[Kuka] Could not find axisID: " + axisID);
@@ -129,4 +165,25 @@ public class Kuka : Machine
     }
 
     /* Private Methods */
+    
+    /// <summary>
+    /// Returns the final location of the robotic arm using forward kinematics
+    /// </summary>
+    /// <param name="anglesToCalculate">Array of floats with angles to calculate</param>
+    /// <returns>Vector3 of final position in world space</returns>
+    private Vector3 ForwardKinematics(float[] anglesToCalculate) {
+        Vector3 prevPoint = components[0].position;
+        Quaternion rotation = Quaternion.identity;
+
+        for (int i = 0; i < axisCount - 1; i++) {
+            rotation *= Quaternion.AngleAxis((anglesToCalculate[i] % 360) + 360f, GetAxis(i));
+            Vector3 nextPoint = prevPoint + rotation * components[i + 1].localPosition;
+
+            Debug.Log(i + " rotation: " + rotation + ", nextPoint: " + nextPoint.ToString("F4"));
+            Debug.DrawRay(prevPoint, nextPoint - prevPoint, randomColors[i]);
+            prevPoint = nextPoint;
+        }
+
+        return prevPoint;
+    }
 }

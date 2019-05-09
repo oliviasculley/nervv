@@ -153,6 +153,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 344695346}
+  - component: {fileID: 344695347}
   m_Layer: 0
   m_Name: A6
   m_TagString: Untagged
@@ -175,6 +176,18 @@ Transform:
   m_Father: {fileID: 1624065583}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &344695347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 344695345}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c704d368e627ca84584d97201c5b884c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &353581131
 GameObject:
   m_ObjectHideFlags: 0
@@ -1442,7 +1455,7 @@ MonoBehaviour:
   - 0
   - 0
   axisCount: 6
-  maxSpeed: 100
+  maxSpeed: 1
   manufacturer: Kuka
   model: idk
   name: Kuka 1
