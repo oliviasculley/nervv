@@ -4,8 +4,11 @@ using UnityEngine;
 
 public class Test : MonoBehaviour
 {
+    [Header("References")]
+    public Kuka kuka;
+
     void Update()
     {
-        Debug.Log("Goal: " + transform.position);
+        kuka.InverseKinematics(transform.position);
     }
 }

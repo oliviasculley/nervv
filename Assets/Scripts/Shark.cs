@@ -30,7 +30,11 @@ public class Shark : Machine
 
     private void Start() {
         // Link to MTConnect updates
-        MTConnect.mtc.AddMachine(this);
+        if (MTConnect.mtc == null) {
+            Debug.LogWarning("[Shark] Could not find MTConnect!");
+        } else {
+            MTConnect.mtc.AddMachine(this);
+        }
     }
 
     private void Update() {

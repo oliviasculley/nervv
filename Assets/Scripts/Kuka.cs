@@ -8,6 +8,10 @@ public class Kuka : Machine
     public float lerpSpeed = 10f;           // Speed of lerping to correct position
     public bool interpolation = true;       // Toggles lerping to correct position
     public float[] minAngles, maxAngles;    // Min and max angles for each axis
+    [Range(0.00001f, 1)]
+    public float samplingDistance;   // Sampling distance used to calculate gradient
+    [Range(0, 50000)]
+    public float learningRate;          // Learning rate of gradient descent
 
     // Private Vars
     private Transform[] components;
@@ -44,8 +48,12 @@ public class Kuka : Machine
 
     private void Start() {
         // Link to MTConnect updates
-        MTConnect.mtc.AddMachine(this);
-
+        if (MTConnect.mtc == null) {
+            Debug.LogWarning("[Kuka] Could not find MTConnect!");
+        } else {
+            MTConnect.mtc.AddMachine(this);
+        }
+        
         // DEBUG: Random colors
         randomColors = new Color[axisCount];
         for (int i = 0; i < axisCount; i++)
@@ -64,8 +72,9 @@ public class Kuka : Machine
             for (int i = 0; i < axisCount; i++)
                 components[i].localEulerAngles = GetAxis(i);
         }
+
+        // Debug
         ForwardKinematics(angles);
-        //Debug.Log("Test: " + ForwardKinematics(angles));
     }
 
     /* Public Methods */
@@ -108,24 +117,24 @@ public class Kuka : Machine
 
             // X rotation
             case 1:
-                angles[axisID] = -(angles[axisID] % 360 + 90f);
+                angles[axisID] = NormalizeAngle(-(angles[axisID] + 90f));
                 break;
             case 2:
-                angles[axisID] = -(angles[axisID] % 360 - 90f);
+                angles[axisID] = NormalizeAngle(-(angles[axisID] - 90));
                 break;
             case 4:
-                angles[axisID] = (angles[axisID] % 360);
+                angles[axisID] = NormalizeAngle(angles[axisID]);
                 break;
 
             // Y rotation
             case 0:
-                // Nothing
+                angles[axisID] = NormalizeAngle(angles[axisID]);
                 break;
 
             // Z rotation
             case 3:
             case 5:
-                angles[axisID] = -(angles[axisID] % 360);
+                angles[axisID] = NormalizeAngle(-angles[axisID]);
                 break;
 
             default:
@@ -135,10 +144,10 @@ public class Kuka : Machine
     }
 
     /// <summary>
-    /// Returns the Vector3 for the associated axis
+    /// Returns the Vector3 for the associated axis in local space
     /// </summary>
     /// <param name="axisID">ID of the axis to return Vector3</param>
-    /// <returns>Vector3 of rotation for selected axis</returns>
+    /// <returns>Vector3 of rotation for selected axis in local space</returns>
     public override Vector3 GetAxis(int axisID) {
         // Switch based on axisID
         switch (axisID) {
@@ -164,26 +173,72 @@ public class Kuka : Machine
         }
     }
 
-    /* Private Methods */
-    
     /// <summary>
     /// Returns the final location of the robotic arm using forward kinematics
     /// </summary>
     /// <param name="anglesToCalculate">Array of floats with angles to calculate</param>
     /// <returns>Vector3 of final position in world space</returns>
-    private Vector3 ForwardKinematics(float[] anglesToCalculate) {
+    public Vector3 ForwardKinematics(float[] anglesToCalculate) {
         Vector3 prevPoint = components[0].position;
         Quaternion rotation = Quaternion.identity;
 
         for (int i = 0; i < axisCount - 1; i++) {
-            rotation *= Quaternion.AngleAxis((anglesToCalculate[i] % 360) + 360f, GetAxis(i));
-            Vector3 nextPoint = prevPoint + rotation * components[i + 1].localPosition;
-
-            Debug.Log(i + " rotation: " + rotation + ", nextPoint: " + nextPoint.ToString("F4"));
-            Debug.DrawRay(prevPoint, nextPoint - prevPoint, randomColors[i]);
+            rotation *= Quaternion.AngleAxis(NormalizeAngle(anglesToCalculate[i]), components[i].TransformDirection(GetAxis(i)));
+            Vector3 nextPoint = prevPoint + (rotation * components[i + 1].localPosition);
+            Debug.DrawRay(prevPoint, rotation * components[i + 1].localPosition, randomColors[i]);
             prevPoint = nextPoint;
         }
 
         return prevPoint;
+    }
+
+    /// <summary>
+    /// When called, performs IK toward the target position
+    /// </summary>
+    /// <param name="target">Vector3 target position in worldspace</param>
+    public void InverseKinematics(Vector3 target) {
+        for (int i = 0; i < axisCount; i++) {
+            if (i == 3 || i == 5)
+                continue;
+
+            angles[i] = NormalizeAngle( angles[i] - learningRate
+                                        * PartialGradient(transform.InverseTransformPoint(target), angles, i)
+                                        * Time.deltaTime);
+        }
+    }
+
+    /* Private Methods */
+
+    /// <summary>
+    /// Ensures that angle will always be between 0-360
+    /// </summary>
+    /// <param name="angle">Angle in degrees</param>
+    /// <returns>Equivalent angle in degrees between 0-360</returns>
+    private float NormalizeAngle(float angle) {
+        return ((angle %= 360) < 0) ? angle + 360 : angle;
+    }
+
+    /// <summary>
+    /// Returns the gradient for a specific angleID
+    /// </summary>
+    /// <param name="target">Vector3 target location in worldspace</param>
+    /// <param name="anglesToCalculate">Angles to calculate from</param>
+    /// <param name="angleID">Angle to return gradient</param>
+    /// <returns></returns>
+    private float PartialGradient(Vector3 target, float[] anglesToCalculate, int axisID) {
+
+        // Safety checks
+        Debug.Assert(axisID >= 0 && axisID < axisCount, "[Kuka] Invalid axisID: " + axisID);
+        Debug.Assert(anglesToCalculate.Length == axisCount, "Invalid number of angles passed!");
+
+        float cachedAngle = anglesToCalculate[axisID];
+        // Gradient : [F(x+SamplingDistance) - F(x)] / h
+        float f_x = Vector3.SqrMagnitude(target - ForwardKinematics(anglesToCalculate));
+
+        anglesToCalculate[axisID] += samplingDistance;
+        float f_x_plus_d = Vector3.SqrMagnitude(target - ForwardKinematics(anglesToCalculate));
+        anglesToCalculate[axisID] = cachedAngle;
+
+        return (f_x_plus_d - f_x) / samplingDistance;
     }
 }
