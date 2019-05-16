@@ -687,7 +687,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1076939392}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c704d368e627ca84584d97201c5b884c, type: 3}
   m_Name: 
@@ -759,7 +759,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1076939392}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.42898512, y: 0.6251454, z: 0.17735478}
+  m_LocalPosition: {x: 0.119, y: 0.6251454, z: -0.432}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -789,7 +789,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1115453529}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e6a490fc9640e01418eea121f638b33f, type: 3}
   m_Name: 
@@ -1757,7 +1757,7 @@ MonoBehaviour:
   model: idk
   name: Kuka 1
   lerpSpeed: 10
-  interpolation: 1
+  interpolation: 0
   minAngles:
   - 0
   - 0

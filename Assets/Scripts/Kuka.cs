@@ -183,7 +183,7 @@ public class Kuka : Machine
         Quaternion rotation = Quaternion.identity;
 
         for (int i = 0; i < axisCount - 1; i++) {
-            rotation *= Quaternion.AngleAxis(NormalizeAngle(anglesToCalculate[i]), components[i].TransformDirection(GetAxis(i)));
+            rotation *= Quaternion.AngleAxis(NormalizeAngle(anglesToCalculate[i]), GetAxis(i));
             Vector3 nextPoint = prevPoint + (rotation * components[i + 1].localPosition);
             Debug.DrawRay(prevPoint, rotation * components[i + 1].localPosition, randomColors[i]);
             prevPoint = nextPoint;
