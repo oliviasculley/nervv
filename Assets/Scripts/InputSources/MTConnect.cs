@@ -1,51 +1,46 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
-using UnityEngine;                  // Unity
+
+// Unity
+using UnityEngine;                  
 using UnityEngine.Networking;
-using System.Xml.Serialization;     // XML Parsing
+
+// XML Parsing
+using System.Xml.Serialization;
+using System.IO;
+using Xml2CSharp;
 
 public class MTConnect : InputSource
 {
-    // Constructor
-    public MTConnect() : base("MTConnect") { }
-
-    [Header("Properties")]
-    public List<Machine> machines;
-
     [Header("Settings")]
-    public string MTConnectURL;
+    public string source;
     public float pollInterval;  // Interval in seconds to poll
     public char delim;
     public char[] trimChars;
 
     //[Header("References")]
 
-    [Header("DEBUG")]
-    public float[] debugAxes;
-    public bool useDebugString,
-                useOpenHaptics;
-
     // Private vars
     float timeToTrigger = 0.0f;
 
     private void Awake() {
         // Safety checks
-        Debug.Assert(!string.IsNullOrEmpty(MTConnectURL), "MTConnectURL is null or empty!");
+        Debug.Assert(!string.IsNullOrEmpty(source), "MTConnectURL is null or empty!");
         if (pollInterval == 0)
             Debug.LogWarning("Poll interval set to 0, will send GET request every frame!");
     }
 
     private void Start() {
-        // Init vals
-        machines = new List<Machine>();
+        // Add self to InputManager
+        Debug.Assert(InputManager.Instance != null, "[MTConnect] Could not get ref to InputManager!");
+        if (!InputManager.Instance.AddInput(this))
+            Debug.LogError("[MTConnect] Could not add self to InputManager!");
     }
 
     private void Update()
     {
-        // Time to trigger
-        if (Time.time > timeToTrigger && !useOpenHaptics) {
+        // Check if time to trigger
+        if (Time.time > timeToTrigger) {
 
             // Set new time to trigger
             timeToTrigger += pollInterval;
@@ -64,7 +59,7 @@ public class MTConnect : InputSource
     private IEnumerator FetchMTConnect() {
 
         WWWForm form = new WWWForm();
-        using (UnityWebRequest www = UnityWebRequest.Get(MTConnectURL)) {
+        using (UnityWebRequest www = UnityWebRequest.Get(source)) {
             yield return www.SendWebRequest();
 
             if (www.isNetworkError || www.isHttpError) {
@@ -72,55 +67,41 @@ public class MTConnect : InputSource
             } else {
                 //Debug.Log("[INFO] GET request returned: " + www.downloadHandler.text);
 
-                // Get raw string
-                string raw;
-                if (useDebugString) {
-                    raw = "\"";
-                    foreach (float f in debugAxes)
-                        raw += f.ToString() + ",";
-                    raw += "\"";
-                } else {
-                    raw = www.downloadHandler.text;
-                }
-
-                // Trim spaces and quotations
-                raw = raw.Trim(trimChars);
-                
-                // Split on delimiter
-                string[] split = raw.Split(delim);
-
-                // Check for unavailable values
-                for (int i = 0; i < split.Length; i++)
-                    if (split[i].ToUpper() == "UNAVAILABLE")
-                        Debug.LogWarning("Split val " + i + " is unavailable!");
-
-                NumberStyles style = NumberStyles.AllowParentheses | NumberStyles.AllowTrailingSign | NumberStyles.Float | NumberStyles.AllowThousands;
-                IFormatProvider provider = CultureInfo.CreateSpecificCulture("en-US");
-
-                // Parse to temp array
-                float[] temp = new float[split.Length];
-                for (int i = 0; i < split.Length; i++)
-                    if (!float.TryParse(split[i].ToUpper(), style, provider, out temp[i]))
-                        Debug.LogError("[MTConnect] Could not parse string to float: \"" + split[i] + "\"");
-
-                // As of current, send values for Kuka and Shark
-                if (machines.Count >= 1 && machines[0] != null)
-                    for (int i = 0; i < 3; i++)
-                        machines[0].SetAxisAngle("A" + (i + 1), temp[i]);
-
-                if (machines.Count >= 2 && machines[1] != null)
-                    for (int i = 3; i < split.Length; i++)
-                        machines[1].SetAxisAngle("A" + (i - 2), temp[i]);
+                // Parse XML
+                // DEBUG: Time how long it takes
+                System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+                sw.Start();
+                ParseXML(www.downloadHandler.text);
+                sw.Stop();
+                Debug.Log("Parsed XML in " + sw.ElapsedMilliseconds + " ms");
             }
         }
     }
 
-    /* XML Serialization Classes */
-    /* Converted from https://xmltocsharp.azurewebsites.net/ */
+    private void ParseXML(string input) {
+        XmlSerializer serializer = new XmlSerializer(typeof(MTConnectDevices));
+        TextReader reader = new StringReader(input);
+        MTConnectDevices xmlData = (MTConnectDevices) serializer.Deserialize(reader);
+
+        // Debug list out devices
+        string temp = "DEBUG: Parsing XML Devices...\n";
+        foreach (Device d in xmlData.Devices.Device)
+            temp += "ID: " + d.Id.ToString() +
+                    ", Name: " + d.Name.ToString() +
+                    ", UUID: " + d.Uuid.ToString() + "\n";
+        Debug.Log(temp);
+    }
+
+}
+
+#region XMLSerialization
+
+/* XML Serialization Classes */
+/* Converted from https://xmltocsharp.azurewebsites.net/ */
+namespace Xml2CSharp {
 
     [XmlRoot(ElementName = "Header", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Header
-    {
+    public class Header {
         [XmlAttribute(AttributeName = "creationTime")]
         public string CreationTime { get; set; }
         [XmlAttribute(AttributeName = "sender")]
@@ -138,8 +119,7 @@ public class MTConnect : InputSource
     }
 
     [XmlRoot(ElementName = "Description", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Description
-    {
+    public class Description {
         [XmlAttribute(AttributeName = "manufacturer")]
         public string Manufacturer { get; set; }
         [XmlAttribute(AttributeName = "model")]
@@ -149,8 +129,7 @@ public class MTConnect : InputSource
     }
 
     [XmlRoot(ElementName = "DataItem", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class DataItem
-    {
+    public class DataItem {
         [XmlAttribute(AttributeName = "category")]
         public string Category { get; set; }
         [XmlAttribute(AttributeName = "id")]
@@ -168,15 +147,13 @@ public class MTConnect : InputSource
     }
 
     [XmlRoot(ElementName = "DataItems", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class DataItems
-    {
+    public class DataItems {
         [XmlElement(ElementName = "DataItem", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
         public List<DataItem> DataItem { get; set; }
     }
 
     [XmlRoot(ElementName = "Controller", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Controller
-    {
+    public class Controller {
         [XmlElement(ElementName = "DataItems", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
         public DataItems DataItems { get; set; }
         [XmlAttribute(AttributeName = "id")]
@@ -186,8 +163,7 @@ public class MTConnect : InputSource
     }
 
     [XmlRoot(ElementName = "Linear", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Linear
-    {
+    public class Linear {
         [XmlElement(ElementName = "DataItems", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
         public DataItems DataItems { get; set; }
         [XmlAttribute(AttributeName = "id")]
@@ -197,8 +173,7 @@ public class MTConnect : InputSource
     }
 
     [XmlRoot(ElementName = "Components", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Components
-    {
+    public class Components {
         [XmlElement(ElementName = "Linear", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
         public List<Linear> Linear { get; set; }
         [XmlElement(ElementName = "Controller", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
@@ -210,8 +185,7 @@ public class MTConnect : InputSource
     }
 
     [XmlRoot(ElementName = "Axes", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Axes
-    {
+    public class Axes {
         [XmlElement(ElementName = "DataItems", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
         public DataItems DataItems { get; set; }
         [XmlElement(ElementName = "Components", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
@@ -223,8 +197,7 @@ public class MTConnect : InputSource
     }
 
     [XmlRoot(ElementName = "Device", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Device
-    {
+    public class Device {
         [XmlElement(ElementName = "Description", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
         public Description Description { get; set; }
         [XmlElement(ElementName = "DataItems", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
@@ -240,8 +213,7 @@ public class MTConnect : InputSource
     }
 
     [XmlRoot(ElementName = "Rotary", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Rotary
-    {
+    public class Rotary {
         [XmlElement(ElementName = "DataItems", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
         public DataItems DataItems { get; set; }
         [XmlAttribute(AttributeName = "id")]
@@ -251,8 +223,7 @@ public class MTConnect : InputSource
     }
 
     [XmlRoot(ElementName = "Sensor", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Sensor
-    {
+    public class Sensor {
         [XmlElement(ElementName = "DataItems", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
         public DataItems DataItems { get; set; }
         [XmlAttribute(AttributeName = "id")]
@@ -262,8 +233,7 @@ public class MTConnect : InputSource
     }
 
     [XmlRoot(ElementName = "Systems", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Systems
-    {
+    public class Systems {
         [XmlElement(ElementName = "Components", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
         public Components Components { get; set; }
         [XmlAttribute(AttributeName = "id")]
@@ -271,15 +241,13 @@ public class MTConnect : InputSource
     }
 
     [XmlRoot(ElementName = "Devices", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Devices
-    {
+    public class Devices {
         [XmlElement(ElementName = "Device", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
         public List<Device> Device { get; set; }
     }
 
     [XmlRoot(ElementName = "MTConnectDevices", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class MTConnectDevices
-    {
+    public class MTConnectDevices {
         [XmlElement(ElementName = "Header", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
         public Header Header { get; set; }
         [XmlElement(ElementName = "Devices", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
@@ -293,4 +261,6 @@ public class MTConnect : InputSource
         [XmlAttribute(AttributeName = "schemaLocation", Namespace = "http://www.w3.org/2001/XMLSchema-instance")]
         public string SchemaLocation { get; set; }
     }
+
 }
+#endregion

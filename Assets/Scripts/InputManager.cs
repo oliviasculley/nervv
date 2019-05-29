@@ -12,7 +12,10 @@ public class InputManager : MonoBehaviour
     public static InputManager Instance;
 
     [Header("Properties")]
-    public List<InputSource> inputs = new List<InputSource>();
+    public List<InputSource> inputs; // List of input sources in scene
+
+    // Private vars
+    List<System.Type> knownExclusives;  // Keeps track of exclusive types in inputs
 
     private void Awake() {
         // Add static reference to self
@@ -34,11 +37,14 @@ public class InputManager : MonoBehaviour
             return false;
 
         // Check for same type for exclusive types
-        if (input.exclusiveType)
-            foreach (InputSource i in inputs)
-                if (i.GetType() == input.GetType())
-                    return false;
+        if (knownExclusives.Contains(input.GetType()))
+            return false;
 
+        // Add to knownExclusives if exclusive
+        if (input.exclusiveType)
+            knownExclusives.Add(input.GetType());
+
+        // Add to list of inputs
         inputs.Add(input);
         return true;
     }
@@ -49,6 +55,11 @@ public class InputManager : MonoBehaviour
     /// <param name="input">Input source to remove</param>
     /// <returns>Succesfully removed?</returns>
     public bool RemoveInput(InputSource input) {
+        // If exclusive, remove from exclusives list
+        if (input.exclusiveType)
+            knownExclusives.Remove(input.GetType());
+
+        // Remove from list of inputs
         return inputs.Remove(input);
     }
 

@@ -12,7 +12,7 @@ public class MachineManager : MonoBehaviour
     public static MachineManager Instance;
 
     [Header("Properties")]
-    public List<Machine> machines;
+    public List<Machine> machines;  // List of machines in scene
 
     public void Awake() {
         if (Instance != null)
