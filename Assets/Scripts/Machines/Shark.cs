@@ -29,11 +29,11 @@ public class Shark : Machine
     }
 
     private void Start() {
-        // Link to MTConnect updates
-        if (MTConnect.mtc == null) {
-            Debug.LogWarning("[Shark] Could not find MTConnect!");
+        // Add to MachineManager
+        if (MachineManager.Instance == null) {
+            Debug.LogWarning("[Shark] Could not find MachineManager!");
         } else {
-            MTConnect.mtc.AddMachine(this);
+            MachineManager.Instance.AddMachine(this);
         }
     }
 

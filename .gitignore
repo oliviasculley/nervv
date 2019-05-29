@@ -1,5 +1,7 @@
-# This .gitignore file should be placed at the root of your Unity project directory
+# Ignore Microsoft Word Temp files
+~$cumentation.docx
 
+# Unity
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/

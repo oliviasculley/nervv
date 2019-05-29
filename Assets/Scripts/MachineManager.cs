@@ -1,0 +1,77 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class MachineManager : MonoBehaviour
+{
+    // MachineManager
+    // This class handles adding and removing machines from the scene.
+    // It also handles sending data to the machines
+
+    /* Static Reference */
+    public static MachineManager Instance;
+
+    [Header("Properties")]
+    public List<Machine> machines;
+
+    public void Awake() {
+        if (Instance != null)
+            Debug.LogWarning("[MachineManager] Static ref to self was not null!\nOverriding...");
+        Instance = this;
+    }
+
+    /* Public Methods */
+
+    /// <summary>
+    /// Adds machine to machines List
+    /// </summary>
+    /// <param name="machine">Machine to add</param>
+    /// <returns>Succesfully added?</returns>
+    public bool AddMachine(Machine machine) {
+        // Check for duplicate machines
+        if (machines.Contains(machine))
+            return false;
+
+        machines.Add(machine);
+        return true;
+    }
+
+    /// <summary>
+    /// Removes machine from machines list
+    /// </summary>
+    /// <param name="machine">Machine to remove</param>
+    /// <returns>Succesfully removed?</returns>
+    public bool RemoveMachine(Machine machine) {
+        return machines.Remove(machine);
+    }
+
+    /// <summary>
+    /// Returns machines of same type
+    /// </summary>
+    /// <typeparam name="T">Type of machine to return</typeparam>
+    /// <returns>List<Machine> of machines</returns>
+    public List<Machine> GetMachines<T>() {
+        List<Machine> foundMachines = new List<Machine>();
+
+        foreach (Machine m in machines)
+            if (m.GetType() == typeof(T))
+                foundMachines.Add(m);
+
+        return foundMachines;
+    }
+
+    /// <summary>
+    /// Returns machines of same type
+    /// </summary>
+    /// <param name="type">String of name of type of machine to return</param>
+    /// <returns>List<Machine> of machines</returns>
+    public List<Machine> GetMachines(string type) {
+        List<Machine> foundMachines = new List<Machine>();
+
+        foreach (Machine m in machines)
+            if (m.GetType().ToString() == type)
+                foundMachines.Add(m);
+
+        return foundMachines;
+    }
+}

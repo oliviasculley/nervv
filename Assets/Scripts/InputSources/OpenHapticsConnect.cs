@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OpenHapticsConnect : MonoBehaviour
+public class OpenHapticsConnect : InputSource
 {
+    // Constructor
+    public OpenHapticsConnect() : base("OpenHaptics") { }
+
     [Header("References")]
     public HapticPlugin HapticDevice = null;
 
@@ -12,13 +15,13 @@ public class OpenHapticsConnect : MonoBehaviour
         // Get ref to HapticPlugin
         HapticDevice = (HapticPlugin)FindObjectOfType(typeof(HapticPlugin));
         Debug.Assert(HapticDevice != null, "[OpenHapticsConnect] Could not find HapticPlugin script in scene!");
+
+        // Add self to InputManager
+        if (!InputManager.Instance.AddInput(this))
+            Debug.LogError("[OpenHapticsConnect] Could not add self to InputManager!");
     }
 
     void Update()
     {
-        // Send Haptic angles to Kuka
-        if (MTConnect.mtc.machines.Count >= 2 && MTConnect.mtc.machines[1] != null)
-            for (int i = 3; i < 9; i++)
-                MTConnect.mtc.machines[1].SetAxisAngle("A" + (i - 2), 0);
     }
 }

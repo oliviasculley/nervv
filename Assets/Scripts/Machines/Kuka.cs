@@ -47,11 +47,11 @@ public class Kuka : Machine
     }
 
     private void Start() {
-        // Link to MTConnect updates
-        if (MTConnect.mtc == null) {
-            Debug.LogWarning("[Kuka] Could not find MTConnect!");
+        // Link to MachineManager
+        if (MachineManager.Instance == null) {
+            Debug.LogWarning("[Kuka] Could not find MachineManager!");
         } else {
-            MTConnect.mtc.AddMachine(this);
+            MachineManager.Instance.AddMachine(this);
         }
         
         // DEBUG: Random colors
