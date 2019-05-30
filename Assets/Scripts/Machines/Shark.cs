@@ -8,7 +8,7 @@ public class Shark : Machine
     public float[] minAngles, maxAngles;    // Min and max angles for each axis
 
     // Private Vars
-    private Transform head;  // Location of Shark Head
+    private Transform head,holder,base_y;  // Location of Shark Head
 
     // Constants
     private readonly float scaleFactor = 0.0254f; // inches to mm
@@ -16,7 +16,11 @@ public class Shark : Machine
     private void Awake() {
         // Init arrays
         angles = new float[axisCount];
-        head = transform.Find("Head");
+        head = transform.Find("A1/A2/A3");
+
+	holder = transform.Find("A1/A2");
+
+	base_y = transform.Find("A1");
 
         // Safety checks
         Debug.Assert(head != null, "Could not find head!");
@@ -44,9 +48,18 @@ public class Shark : Machine
             head.localPosition = Vector3.Lerp(  head.localPosition,
                                                 GetAxis(0),
                                                 lerpSpeed * Time.deltaTime);
+			Debug.Log("Shark  dsfbkjasb"+GetAxis(2));
+            holder.localPosition = Vector3.Lerp(holder.localPosition,
+                                                GetAxis(1),
+                                                lerpSpeed * Time.deltaTime);
+            base_y.localPosition = Vector3.Lerp(base_y.localPosition,
+                                                GetAxis(0),
+                                                lerpSpeed * Time.deltaTime);
         } else {
             // Get latest correct axis angle
-            head.localPosition = GetAxis(0);
+            head.localPosition = GetAxis(2);
+            holder.localPosition = GetAxis(1);
+            base_y.localPosition = GetAxis(0);
         }
     }
 
@@ -93,11 +106,15 @@ public class Shark : Machine
     /// <param name="axisID">ID of the axis to return Vector3</param>
     /// <returns></returns>
     public override Vector3 GetAxis(int axisID) {
-        if (axisID != 0) {
-            Debug.LogError("[Shark] Invalid axisID: " + axisID);
-            return Vector3.zero;
+        if (axisID == 1) {
+			return new Vector3(angles[0], 0,0) * scaleFactor;
         }
-
-        return new Vector3(-angles[1], angles[2], angles[0]) * scaleFactor;
-    }
+		else if(axisID == 2){
+			return new Vector3(0, 0, angles[2]) * scaleFactor;
+		}
+		else if(axisID == 0){
+			return new Vector3(0, angles[1], 0) * scaleFactor;
+		} 
+	return new Vector3(0, 0, 0);
+	}
 }
