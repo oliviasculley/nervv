@@ -24,6 +24,10 @@ public class InputManager : MonoBehaviour
         Instance = this;
     }
 
+    private void Start() {
+        knownExclusives = new List<System.Type>();
+    }
+
     /* Public Methods */
 
     /// <summary>
