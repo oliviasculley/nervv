@@ -12,7 +12,7 @@ using Xml2CSharp;
 
 public class MTConnect : InputSource
 {
-    [Header("Settings")]
+    [Header("MTConnect Settings")]
     public string source;
     public float pollInterval;  // Interval in seconds to poll
     public char delim;
@@ -116,6 +116,28 @@ namespace Xml2CSharp {
         public string AssetCount { get; set; }
         [XmlAttribute(AttributeName = "bufferSize")]
         public string BufferSize { get; set; }
+        [XmlAttribute(AttributeName = "nextSequence")]
+        public string NextSequence { get; set; }
+        [XmlAttribute(AttributeName = "firstSequence")]
+        public string FirstSequence { get; set; }
+        [XmlAttribute(AttributeName = "lastSequence")]
+        public string LastSequence { get; set; }
+    }
+
+    [XmlRoot(ElementName = "Torque", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
+    public class Torque {
+        [XmlAttribute(AttributeName = "dataItemId")]
+        public string DataItemId { get; set; }
+        [XmlAttribute(AttributeName = "timestamp")]
+        public string Timestamp { get; set; }
+        [XmlAttribute(AttributeName = "name")]
+        public string Name { get; set; }
+        [XmlAttribute(AttributeName = "sequence")]
+        public string Sequence { get; set; }
+        [XmlAttribute(AttributeName = "subType")]
+        public string SubType { get; set; }
+        [XmlText]
+        public string Text { get; set; }
     }
 
     [XmlRoot(ElementName = "Description", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
@@ -246,10 +268,46 @@ namespace Xml2CSharp {
         public List<Device> Device { get; set; }
     }
 
+    [XmlRoot(ElementName = "Samples", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
+    public class Samples {
+        [XmlElement(ElementName = "Torque", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
+        public List<Torque> Torque { get; set; }
+    }
+
+    [XmlRoot(ElementName = "ComponentStream", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
+    public class ComponentStream {
+        [XmlElement(ElementName = "Samples", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
+        public Samples Samples { get; set; }
+        [XmlAttribute(AttributeName = "component")]
+        public string Component { get; set; }
+        [XmlAttribute(AttributeName = "name")]
+        public string Name { get; set; }
+        [XmlAttribute(AttributeName = "componentId")]
+        public string ComponentId { get; set; }
+    }
+
+    [XmlRoot(ElementName = "DeviceStream", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
+    public class DeviceStream {
+        [XmlElement(ElementName = "ComponentStream", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
+        public List<ComponentStream> ComponentStream { get; set; }
+        [XmlAttribute(AttributeName = "name")]
+        public string Name { get; set; }
+        [XmlAttribute(AttributeName = "uuid")]
+        public string Uuid { get; set; }
+    }
+
+    [XmlRoot(ElementName = "Streams", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
+    public class Streams {
+        [XmlElement(ElementName = "DeviceStream", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
+        public DeviceStream DeviceStream { get; set; }
+    }
+
     [XmlRoot(ElementName = "MTConnectDevices", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
     public class MTConnectDevices {
         [XmlElement(ElementName = "Header", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
         public Header Header { get; set; }
+        [XmlElement(ElementName = "Streams", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
+        public Streams Streams { get; set; }
         [XmlElement(ElementName = "Devices", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
         public Devices Devices { get; set; }
         [XmlAttribute(AttributeName = "m", Namespace = "http://www.w3.org/2000/xmlns/")]
@@ -261,6 +319,5 @@ namespace Xml2CSharp {
         [XmlAttribute(AttributeName = "schemaLocation", Namespace = "http://www.w3.org/2001/XMLSchema-instance")]
         public string SchemaLocation { get; set; }
     }
-
 }
 #endregion

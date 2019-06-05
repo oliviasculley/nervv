@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Renderer))]
 public class Webcam : MonoBehaviour
 {
+    [Header("References")]
+    public Renderer planeRenderer;
+
     // Private vars
     private WebCamTexture webCamTexture;
-    private Renderer renderer;
 
     private void Awake() {
-        renderer = GetComponent<Renderer>();
-        Debug.Assert(renderer != null, "[Webcam] Could not get reference to renderer!");
+        Debug.Assert(planeRenderer != null, "[Webcam] Could not get reference to renderer!");
     }
 
     private void Start()
@@ -29,7 +29,7 @@ public class Webcam : MonoBehaviour
     private IEnumerator GetWebcamFeed() {
         yield return Application.RequestUserAuthorization(UserAuthorization.WebCam);
         if (Application.HasUserAuthorization(UserAuthorization.WebCam)) {
-            renderer.material.mainTexture = webCamTexture;
+            planeRenderer.material.mainTexture = webCamTexture;
             webCamTexture.Play();
         } else {
             Debug.LogWarning("[Webcam] Webcam authorization denied!");

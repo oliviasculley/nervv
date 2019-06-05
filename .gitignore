@@ -1,5 +1,6 @@
 # Ignore Microsoft Word Temp files
 ~$cumentation.docx
+~$Todo.docx
 
 # Unity
 /[Ll]ibrary/

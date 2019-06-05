@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class Shark : Machine
 {
     [Header("Shark Settings")]
     public float lerpSpeed = 10f;           // Speed to lerp to correct position
     public bool interpolation = true;       // Toggles lerping to final position
-    public float[] minAngles, maxAngles;    // Min and max angles for each axis
 
     // Private Vars
     private Transform head,holder,base_y;  // Location of Shark Head
@@ -15,17 +16,17 @@ public class Shark : Machine
 
     private void Awake() {
         // Init arrays
-        angles = new float[axisCount];
+        axes = new List<Axis>();
         head = transform.Find("A1/A2/A3");
-
-	holder = transform.Find("A1/A2");
-
-	base_y = transform.Find("A1");
+	    holder = transform.Find("A1/A2");
+	    base_y = transform.Find("A1");
 
         // Safety checks
         Debug.Assert(head != null, "Could not find head!");
-        Debug.Assert(minAngles.Length == axisCount, "MinAngles count does not equal number of axis!");
-        Debug.Assert(maxAngles.Length == axisCount, "MaxAngles count does not equal number of axis!");
+        Debug.Assert(holder != null, "Could not find holder!");
+        Debug.Assert(base_y != null, "Could not find base_y!");
+
+
         if (lerpSpeed == 0)
             Debug.LogWarning("Lerp speed is 0, will never go to final position!");
         if (maxSpeed == 0)
@@ -39,6 +40,10 @@ public class Shark : Machine
         } else {
             MachineManager.Instance.AddMachine(this);
         }
+
+        // Initialize Axes
+        for (int i = 1; i <= 3; i++)
+            axes.Add(new Axis("a" + i.ToString(), "A" + i.ToString(), 0, AxisType.Linear));
     }
 
     private void Update() {
@@ -46,20 +51,20 @@ public class Shark : Machine
             // Continually lerp towards final position
             Vector3 vel = Vector3.zero;
             head.localPosition = Vector3.Lerp(  head.localPosition,
-                                                GetAxis(0),
+                                                GetAxisVector3(axes[0]),
                                                 lerpSpeed * Time.deltaTime);
-			Debug.Log("Shark  dsfbkjasb"+GetAxis(2));
+			Debug.Log("Shark  dsfbkjasb"+ GetAxisVector3(axes[2]));
             holder.localPosition = Vector3.Lerp(holder.localPosition,
-                                                GetAxis(1),
+                                                GetAxisVector3(axes[1]),
                                                 lerpSpeed * Time.deltaTime);
             base_y.localPosition = Vector3.Lerp(base_y.localPosition,
-                                                GetAxis(0),
+                                                GetAxisVector3(axes[0]),
                                                 lerpSpeed * Time.deltaTime);
         } else {
             // Get latest correct axis angle
-            head.localPosition = GetAxis(2);
-            holder.localPosition = GetAxis(1);
-            base_y.localPosition = GetAxis(0);
+            head.localPosition = GetAxisVector3(axes[2]);
+            holder.localPosition = GetAxisVector3(axes[1]);
+            base_y.localPosition = GetAxisVector3(axes[0]);
         }
     }
 
@@ -69,35 +74,14 @@ public class Shark : Machine
     /// Sets the angle of a certain axis
     /// </summary>
     /// <param name="s">Name of the axis to set (1 indexed)</param>
-    public override void SetAxisAngle(string axisName, float angle) {
-        // String Err checking
-        if (string.IsNullOrEmpty(axisName) ||               // Axis name cannot be null, empty
-            axisName.Length < 2 ||                          // Must be at least 2 chars
-            (axisName[0] != 'a' && axisName[0] != 'A')) {   // Kuka must start with [Aa]
-            Debug.LogWarning("[Shark] Invalid axisName: \"" + axisName + "\"");
+    public void SetAxisValue(string axisID, float value) {
+
+        // Get Axis with axisID
+        Axis found;
+        if ((found = axes.Find(x => x.GetID() == axisID)) == null)
             return;
-        }
 
-        // Parse 2nd char to axis ID
-        if (!int.TryParse(axisName[1].ToString(), out int axis))
-            Debug.LogWarning("[Shark] Could not parse axisName: \"" + axisName + "\"");
-
-        // Safety check axisID
-        if (axis < 0 || axis > axisCount) {
-            Debug.LogWarning("[Shark] Invalid axisID to set: " + axis);
-            return;
-        } else {
-            // Decrement to 0 index axisID
-            axis -= 1;
-        }
-
-        // Set angle with safety min and max angles
-        if (minAngles[axis] == 0 && maxAngles[axis] == 0) {
-            // No min/max angle restriction
-            angles[axis] = angle % 360f;
-        } else {
-            angles[axis] = Mathf.Clamp(angle, minAngles[axis], maxAngles[axis]);
-        }
+        found.SetValue(value);
     }
 
     /// <summary>
@@ -105,16 +89,20 @@ public class Shark : Machine
     /// </summary>
     /// <param name="axisID">ID of the axis to return Vector3</param>
     /// <returns></returns>
-    public override Vector3 GetAxis(int axisID) {
-        if (axisID == 1) {
-			return new Vector3(angles[0], 0,0) * scaleFactor;
+    public override Vector3 GetAxisVector3(Axis axis) {
+        switch (axis.GetID()) {
+            case "a1":
+                return new Vector3(0, axis.GetValue(), 0) * scaleFactor;
+
+            case "a2":
+                return new Vector3(axis.GetValue(), 0, 0) * scaleFactor;
+
+            case "a3":
+                return new Vector3(0, 0, axis.GetValue()) * scaleFactor;
+
+            default:
+                Debug.LogError("[Shark] Could not find axis with id: " + axis.GetID());
+                return new Vector3(0, 0, 0);
         }
-		else if(axisID == 2){
-			return new Vector3(0, 0, angles[2]) * scaleFactor;
-		}
-		else if(axisID == 0){
-			return new Vector3(0, angles[1], 0) * scaleFactor;
-		} 
-	return new Vector3(0, 0, 0);
 	}
 }
