@@ -63,15 +63,24 @@ public class MachineManager : MonoBehaviour
     /// <summary>
     /// Returns machines of same type
     /// </summary>
-    /// <param name="type">String of name of type of machine to return</param>
+    /// <param name="type">Type of machine to return</param>
     /// <returns>List<Machine> of machines</returns>
-    public List<Machine> GetMachines(string type) {
+    public List<Machine> GetMachines(System.Type type) {
         List<Machine> foundMachines = new List<Machine>();
 
         foreach (Machine m in machines)
-            if (m.GetType().ToString() == type)
+            if (m.GetType() == type)
                 foundMachines.Add(m);
 
         return foundMachines;
+    }
+
+    /// <summary>
+    /// Returns machine with matching ID
+    /// </summary>
+    /// <param name="id">string with machine ID</param>
+    /// <returns>Selected machine if found, otherwise returns null</returns>
+    public Machine GetMachine(string id) {
+        return machines.Find(x => x.id == id);
     }
 }

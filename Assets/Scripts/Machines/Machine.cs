@@ -76,4 +76,10 @@ public abstract class Machine : MonoBehaviour
     /// <param name="axis">Axis to get Vector3</param>
     /// <returns>Vector3 of axis value in local space</returns>
     public abstract Vector3 GetAxisVector3(Axis axis);
-}
+
+    /// <summary>
+    /// Sets the value of a certain axis by axis' ID
+    /// </summary>
+    /// <param name="axisID">Axis ID (MTConnect string identifier) to set</param>
+    /// <param name="value">Value of axis to set</param>
+    public abstract void SetAxisValue(string axisID, float value);

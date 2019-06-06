@@ -81,10 +81,11 @@ public class Kuka : Machine
     /* Public Methods */
 
     /// <summary>
-    /// Sets the angle of a certain axis
+    /// Sets the value of a certain axis by axis' ID
     /// </summary>
-    /// <param name="s">Name of the axis to set (1 indexed)</param>
-    public void SetAxisValue(string axisID, float value) {
+    /// <param name="axisID">Axis ID (MTConnect string identifier) to set</param>
+    /// <param name="value">Value of axis to set</param>
+    public override void SetAxisValue(string axisID, float value) {
 
         // Get Axis with axisID
         Axis found;
@@ -125,7 +126,7 @@ public class Kuka : Machine
     /// <summary>
     /// Returns the Vector3 for the associated axis in local space
     /// </summary>
-    /// <param name="axisID">ID of the axis to return Vector3</param>
+    /// <param name="axis">Axis to return Vector3</param>
     /// <returns>Vector3 of rotation for selected axis in local space</returns>
     public override Vector3 GetAxisVector3(Axis axis) {
         // Switch based on axisID

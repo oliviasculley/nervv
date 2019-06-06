@@ -26,7 +26,6 @@ public class Shark : Machine
         Debug.Assert(holder != null, "Could not find holder!");
         Debug.Assert(base_y != null, "Could not find base_y!");
 
-
         if (lerpSpeed == 0)
             Debug.LogWarning("Lerp speed is 0, will never go to final position!");
         if (maxSpeed == 0)
@@ -71,10 +70,11 @@ public class Shark : Machine
     /* Public Methods */
 
     /// <summary>
-    /// Sets the angle of a certain axis
+    /// Sets the value of a certain axis by axis' ID
     /// </summary>
-    /// <param name="s">Name of the axis to set (1 indexed)</param>
-    public void SetAxisValue(string axisID, float value) {
+    /// <param name="axisID">Axis ID (MTConnect string identifier) to set</param>
+    /// <param name="value">Value of axis to set</param>
+    public override void SetAxisValue(string axisID, float value) {
 
         // Get Axis with axisID
         Axis found;
@@ -85,10 +85,10 @@ public class Shark : Machine
     }
 
     /// <summary>
-    /// Returns the Vector3 for the associated axis
+    /// Returns the Vector3 for the associated axis in local space
     /// </summary>
-    /// <param name="axisID">ID of the axis to return Vector3</param>
-    /// <returns></returns>
+    /// <param name="axis">Axis to return Vector3</param>
+    /// <returns>Vector3 of rotation for selected axis in local space</returns>
     public override Vector3 GetAxisVector3(Axis axis) {
         switch (axis.GetID()) {
             case "a1":
