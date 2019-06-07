@@ -354,7 +354,7 @@ Transform:
   - {fileID: 1330480000}
   - {fileID: 702280077}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &393471029
 MonoBehaviour:
@@ -368,7 +368,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e636bacc0c831f4d9a6ec031fdb1fe8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  planeRenderer: {fileID: 386268453}
 --- !u!1001 &443746639
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -430,6 +429,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7cdb4dbd1f8f22a4a9a363f1a23b8217, type: 3}
+--- !u!4 &443746640 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4096501265198900, guid: 7cdb4dbd1f8f22a4a9a363f1a23b8217,
+    type: 3}
+  m_PrefabInstance: {fileID: 443746639}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &702280076
 GameObject:
   m_ObjectHideFlags: 0
@@ -672,7 +677,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1074957910
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -800,11 +805,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1076939392}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.119, y: 0.6251454, z: -0.432}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalRotation: {x: -0, y: -1, z: -0, w: 0.00021807462}
+  m_LocalPosition: {x: -1.8885518, y: 0.75145364, z: 3.3208249}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 443746640}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1115453529
@@ -954,7 +959,7 @@ Transform:
   - {fileID: 2001114577}
   - {fileID: 2088168708}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1330479999
 GameObject:
@@ -1077,7 +1082,7 @@ Transform:
   - {fileID: 307011777}
   - {fileID: 755076808}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2001114576 stripped
 MonoBehaviour:
@@ -1127,7 +1132,7 @@ Transform:
   - {fileID: 1074957911}
   - {fileID: 1115453531}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2088168707
 PrefabInstance:
