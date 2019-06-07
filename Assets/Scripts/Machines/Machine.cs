@@ -6,6 +6,7 @@ public abstract class Machine : MonoBehaviour
 {
     public enum AxisType { Rotary, Linear, None }
 
+    [System.Serializable]
     public class Axis {
         [SerializeField] private string id, name;
         [SerializeField] private float value, minValue, maxValue;
@@ -42,6 +43,10 @@ public abstract class Machine : MonoBehaviour
             return name;
         }
 
+        public AxisType GetAxisType() {
+            return type;
+        }
+
         public void SetValue(float newValue) {
             if (minValue != maxValue)
                 this.value = Mathf.Clamp(newValue, minValue, maxValue);
@@ -56,14 +61,14 @@ public abstract class Machine : MonoBehaviour
     }
 
     [Header("Machine Properties")]
+    [SerializeField]
     public List<Axis> axes;
 
     [Header("Machine Settings")]
     public int axisCount;           // Number of axes on machine
     public float maxSpeed;          // Max speed of machine
     public new string name;         // Individual ID
-    public string   id,
-                    uuid,
+    public string   uuid,
                     manufacturer,
                     model;
 
@@ -83,3 +88,4 @@ public abstract class Machine : MonoBehaviour
     /// <param name="axisID">Axis ID (MTConnect string identifier) to set</param>
     /// <param name="value">Value of axis to set</param>
     public abstract void SetAxisValue(string axisID, float value);
+}

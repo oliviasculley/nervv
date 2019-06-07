@@ -74,13 +74,4 @@ public class MachineManager : MonoBehaviour
 
         return foundMachines;
     }
-
-    /// <summary>
-    /// Returns machine with matching ID
-    /// </summary>
-    /// <param name="id">string with machine ID</param>
-    /// <returns>Selected machine if found, otherwise returns null</returns>
-    public Machine GetMachine(string id) {
-        return machines.Find(x => x.id == id);
-    }
 }

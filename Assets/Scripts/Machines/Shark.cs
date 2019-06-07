@@ -16,7 +16,6 @@ public class Shark : Machine
 
     private void Awake() {
         // Init arrays
-        axes = new List<Axis>();
         head = transform.Find("A1/A2/A3");
 	    holder = transform.Find("A1/A2");
 	    base_y = transform.Find("A1");
@@ -39,10 +38,6 @@ public class Shark : Machine
         } else {
             MachineManager.Instance.AddMachine(this);
         }
-
-        // Initialize Axes
-        for (int i = 1; i <= 3; i++)
-            axes.Add(new Axis("a" + i.ToString(), "A" + i.ToString(), 0, AxisType.Linear));
     }
 
     private void Update() {
@@ -52,12 +47,12 @@ public class Shark : Machine
             head.localPosition = Vector3.Lerp(  head.localPosition,
                                                 GetAxisVector3(axes[0]),
                                                 lerpSpeed * Time.deltaTime);
-			Debug.Log("Shark  dsfbkjasb"+ GetAxisVector3(axes[2]));
+			//Debug.Log("Shark  dsfbkjasb"+ GetAxisVector3(axes[2]));
             holder.localPosition = Vector3.Lerp(holder.localPosition,
                                                 GetAxisVector3(axes[1]),
                                                 lerpSpeed * Time.deltaTime);
             base_y.localPosition = Vector3.Lerp(base_y.localPosition,
-                                                GetAxisVector3(axes[0]),
+                                                GetAxisVector3(axes[2]),
                                                 lerpSpeed * Time.deltaTime);
         } else {
             // Get latest correct axis angle
@@ -91,13 +86,13 @@ public class Shark : Machine
     /// <returns>Vector3 of rotation for selected axis in local space</returns>
     public override Vector3 GetAxisVector3(Axis axis) {
         switch (axis.GetID()) {
-            case "a1":
+            case "x_axis":
                 return new Vector3(0, axis.GetValue(), 0) * scaleFactor;
 
-            case "a2":
+            case "y_axis":
                 return new Vector3(axis.GetValue(), 0, 0) * scaleFactor;
 
-            case "a3":
+            case "z_axis":
                 return new Vector3(0, 0, axis.GetValue()) * scaleFactor;
 
             default:

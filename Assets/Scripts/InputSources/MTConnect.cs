@@ -7,13 +7,15 @@ using UnityEngine.Networking;
 
 // XML Parsing
 using System.Xml.Serialization;
+using System.Net;
 using System.IO;
-using Xml2CSharp;
+using System.Globalization;
+using MTConnectStreamsXML;
 
 public class MTConnect : InputSource
 {
     [Header("MTConnect Settings")]
-    public string source;
+    public readonly string source = "";
     public float pollInterval;  // Interval in seconds to poll
     public char delim;
     public char[] trimChars;
@@ -79,1419 +81,333 @@ public class MTConnect : InputSource
     }
 
     private void ParseXML(string input) {
-        XmlSerializer serializer = new XmlSerializer(typeof(MTConnectDevices));
+        XmlSerializer serializer = new XmlSerializer(typeof(MTConnectStreams));
         TextReader reader = new StringReader(input);
-        MTConnectDevices xmlData = (MTConnectDevices) serializer.Deserialize(reader);
+        MTConnectStreams xmlData = (MTConnectStreams) serializer.Deserialize(reader);
 
         // DEBUG: Send data to MachineManager, will use InputManager in the future
-        foreach (MTConnectDevicesDevice d in xmlData.Devices) {
-            Machine m;
-            /*
-            if ((m = MachineManager.Instance.GetMachine(d.id)) != null) {
-                foreach (MTConnectDevicesDeviceComponentsAxes a in d.Components.Axes) {
-                    foreach (var item in a.Components.Items) {
-                        if (item.GetType() == typeof(MTConnectDevicesDeviceComponentsAxesComponentsLinear)) {
-                            // Get axisID
-                            ((MTConnectDevicesDeviceComponentsAxesComponentsLinear)item).DataItems.DataItem.statistic;
-                        } else if (item.GetType() == typeof(MTConnectDevicesDeviceComponentsAxesComponentsRotary)) {
-                            foreach(MTConnectDevicesDeviceComponentsAxesComponentsRotaryDataItem dataItem in
-                                ((MTConnectDevicesDeviceComponentsAxesComponentsRotary)item).DataItems) {
-                                dataItem.statistic;
-                            }
-                        } else {
-                            Debug.LogError("[MTConnect] Could not find Component Type: " + item.GetType().ToString());
-                        }
-                    }
-                }
-            }
-            */
+		
+		// For each device
+        foreach (DeviceStream ds in xmlData.Streams.DeviceStream) {
+            Machine m = MachineManager.Instance.machines.Find(x => x.uuid == ds.Uuid);
+			if (m == null)
+				continue;
+			
+			// Go through each component
+			foreach (ComponentStream cs in ds.ComponentStream) {
+				Machine.Axis a = m.axes.Find(x => x.GetID() == cs.ComponentId);
+				if (a == null)
+					continue;
+
+				switch (a.GetAxisType()) {
+					case Machine.AxisType.Linear:
+						// Linear axis, get latest position
+						if (cs.Samples.Position.Count == 0)
+							break;
+						cs.Samples.Position.Sort(new PositionTimeStampCompare());
+						Position p = cs.Samples.Position[cs.Samples.Position.Count - 1];
+
+						if (p.Text == "UNAVAILABLE")
+							break;
+
+						// Set axis
+						Debug.Log("[MTConnect] Set Position " + a.GetID() + "'s value: " + p.Text);
+						a.SetValue(float.Parse(p.Text, CultureInfo.InvariantCulture));
+						break;
+
+					case Machine.AxisType.Rotary:
+						// Rotary axis, get latest angle
+						if (cs.Samples.Angle.Count == 0)
+							break;
+						cs.Samples.Angle.Sort(new AngleTimeStampCompare());
+						Angle angle = cs.Samples.Angle[cs.Samples.Angle.Count - 1];
+
+						if (angle.Text == "UNAVAILABLE")
+							break;
+						
+						// Set axis
+						Debug.Log("[MTConnect] Set Angle " + a.GetID() + "'s value: " + angle.Text);
+						a.SetValue(float.Parse(angle.Text, CultureInfo.InvariantCulture));
+						break;
+
+					default:
+						Debug.LogError("[MTConnect] Invalid AxisType!");
+						break;
+				}
+			}
+			
         }
     }
+
+	/* Private Methods */
+	private class PositionTimeStampCompare : IComparer<Position> {
+		public int Compare(Position x, Position y) {
+			if (x == null || y == null)
+				return 0;
+			Debug.Log("xT: " + x.Timestamp + ", " +
+				"yT: " + y.Timestamp + ", " +
+				x.Timestamp.CompareTo(y.Timestamp));
+			return x.Timestamp.CompareTo(y.Timestamp);
+		}
+	}
+
+	private class AngleTimeStampCompare : IComparer<Angle> {
+		public int Compare(Angle x, Angle y) {
+			if (x == null || y == null)
+				return 0;
+			Debug.Log("xT: " + x.Timestamp + ", " +
+				"yT: " + y.Timestamp + ", " +
+				x.Timestamp.CompareTo(y.Timestamp));
+			return x.Timestamp.CompareTo(y.Timestamp);
+		}
+	}
 
 }
 
 #region XMLSerialization
 
-/* XML Serialization Classes */
-/* Converted from https://xmltocsharp.azurewebsites.net/ */
-/*
-namespace Xml2CSharp {
+namespace MTConnectStreamsXML {
+    
+    	[XmlRoot(ElementName="Header", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+	public class Header {
+		[XmlAttribute(AttributeName="creationTime")]
+		public string CreationTime { get; set; }
+		[XmlAttribute(AttributeName="sender")]
+		public string Sender { get; set; }
+		[XmlAttribute(AttributeName="instanceId")]
+		public string InstanceId { get; set; }
+		[XmlAttribute(AttributeName="version")]
+		public string Version { get; set; }
+		[XmlAttribute(AttributeName="bufferSize")]
+		public string BufferSize { get; set; }
+		[XmlAttribute(AttributeName="nextSequence")]
+		public string NextSequence { get; set; }
+		[XmlAttribute(AttributeName="firstSequence")]
+		public string FirstSequence { get; set; }
+		[XmlAttribute(AttributeName="lastSequence")]
+		public string LastSequence { get; set; }
+	}
 
-    [XmlRoot(ElementName = "Header", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Header {
-        [XmlAttribute(AttributeName = "creationTime")]
-        public string CreationTime { get; set; }
-        [XmlAttribute(AttributeName = "sender")]
-        public string Sender { get; set; }
-        [XmlAttribute(AttributeName = "instanceId")]
-        public string InstanceId { get; set; }
-        [XmlAttribute(AttributeName = "version")]
-        public string Version { get; set; }
-        [XmlAttribute(AttributeName = "assetBufferSize")]
-        public string AssetBufferSize { get; set; }
-        [XmlAttribute(AttributeName = "assetCount")]
-        public string AssetCount { get; set; }
-        [XmlAttribute(AttributeName = "bufferSize")]
-        public string BufferSize { get; set; }
-        [XmlAttribute(AttributeName = "nextSequence")]
-        public string NextSequence { get; set; }
-        [XmlAttribute(AttributeName = "firstSequence")]
-        public string FirstSequence { get; set; }
-        [XmlAttribute(AttributeName = "lastSequence")]
-        public string LastSequence { get; set; }
-    }
+	[XmlRoot(ElementName="MachineState", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+	public class MachineState {
+		[XmlAttribute(AttributeName="dataItemId")]
+		public string DataItemId { get; set; }
+		[XmlAttribute(AttributeName="timestamp")]
+		public string Timestamp { get; set; }
+		[XmlAttribute(AttributeName="name")]
+		public string Name { get; set; }
+		[XmlAttribute(AttributeName="sequence")]
+		public string Sequence { get; set; }
+		[XmlText]
+		public string Text { get; set; }
+	}
 
-    [XmlRoot(ElementName = "Torque", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class Torque {
-        [XmlAttribute(AttributeName = "dataItemId")]
-        public string DataItemId { get; set; }
-        [XmlAttribute(AttributeName = "timestamp")]
-        public string Timestamp { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-        [XmlAttribute(AttributeName = "sequence")]
-        public string Sequence { get; set; }
-        [XmlAttribute(AttributeName = "subType")]
-        public string SubType { get; set; }
-        [XmlText]
-        public string Text { get; set; }
-    }
+	[XmlRoot(ElementName="Events", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+	public class Events {
+		[XmlElement(ElementName="MachineState", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+		public List<MachineState> MachineState { get; set; }
+		[XmlElement(ElementName="AssetChanged", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+		public AssetChanged AssetChanged { get; set; }
+		[XmlElement(ElementName="AssetRemoved", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+		public AssetRemoved AssetRemoved { get; set; }
+		[XmlElement(ElementName="Availability", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+		public List<Availability> Availability { get; set; }
+		[XmlElement(ElementName="RemoteState", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+		public RemoteState RemoteState { get; set; }
+	}
 
-    [XmlRoot(ElementName = "Description", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Description {
-        [XmlAttribute(AttributeName = "manufacturer")]
-        public string Manufacturer { get; set; }
-        [XmlAttribute(AttributeName = "model")]
-        public string Model { get; set; }
-        [XmlText]
-        public string Text { get; set; }
-    }
+	[XmlRoot(ElementName="ComponentStream", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+	public class ComponentStream {
+		[XmlElement(ElementName="Events", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+		public Events Events { get; set; }
+		[XmlAttribute(AttributeName="component")]
+		public string Component { get; set; }
+		[XmlAttribute(AttributeName="name")]
+		public string Name { get; set; }
+		[XmlAttribute(AttributeName="componentId")]
+		public string ComponentId { get; set; }
+		[XmlElement(ElementName="Samples", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+		public Samples Samples { get; set; }
+	}
 
-    [XmlRoot(ElementName = "DataItem", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class DataItem {
-        [XmlAttribute(AttributeName = "category")]
-        public string Category { get; set; }
-        [XmlAttribute(AttributeName = "id")]
-        public string Id { get; set; }
-        [XmlAttribute(AttributeName = "type")]
-        public string Type { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-        [XmlAttribute(AttributeName = "nativeUnits")]
-        public string NativeUnits { get; set; }
-        [XmlAttribute(AttributeName = "subType")]
-        public string SubType { get; set; }
-        [XmlAttribute(AttributeName = "units")]
-        public string Units { get; set; }
-    }
+	[XmlRoot(ElementName="AssetChanged", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+	public class AssetChanged {
+		[XmlAttribute(AttributeName="dataItemId")]
+		public string DataItemId { get; set; }
+		[XmlAttribute(AttributeName="timestamp")]
+		public string Timestamp { get; set; }
+		[XmlAttribute(AttributeName="sequence")]
+		public string Sequence { get; set; }
+		[XmlAttribute(AttributeName="assetType")]
+		public string AssetType { get; set; }
+		[XmlText]
+		public string Text { get; set; }
+	}
 
-    [XmlRoot(ElementName = "DataItems", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class DataItems {
-        [XmlElement(ElementName = "DataItem", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-        public List<DataItem> DataItem { get; set; }
-    }
+	[XmlRoot(ElementName="AssetRemoved", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+	public class AssetRemoved {
+		[XmlAttribute(AttributeName="dataItemId")]
+		public string DataItemId { get; set; }
+		[XmlAttribute(AttributeName="timestamp")]
+		public string Timestamp { get; set; }
+		[XmlAttribute(AttributeName="sequence")]
+		public string Sequence { get; set; }
+		[XmlAttribute(AttributeName="assetType")]
+		public string AssetType { get; set; }
+		[XmlText]
+		public string Text { get; set; }
+	}
 
-    [XmlRoot(ElementName = "Controller", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Controller {
-        [XmlElement(ElementName = "DataItems", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-        public DataItems DataItems { get; set; }
-        [XmlAttribute(AttributeName = "id")]
-        public string Id { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-    }
+	[XmlRoot(ElementName="Availability", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+	public class Availability {
+		[XmlAttribute(AttributeName="dataItemId")]
+		public string DataItemId { get; set; }
+		[XmlAttribute(AttributeName="timestamp")]
+		public string Timestamp { get; set; }
+		[XmlAttribute(AttributeName="sequence")]
+		public string Sequence { get; set; }
+		[XmlText]
+		public string Text { get; set; }
+	}
 
-    [XmlRoot(ElementName = "Linear", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Linear {
-        [XmlElement(ElementName = "DataItems", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-        public DataItems DataItems { get; set; }
-        [XmlAttribute(AttributeName = "id")]
-        public string Id { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-    }
+	[XmlRoot(ElementName="Angle", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+	public class Angle {
+		[XmlAttribute(AttributeName="dataItemId")]
+		public string DataItemId { get; set; }
+		[XmlAttribute(AttributeName="timestamp")]
+		public string Timestamp { get; set; }
+		[XmlAttribute(AttributeName="name")]
+		public string Name { get; set; }
+		[XmlAttribute(AttributeName="sequence")]
+		public string Sequence { get; set; }
+		[XmlAttribute(AttributeName="subType")]
+		public string SubType { get; set; }
+		[XmlText]
+		public string Text { get; set; }
+	}
 
-    [XmlRoot(ElementName = "Components", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Components {
-        [XmlElement(ElementName = "Linear", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-        public List<Linear> Linear { get; set; }
-        [XmlElement(ElementName = "Controller", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-        public Controller Controller { get; set; }
-        [XmlElement(ElementName = "Axes", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-        public List<Axes> Axes { get; set; }
-        [XmlElement(ElementName = "Systems", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-        public Systems Systems { get; set; }
-    }
+	[XmlRoot(ElementName="Torque", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+	public class Torque {
+		[XmlAttribute(AttributeName="dataItemId")]
+		public string DataItemId { get; set; }
+		[XmlAttribute(AttributeName="timestamp")]
+		public string Timestamp { get; set; }
+		[XmlAttribute(AttributeName="name")]
+		public string Name { get; set; }
+		[XmlAttribute(AttributeName="sequence")]
+		public string Sequence { get; set; }
+		[XmlAttribute(AttributeName="subType")]
+		public string SubType { get; set; }
+		[XmlText]
+		public string Text { get; set; }
+	}
 
-    [XmlRoot(ElementName = "Axes", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Axes {
-        [XmlElement(ElementName = "DataItems", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-        public DataItems DataItems { get; set; }
-        [XmlElement(ElementName = "Components", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-        public Components Components { get; set; }
-        [XmlAttribute(AttributeName = "id")]
-        public string Id { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-    }
+	[XmlRoot(ElementName="Samples", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+	public class Samples {
+		[XmlElement(ElementName="Angle", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+		public List<Angle> Angle { get; set; }
+		[XmlElement(ElementName="Torque", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+		public List<Torque> Torque { get; set; }
+		[XmlElement(ElementName="Position", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+		public List<Position> Position { get; set; }
+		[XmlElement(ElementName="AxisFeedrate", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+		public AxisFeedrate AxisFeedrate { get; set; }
+		[XmlElement(ElementName="SoundLevel", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+		public SoundLevel SoundLevel { get; set; }
+	}
 
-    [XmlRoot(ElementName = "Device", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Device {
-        [XmlElement(ElementName = "Description", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-        public Description Description { get; set; }
-        [XmlElement(ElementName = "DataItems", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-        public DataItems DataItems { get; set; }
-        [XmlElement(ElementName = "Components", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-        public Components Components { get; set; }
-        [XmlAttribute(AttributeName = "id")]
-        public string Id { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-        [XmlAttribute(AttributeName = "uuid")]
-        public string Uuid { get; set; }
-    }
+	[XmlRoot(ElementName="Position", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+	public class Position {
+		[XmlAttribute(AttributeName="dataItemId")]
+		public string DataItemId { get; set; }
+		[XmlAttribute(AttributeName="timestamp")]
+		public string Timestamp { get; set; }
+		[XmlAttribute(AttributeName="name")]
+		public string Name { get; set; }
+		[XmlAttribute(AttributeName="sequence")]
+		public string Sequence { get; set; }
+		[XmlAttribute(AttributeName="subType")]
+		public string SubType { get; set; }
+		[XmlText]
+		public string Text { get; set; }
+	}
 
-    [XmlRoot(ElementName = "Rotary", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Rotary {
-        [XmlElement(ElementName = "DataItems", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-        public DataItems DataItems { get; set; }
-        [XmlAttribute(AttributeName = "id")]
-        public string Id { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-    }
+	[XmlRoot(ElementName="DeviceStream", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+	public class DeviceStream {
+		[XmlElement(ElementName="ComponentStream", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+		public List<ComponentStream> ComponentStream { get; set; }
+		[XmlAttribute(AttributeName="name")]
+		public string Name { get; set; }
+		[XmlAttribute(AttributeName="uuid")]
+		public string Uuid { get; set; }
+	}
 
-    [XmlRoot(ElementName = "Sensor", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Sensor {
-        [XmlElement(ElementName = "DataItems", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-        public DataItems DataItems { get; set; }
-        [XmlAttribute(AttributeName = "id")]
-        public string Id { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-    }
+	[XmlRoot(ElementName="AxisFeedrate", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+	public class AxisFeedrate {
+		[XmlAttribute(AttributeName="dataItemId")]
+		public string DataItemId { get; set; }
+		[XmlAttribute(AttributeName="timestamp")]
+		public string Timestamp { get; set; }
+		[XmlAttribute(AttributeName="name")]
+		public string Name { get; set; }
+		[XmlAttribute(AttributeName="sequence")]
+		public string Sequence { get; set; }
+		[XmlAttribute(AttributeName="subType")]
+		public string SubType { get; set; }
+		[XmlText]
+		public string Text { get; set; }
+	}
 
-    [XmlRoot(ElementName = "Systems", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Systems {
-        [XmlElement(ElementName = "Components", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-        public Components Components { get; set; }
-        [XmlAttribute(AttributeName = "id")]
-        public string Id { get; set; }
-    }
+	[XmlRoot(ElementName="RemoteState", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+	public class RemoteState {
+		[XmlAttribute(AttributeName="dataItemId")]
+		public string DataItemId { get; set; }
+		[XmlAttribute(AttributeName="timestamp")]
+		public string Timestamp { get; set; }
+		[XmlAttribute(AttributeName="name")]
+		public string Name { get; set; }
+		[XmlAttribute(AttributeName="sequence")]
+		public string Sequence { get; set; }
+		[XmlText]
+		public string Text { get; set; }
+	}
 
-    [XmlRoot(ElementName = "Devices", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class Devices {
-        [XmlElement(ElementName = "Device", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-        public List<Device> Device { get; set; }
-    }
+	[XmlRoot(ElementName="SoundLevel", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+	public class SoundLevel {
+		[XmlAttribute(AttributeName="dataItemId")]
+		public string DataItemId { get; set; }
+		[XmlAttribute(AttributeName="timestamp")]
+		public string Timestamp { get; set; }
+		[XmlAttribute(AttributeName="name")]
+		public string Name { get; set; }
+		[XmlAttribute(AttributeName="sequence")]
+		public string Sequence { get; set; }
+		[XmlText]
+		public string Text { get; set; }
+	}
 
-    [XmlRoot(ElementName = "Samples", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class Samples {
-        [XmlElement(ElementName = "Torque", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-        public List<Torque> Torque { get; set; }
-    }
+	[XmlRoot(ElementName="Streams", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+	public class Streams {
+		[XmlElement(ElementName="DeviceStream", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+		public List<DeviceStream> DeviceStream { get; set; }
+	}
 
-    [XmlRoot(ElementName = "ComponentStream", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class ComponentStream {
-        [XmlElement(ElementName = "Samples", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-        public Samples Samples { get; set; }
-        [XmlAttribute(AttributeName = "component")]
-        public string Component { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-        [XmlAttribute(AttributeName = "componentId")]
-        public string ComponentId { get; set; }
-    }
+	[XmlRoot(ElementName="MTConnectStreams", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+	public class MTConnectStreams {
+		[XmlElement(ElementName="Header", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+		public Header Header { get; set; }
+		[XmlElement(ElementName="Streams", Namespace="urn:mtconnect.org:MTConnectStreams:1.4")]
+		public Streams Streams { get; set; }
+		[XmlAttribute(AttributeName="m", Namespace="http://www.w3.org/2000/xmlns/")]
+		public string M { get; set; }
+		[XmlAttribute(AttributeName="xmlns")]
+		public string Xmlns { get; set; }
+		[XmlAttribute(AttributeName="xsi", Namespace="http://www.w3.org/2000/xmlns/")]
+		public string Xsi { get; set; }
+		[XmlAttribute(AttributeName="schemaLocation", Namespace="http://www.w3.org/2001/XMLSchema-instance")]
+		public string SchemaLocation { get; set; }
+	}
 
-    [XmlRoot(ElementName = "DeviceStream", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class DeviceStream {
-        [XmlElement(ElementName = "ComponentStream", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-        public List<ComponentStream> ComponentStream { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-        [XmlAttribute(AttributeName = "uuid")]
-        public string Uuid { get; set; }
-    }
-
-    [XmlRoot(ElementName = "Streams", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class Streams {
-        [XmlElement(ElementName = "DeviceStream", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-        public DeviceStream DeviceStream { get; set; }
-    }
-
-    [XmlRoot(ElementName = "MTConnectDevices", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public class MTConnectDevices {
-        [XmlElement(ElementName = "Header", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-        public Header Header { get; set; }
-        [XmlElement(ElementName = "Streams", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-        public Streams Streams { get; set; }
-        [XmlElement(ElementName = "Devices", Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-        public Devices Devices { get; set; }
-        [XmlAttribute(AttributeName = "m", Namespace = "http://www.w3.org/2000/xmlns/")]
-        public string M { get; set; }
-        [XmlAttribute(AttributeName = "xmlns")]
-        public string Xmlns { get; set; }
-        [XmlAttribute(AttributeName = "xsi", Namespace = "http://www.w3.org/2000/xmlns/")]
-        public string Xsi { get; set; }
-        [XmlAttribute(AttributeName = "schemaLocation", Namespace = "http://www.w3.org/2001/XMLSchema-instance")]
-        public string SchemaLocation { get; set; }
-    }
 }
-*/
-#endregion
 
-#region VSGeneratedXML
-namespace Xml2CSharp {
-    // NOTE: Generated code may require at least .NET Framework 4.5 or .NET Core/Standard 2.0.
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace = "urn:mtconnect.org:MTConnectDevices:1.4", IsNullable = false)]
-    public partial class MTConnectDevices {
-
-        private MTConnectDevicesHeader headerField;
-
-        private MTConnectDevicesDevice[] devicesField;
-
-        /// <remarks/>
-        public MTConnectDevicesHeader Header {
-            get {
-                return this.headerField;
-            }
-            set {
-                this.headerField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("Device", IsNullable = false)]
-        public MTConnectDevicesDevice[] Devices {
-            get {
-                return this.devicesField;
-            }
-            set {
-                this.devicesField = value;
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public partial class MTConnectDevicesHeader {
-
-        private System.DateTime creationTimeField;
-
-        private string senderField;
-
-        private uint instanceIdField;
-
-        private string versionField;
-
-        private ushort assetBufferSizeField;
-
-        private byte assetCountField;
-
-        private uint bufferSizeField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public System.DateTime creationTime {
-            get {
-                return this.creationTimeField;
-            }
-            set {
-                this.creationTimeField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string sender {
-            get {
-                return this.senderField;
-            }
-            set {
-                this.senderField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public uint instanceId {
-            get {
-                return this.instanceIdField;
-            }
-            set {
-                this.instanceIdField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string version {
-            get {
-                return this.versionField;
-            }
-            set {
-                this.versionField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public ushort assetBufferSize {
-            get {
-                return this.assetBufferSizeField;
-            }
-            set {
-                this.assetBufferSizeField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public byte assetCount {
-            get {
-                return this.assetCountField;
-            }
-            set {
-                this.assetCountField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public uint bufferSize {
-            get {
-                return this.bufferSizeField;
-            }
-            set {
-                this.bufferSizeField = value;
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public partial class MTConnectDevicesDevice {
-
-        private MTConnectDevicesDeviceDescription descriptionField;
-
-        private MTConnectDevicesDeviceDataItem[] dataItemsField;
-
-        private MTConnectDevicesDeviceComponents componentsField;
-
-        private string idField;
-
-        private string nameField;
-
-        private string uuidField;
-
-        /// <remarks/>
-        public MTConnectDevicesDeviceDescription Description {
-            get {
-                return this.descriptionField;
-            }
-            set {
-                this.descriptionField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("DataItem", IsNullable = false)]
-        public MTConnectDevicesDeviceDataItem[] DataItems {
-            get {
-                return this.dataItemsField;
-            }
-            set {
-                this.dataItemsField = value;
-            }
-        }
-
-        /// <remarks/>
-        public MTConnectDevicesDeviceComponents Components {
-            get {
-                return this.componentsField;
-            }
-            set {
-                this.componentsField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string id {
-            get {
-                return this.idField;
-            }
-            set {
-                this.idField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string uuid {
-            get {
-                return this.uuidField;
-            }
-            set {
-                this.uuidField = value;
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public partial class MTConnectDevicesDeviceDescription {
-
-        private string manufacturerField;
-
-        private string modelField;
-
-        private string valueField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string manufacturer {
-            get {
-                return this.manufacturerField;
-            }
-            set {
-                this.manufacturerField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string model {
-            get {
-                return this.modelField;
-            }
-            set {
-                this.modelField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlTextAttribute()]
-        public string Value {
-            get {
-                return this.valueField;
-            }
-            set {
-                this.valueField = value;
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public partial class MTConnectDevicesDeviceDataItem {
-
-        private string categoryField;
-
-        private string idField;
-
-        private string typeField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string category {
-            get {
-                return this.categoryField;
-            }
-            set {
-                this.categoryField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string id {
-            get {
-                return this.idField;
-            }
-            set {
-                this.idField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string type {
-            get {
-                return this.typeField;
-            }
-            set {
-                this.typeField = value;
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public partial class MTConnectDevicesDeviceComponents {
-
-        private MTConnectDevicesDeviceComponentsSystems systemsField;
-
-        private MTConnectDevicesDeviceComponentsController controllerField;
-
-        private MTConnectDevicesDeviceComponentsAxes[] axesField;
-
-        /// <remarks/>
-        public MTConnectDevicesDeviceComponentsSystems Systems {
-            get {
-                return this.systemsField;
-            }
-            set {
-                this.systemsField = value;
-            }
-        }
-
-        /// <remarks/>
-        public MTConnectDevicesDeviceComponentsController Controller {
-            get {
-                return this.controllerField;
-            }
-            set {
-                this.controllerField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Axes")]
-        public MTConnectDevicesDeviceComponentsAxes[] Axes {
-            get {
-                return this.axesField;
-            }
-            set {
-                this.axesField = value;
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public partial class MTConnectDevicesDeviceComponentsSystems {
-
-        private MTConnectDevicesDeviceComponentsSystemsComponents componentsField;
-
-        private string idField;
-
-        /// <remarks/>
-        public MTConnectDevicesDeviceComponentsSystemsComponents Components {
-            get {
-                return this.componentsField;
-            }
-            set {
-                this.componentsField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string id {
-            get {
-                return this.idField;
-            }
-            set {
-                this.idField = value;
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public partial class MTConnectDevicesDeviceComponentsSystemsComponents {
-
-        private MTConnectDevicesDeviceComponentsSystemsComponentsSensor sensorField;
-
-        /// <remarks/>
-        public MTConnectDevicesDeviceComponentsSystemsComponentsSensor Sensor {
-            get {
-                return this.sensorField;
-            }
-            set {
-                this.sensorField = value;
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public partial class MTConnectDevicesDeviceComponentsSystemsComponentsSensor {
-
-        private MTConnectDevicesDeviceComponentsSystemsComponentsSensorDataItem[] dataItemsField;
-
-        private string idField;
-
-        private string nameField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("DataItem", IsNullable = false)]
-        public MTConnectDevicesDeviceComponentsSystemsComponentsSensorDataItem[] DataItems {
-            get {
-                return this.dataItemsField;
-            }
-            set {
-                this.dataItemsField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string id {
-            get {
-                return this.idField;
-            }
-            set {
-                this.idField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public partial class MTConnectDevicesDeviceComponentsSystemsComponentsSensorDataItem {
-
-        private string categoryField;
-
-        private string idField;
-
-        private string nameField;
-
-        private string nativeUnitsField;
-
-        private string typeField;
-
-        private string unitsField;
-
-        private string subTypeField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string category {
-            get {
-                return this.categoryField;
-            }
-            set {
-                this.categoryField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string id {
-            get {
-                return this.idField;
-            }
-            set {
-                this.idField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string nativeUnits {
-            get {
-                return this.nativeUnitsField;
-            }
-            set {
-                this.nativeUnitsField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string type {
-            get {
-                return this.typeField;
-            }
-            set {
-                this.typeField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string units {
-            get {
-                return this.unitsField;
-            }
-            set {
-                this.unitsField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string subType {
-            get {
-                return this.subTypeField;
-            }
-            set {
-                this.subTypeField = value;
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public partial class MTConnectDevicesDeviceComponentsController {
-
-        private MTConnectDevicesDeviceComponentsControllerDataItem[] dataItemsField;
-
-        private string idField;
-
-        private string nameField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("DataItem", IsNullable = false)]
-        public MTConnectDevicesDeviceComponentsControllerDataItem[] DataItems {
-            get {
-                return this.dataItemsField;
-            }
-            set {
-                this.dataItemsField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string id {
-            get {
-                return this.idField;
-            }
-            set {
-                this.idField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public partial class MTConnectDevicesDeviceComponentsControllerDataItem {
-
-        private string categoryField;
-
-        private string idField;
-
-        private string nameField;
-
-        private string typeField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string category {
-            get {
-                return this.categoryField;
-            }
-            set {
-                this.categoryField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string id {
-            get {
-                return this.idField;
-            }
-            set {
-                this.idField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string type {
-            get {
-                return this.typeField;
-            }
-            set {
-                this.typeField = value;
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public partial class MTConnectDevicesDeviceComponentsAxes {
-
-        private MTConnectDevicesDeviceComponentsAxesDataItems dataItemsField;
-
-        private MTConnectDevicesDeviceComponentsAxesComponents componentsField;
-
-        private string idField;
-
-        private string nameField;
-
-        /// <remarks/>
-        public MTConnectDevicesDeviceComponentsAxesDataItems DataItems {
-            get {
-                return this.dataItemsField;
-            }
-            set {
-                this.dataItemsField = value;
-            }
-        }
-
-        /// <remarks/>
-        public MTConnectDevicesDeviceComponentsAxesComponents Components {
-            get {
-                return this.componentsField;
-            }
-            set {
-                this.componentsField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string id {
-            get {
-                return this.idField;
-            }
-            set {
-                this.idField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public partial class MTConnectDevicesDeviceComponentsAxesDataItems {
-
-        private MTConnectDevicesDeviceComponentsAxesDataItemsDataItem dataItemField;
-
-        /// <remarks/>
-        public MTConnectDevicesDeviceComponentsAxesDataItemsDataItem DataItem {
-            get {
-                return this.dataItemField;
-            }
-            set {
-                this.dataItemField = value;
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public partial class MTConnectDevicesDeviceComponentsAxesDataItemsDataItem {
-
-        private string categoryField;
-
-        private string idField;
-
-        private string nameField;
-
-        private string nativeUnitsField;
-
-        private string subTypeField;
-
-        private string typeField;
-
-        private string unitsField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string category {
-            get {
-                return this.categoryField;
-            }
-            set {
-                this.categoryField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string id {
-            get {
-                return this.idField;
-            }
-            set {
-                this.idField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string nativeUnits {
-            get {
-                return this.nativeUnitsField;
-            }
-            set {
-                this.nativeUnitsField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string subType {
-            get {
-                return this.subTypeField;
-            }
-            set {
-                this.subTypeField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string type {
-            get {
-                return this.typeField;
-            }
-            set {
-                this.typeField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string units {
-            get {
-                return this.unitsField;
-            }
-            set {
-                this.unitsField = value;
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public partial class MTConnectDevicesDeviceComponentsAxesComponents {
-
-        private object[] itemsField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlElementAttribute("Linear", typeof(MTConnectDevicesDeviceComponentsAxesComponentsLinear))]
-        [System.Xml.Serialization.XmlElementAttribute("Rotary", typeof(MTConnectDevicesDeviceComponentsAxesComponentsRotary))]
-        public object[] Items {
-            get {
-                return this.itemsField;
-            }
-            set {
-                this.itemsField = value;
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public partial class MTConnectDevicesDeviceComponentsAxesComponentsLinear {
-
-        private MTConnectDevicesDeviceComponentsAxesComponentsLinearDataItems dataItemsField;
-
-        private string idField;
-
-        private string nameField;
-
-        /// <remarks/>
-        public MTConnectDevicesDeviceComponentsAxesComponentsLinearDataItems DataItems {
-            get {
-                return this.dataItemsField;
-            }
-            set {
-                this.dataItemsField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string id {
-            get {
-                return this.idField;
-            }
-            set {
-                this.idField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public partial class MTConnectDevicesDeviceComponentsAxesComponentsLinearDataItems {
-
-        private MTConnectDevicesDeviceComponentsAxesComponentsLinearDataItemsDataItem dataItemField;
-
-        /// <remarks/>
-        public MTConnectDevicesDeviceComponentsAxesComponentsLinearDataItemsDataItem DataItem {
-            get {
-                return this.dataItemField;
-            }
-            set {
-                this.dataItemField = value;
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public partial class MTConnectDevicesDeviceComponentsAxesComponentsLinearDataItemsDataItem {
-
-        private string categoryField;
-
-        private string idField;
-
-        private string nameField;
-
-        private string nativeUnitsField;
-
-        private string subTypeField;
-
-        private string typeField;
-
-        private string unitsField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string category {
-            get {
-                return this.categoryField;
-            }
-            set {
-                this.categoryField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string id {
-            get {
-                return this.idField;
-            }
-            set {
-                this.idField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string nativeUnits {
-            get {
-                return this.nativeUnitsField;
-            }
-            set {
-                this.nativeUnitsField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string subType {
-            get {
-                return this.subTypeField;
-            }
-            set {
-                this.subTypeField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string type {
-            get {
-                return this.typeField;
-            }
-            set {
-                this.typeField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string units {
-            get {
-                return this.unitsField;
-            }
-            set {
-                this.unitsField = value;
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public partial class MTConnectDevicesDeviceComponentsAxesComponentsRotary {
-
-        private MTConnectDevicesDeviceComponentsAxesComponentsRotaryDataItem[] dataItemsField;
-
-        private string idField;
-
-        private string nameField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlArrayItemAttribute("DataItem", IsNullable = false)]
-        public MTConnectDevicesDeviceComponentsAxesComponentsRotaryDataItem[] DataItems {
-            get {
-                return this.dataItemsField;
-            }
-            set {
-                this.dataItemsField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string id {
-            get {
-                return this.idField;
-            }
-            set {
-                this.idField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
-            }
-        }
-    }
-
-    /// <remarks/>
-    [System.SerializableAttribute()]
-    [System.ComponentModel.DesignerCategoryAttribute("code")]
-    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "urn:mtconnect.org:MTConnectDevices:1.4")]
-    public partial class MTConnectDevicesDeviceComponentsAxesComponentsRotaryDataItem {
-
-        private string categoryField;
-
-        private string idField;
-
-        private string nameField;
-
-        private string nativeUnitsField;
-
-        private string subTypeField;
-
-        private string typeField;
-
-        private string unitsField;
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string category {
-            get {
-                return this.categoryField;
-            }
-            set {
-                this.categoryField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string id {
-            get {
-                return this.idField;
-            }
-            set {
-                this.idField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string name {
-            get {
-                return this.nameField;
-            }
-            set {
-                this.nameField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string nativeUnits {
-            get {
-                return this.nativeUnitsField;
-            }
-            set {
-                this.nativeUnitsField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string subType {
-            get {
-                return this.subTypeField;
-            }
-            set {
-                this.subTypeField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string type {
-            get {
-                return this.typeField;
-            }
-            set {
-                this.typeField = value;
-            }
-        }
-
-        /// <remarks/>
-        [System.Xml.Serialization.XmlAttributeAttribute()]
-        public string units {
-            get {
-                return this.unitsField;
-            }
-            set {
-                this.unitsField = value;
-            }
-        }
-    }
-}
 #endregion
