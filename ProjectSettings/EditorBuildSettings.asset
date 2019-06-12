@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/csculley.unity
+    guid: 57e776f409174c74ab50b5317c344cf2
   m_configObjects: {}

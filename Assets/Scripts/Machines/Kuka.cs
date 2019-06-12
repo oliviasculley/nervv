@@ -100,10 +100,10 @@ public class Kuka : Machine
                 found.SetValue(NormalizeAngle(-(value + 90f)));
                 break;
             case "a3":
-                found.SetValue(NormalizeAngle(-(value - 90)));
+                found.SetValue(NormalizeAngle(-(value - 90f)));
                 break;
             case "a5":
-                found.SetValue(NormalizeAngle(value));
+                found.SetValue(NormalizeAngle(-value));
                 break;
 
             // Y rotation
@@ -113,8 +113,10 @@ public class Kuka : Machine
 
             // Z rotation
             case "a4":
-            case "a6":
                 found.SetValue(NormalizeAngle(-value));
+                break;
+            case "a6":
+                found.SetValue(NormalizeAngle(value));
                 break;
 
             default:
@@ -134,6 +136,7 @@ public class Kuka : Machine
 
             // X rotation
             case "a2":
+                return new Vector3(axis.GetValue(), 0, 0);
             case "a3":
             case "a5":
                 return new Vector3(axis.GetValue(), 0, 0);

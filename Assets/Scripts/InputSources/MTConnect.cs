@@ -111,8 +111,8 @@ public class MTConnect : InputSource
 							break;
 
 						// Set axis
-						Debug.Log("[MTConnect] Set Position " + a.GetID() + "'s value: " + p.Text);
-						a.SetValue(float.Parse(p.Text, CultureInfo.InvariantCulture));
+						//Debug.Log("[MTConnect] Set Position " + a.GetID() + "'s value: " + p.Text);
+                        m.SetAxisValue(a.GetID(), float.Parse(p.Text, CultureInfo.InvariantCulture));
 						break;
 
 					case Machine.AxisType.Rotary:
@@ -126,8 +126,8 @@ public class MTConnect : InputSource
 							break;
 						
 						// Set axis
-						Debug.Log("[MTConnect] Set Angle " + a.GetID() + "'s value: " + angle.Text);
-						a.SetValue(float.Parse(angle.Text, CultureInfo.InvariantCulture));
+						//Debug.Log("[MTConnect] Set Angle " + a.GetID() + "'s value: " + angle.Text);
+						m.SetAxisValue(a.GetID(), float.Parse(angle.Text, CultureInfo.InvariantCulture));
 						break;
 
 					default:

@@ -95,19 +95,21 @@ public class Doosan : Machine
                 found.SetValue(NormalizeAngle(-(value)));
                 break;
             case "DR1_A3":
-                found.SetValue(NormalizeAngle(-(value)));
+                found.SetValue(NormalizeAngle(-(value + 180f)));
                 break;
             case "DR1_A5":
-                found.SetValue(NormalizeAngle(value + 270f));
+                found.SetValue(NormalizeAngle(-(value + 90f)));
                 break;
 
             // Y rotation
             case "DR1_A1":
-                found.SetValue(NormalizeAngle(value));
+                found.SetValue(NormalizeAngle(-(value + 180)));
                 break;
 
             // Z rotation
             case "DR1_A4":
+                found.SetValue(NormalizeAngle(value + 90f));
+                break;
             case "DR1_A6":
                 found.SetValue(NormalizeAngle(-value));
                 break;
