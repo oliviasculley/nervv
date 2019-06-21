@@ -71,11 +71,11 @@ public class MTConnect : InputSource
 
                 // Parse XML
                 // DEBUG: Time how long it takes
-                System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-                sw.Start();
+                //System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+                //sw.Start();
                 ParseXML(www.downloadHandler.text);
-                sw.Stop();
-                Debug.Log("Parsed XML in " + sw.ElapsedMilliseconds + " ms");
+                //sw.Stop();
+                //Debug.Log("Parsed XML in " + sw.ElapsedMilliseconds + " ms");
             }
         }
     }

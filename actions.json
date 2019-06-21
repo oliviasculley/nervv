@@ -1,94 +1,29 @@
 {
   "actions": [
     {
-      "name": "/actions/default/in/InteractUI",
-      "type": "boolean"
-    },
-    {
-      "name": "/actions/default/in/Teleport",
-      "type": "boolean"
-    },
-    {
-      "name": "/actions/default/in/GrabPinch",
-      "type": "boolean"
-    },
-    {
-      "name": "/actions/default/in/GrabGrip",
-      "type": "boolean"
-    },
-    {
-      "name": "/actions/default/in/Pose",
-      "type": "pose"
-    },
-    {
-      "name": "/actions/default/in/SkeletonLeftHand",
-      "type": "skeleton",
-      "skeleton": "/skeleton/hand/left"
-    },
-    {
-      "name": "/actions/default/in/SkeletonRightHand",
-      "type": "skeleton",
-      "skeleton": "/skeleton/hand/right"
-    },
-    {
-      "name": "/actions/default/in/Squeeze",
-      "type": "vector1",
-      "requirement": "optional"
-    },
-    {
-      "name": "/actions/default/in/HeadsetOnHead",
+      "name": "/actions/Default/in/CallMenu",
       "type": "boolean",
-      "requirement": "optional"
+      "requirement": "suggested"
     },
     {
-      "name": "/actions/default/out/Haptic",
-      "type": "vibration"
-    },
-    {
-      "name": "/actions/platformer/in/Move",
-      "type": "vector2"
-    },
-    {
-      "name": "/actions/platformer/in/Jump",
-      "type": "boolean"
-    },
-    {
-      "name": "/actions/buggy/in/Steering",
-      "type": "vector2"
-    },
-    {
-      "name": "/actions/buggy/in/Throttle",
-      "type": "vector1"
-    },
-    {
-      "name": "/actions/buggy/in/Brake",
-      "type": "boolean"
-    },
-    {
-      "name": "/actions/buggy/in/Reset",
-      "type": "boolean"
-    },
-    {
-      "name": "/actions/mixedreality/in/ExternalCamera",
+      "name": "/actions/Default/in/Pose",
       "type": "pose",
-      "requirement": "optional"
+      "requirement": "mandatory"
+    },
+    {
+      "name": "/actions/Default/in/InteractUI",
+      "type": "vector2",
+      "requirement": "mandatory"
+    },
+    {
+      "name": "/actions/Default/out/Haptics",
+      "type": "vibration",
+      "requirement": "suggested"
     }
   ],
   "action_sets": [
     {
-      "name": "/actions/default",
-      "usage": "single"
-    },
-    {
-      "name": "/actions/platformer",
-      "usage": "single"
-    },
-    {
-      "name": "/actions/buggy",
-      "usage": "single"
-    },
-    {
-      "name": "/actions/mixedreality",
+      "name": "/actions/Default",
       "usage": "single"
     }
   ],
@@ -132,17 +67,7 @@
   ],
   "localization": [
     {
-      "language_tag": "en_US",
-      "/actions/default/in/GrabGrip": "Grab Grip",
-      "/actions/default/in/GrabPinch": "Grab Pinch",
-      "/actions/default/in/HeadsetOnHead": "Headset on head (proximity sensor)",
-      "/actions/default/in/InteractUI": "Interact With UI",
-      "/actions/default/in/Pose": "Pose",
-      "/actions/default/in/SkeletonLeftHand": "Skeleton (Left)",
-      "/actions/default/in/SkeletonRightHand": "Skeleton (Right)",
-      "/actions/default/in/Teleport": "Teleport",
-      "/actions/default/out/Haptic": "Haptic",
-      "/actions/platformer/in/Jump": "Jump"
+      "language_tag": "en_US"
     }
   ]
 }
