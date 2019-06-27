@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Test : MonoBehaviour
+public class IKTest : MonoBehaviour
 {
     [Header("References")]
-    public Kuka kuka;
+    public Doosan IKMachine;
 
     void Update()
     {
-        kuka.InverseKinematics(transform.position);
+        IKMachine.InverseKinematics(transform.position);
     }
 }

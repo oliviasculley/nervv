@@ -91,27 +91,28 @@ public class Doosan : Machine
         switch (found.GetID()) {
 
             // X rotation
-            case "DR1_A2":
-                found.SetValue(NormalizeAngle(-(value)));
-                break;
-            case "DR1_A3":
-                found.SetValue(NormalizeAngle(-(value + 180f)));
-                break;
-            case "DR1_A5":
-                found.SetValue(NormalizeAngle(-(value + 90f)));
-                break;
+            // None
 
             // Y rotation
             case "DR1_A1":
-                found.SetValue(NormalizeAngle(-(value + 180)));
+                found.SetValue(NormalizeAngle(-(value + 180f)));
+                break;
+            case "DR1_A4":
+                found.SetValue(NormalizeAngle(-(value)));
+                break;
+            case "DR1_A6":
+                found.SetValue(NormalizeAngle(-(value)));
                 break;
 
             // Z rotation
-            case "DR1_A4":
-                found.SetValue(NormalizeAngle(value + 90f));
+            case "DR1_A2":
+                found.SetValue(NormalizeAngle(value));
                 break;
-            case "DR1_A6":
-                found.SetValue(NormalizeAngle(-value));
+            case "DR1_A3":
+                found.SetValue(NormalizeAngle((value)));
+                break;
+            case "DR1_A5":
+                found.SetValue(NormalizeAngle((value)));
                 break;
 
             default:
@@ -130,23 +131,19 @@ public class Doosan : Machine
         switch (axis.GetID()) {
 
             // X rotation
-            case "DR1_A2":
-                return new Vector3(axis.GetValue(), 90, -90);
+            // None
             
-
             // Y rotation
             case "DR1_A1":
-                return new Vector3(0, axis.GetValue(), 0);
-            case "DR1_A3":
-                return new Vector3(-270, axis.GetValue(), 90);
             case "DR1_A4":
-                return new Vector3(-90, axis.GetValue(), -90);
-            case "DR1_A5":
-                return new Vector3(180, axis.GetValue(), -270);
             case "DR1_A6":
                 return new Vector3(0, axis.GetValue(), 0);
 
             // Z rotation
+            case "DR1_A2":
+            case "DR1_A3":
+            case "DR1_A5":
+                return new Vector3(0, 0, axis.GetValue());
 
             default:
                 Debug.LogWarning("[Doosan] Could not find axis for ID: " + axis.GetID());
@@ -179,11 +176,11 @@ public class Doosan : Machine
     /// <param name="target">Vector3 target position in worldspace</param>
     public void InverseKinematics(Vector3 target) {
         for (int i = 0; i < axes.Count; i++) {
-            if (i == 3 || i == 5)
+            if (i == 10000 || i == 100000)
                 continue;
 
             axes[i].SetValue(NormalizeAngle( axes[i].GetValue() - learningRate
-                                        * PartialGradient(transform.InverseTransformPoint(target), axes, i)
+                                        * PartialGradient(target, axes, i)
                                         * Time.deltaTime));
         }
     }

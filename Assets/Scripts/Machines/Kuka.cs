@@ -185,7 +185,7 @@ public class Kuka : Machine
                 continue;
 
             axes[i].SetValue(NormalizeAngle( axes[i].GetValue() - learningRate
-                                        * PartialGradient(transform.InverseTransformPoint(target), axes, i)
+                                        * PartialGradient(target, axes, i)
                                         * Time.deltaTime));
         }
     }
