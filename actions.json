@@ -12,7 +12,7 @@
     },
     {
       "name": "/actions/Default/in/InteractUI",
-      "type": "vector2",
+      "type": "boolean",
       "requirement": "mandatory"
     },
     {

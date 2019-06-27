@@ -41,7 +41,7 @@ public class Menu : MonoBehaviour
                 smoothSpeed
             );
 
-            // Look at camera only around Y axis
+            // Look at camera
             transform.LookAt(Camera.main.transform.position);
 
             // Disable lerping if close enough

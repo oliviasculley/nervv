@@ -33,7 +33,7 @@ namespace Valve.VR
             }
         }
         
-        public virtual SteamVR_Action_Vector2 InteractUI
+        public virtual SteamVR_Action_Boolean InteractUI
         {
             get
             {

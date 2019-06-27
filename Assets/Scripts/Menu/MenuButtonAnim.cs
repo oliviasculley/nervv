@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 
-public class MenuButton : MonoBehaviour
+public class MenuButtonAnim : MonoBehaviour
 {
     [Header("Properties")]
     public bool hovered;
@@ -16,7 +16,7 @@ public class MenuButton : MonoBehaviour
     public float unactivatedHeight = 0.05f;     // Resting height for sprite
     public float activatedHeight = 0.025f;      // Height of activated sprite
     public float activationSpeed = 1f;          // Speed to activate icons
-    public readonly float planeRatio = 0.025f;  // Ratio of background plane to image
+    public readonly float planeRatio = 1f;  // Ratio of background plane to image
 
     [Header("References")]
     public Menu menu;                           // Menu that menuButton is attached to
@@ -89,5 +89,15 @@ public class MenuButton : MonoBehaviour
                 Time.deltaTime * activationSpeed
             )
         );
+    }
+
+    /* Public methods */
+
+    /// <summary>
+    /// Sets the hovered status of this button
+    /// </summary>
+    /// <param name="hovered">Boolean of hovered status</param>
+    public void SetHovered(bool hovered) {
+        this.hovered = hovered;
     }
 }
