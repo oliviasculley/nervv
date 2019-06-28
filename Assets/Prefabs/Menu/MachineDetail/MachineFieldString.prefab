@@ -93,7 +93,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 45.05
+  m_fontSize: 44.95
   m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -402,7 +402,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 260.63727, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &491581312932839927
 CanvasRenderer:
@@ -586,7 +586,7 @@ GameObject:
   - component: {fileID: 4423197391337011292}
   - component: {fileID: 4423197391337011295}
   m_Layer: 0
-  m_Name: ElementName
+  m_Name: FieldName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -609,7 +609,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 127.362724, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4423197391337011293
 CanvasRenderer:
@@ -765,7 +765,7 @@ GameObject:
   - component: {fileID: 4423197391627548599}
   - component: {fileID: 4423197391627548584}
   m_Layer: 0
-  m_Name: MachineElement
+  m_Name: MachineFieldString
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -870,7 +870,7 @@ MonoBehaviour:
   m_Spacing: 15
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
-  m_ChildControlHeight: 1
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
   m_ChildScaleWidth: 1
   m_ChildScaleHeight: 1

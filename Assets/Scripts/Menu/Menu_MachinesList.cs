@@ -13,13 +13,18 @@ public class Menu_MachinesList : MonoBehaviour
     public GameObject machineButtonPrefab;
     public Menu_MachineDetail detailPanel;
 
-    private void Start() {
+    private void Awake() {
         Debug.Assert(detailPanel != null,
             "[Menu: MachinesList] Could not get ref to machine detail panel!");
         Debug.Assert(machineButtonPrefab != null,
             "[Menu: MachinesList] Could not get ref to machine button prefab!");
         Debug.Assert(MachineManager.Instance != null,
             "[Menu: MachinesList] Could not get ref to MachineManager!");
+    }
+
+    private void Start()
+    {
+        GenerateMachineButtons();
     }
 
     /* Public Methods */
@@ -31,10 +36,15 @@ public class Menu_MachinesList : MonoBehaviour
     /* Private Methods */
 
     private void GenerateMachineButtons() {
+        // Delete old objects
+        foreach (Transform t in scrollViewParent.transform)
+            Destroy(t.gameObject);
+
+        // Spawn buttons for each machine
         GameObject g;
         foreach (Machine m in MachineManager.Instance.machines) {
             g = Instantiate(machineButtonPrefab, scrollViewParent);
-            g.transform.Find("MachineName").GetComponent<TextMeshProUGUI>().text = m.name;
+            g.transform.Find("MachineName").GetComponent<TextMeshProUGUI>().text = "Name: " + m.name;
 
             // Push machine to stack so button works correctly
             Machine buttonM = m;
