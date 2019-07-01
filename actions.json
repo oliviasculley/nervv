@@ -11,17 +11,6 @@
       "requirement": "mandatory"
     },
     {
-      "name": "/actions/Default/in/LeftSkeleton",
-      "type": "skeleton",
-      "skeleton": "/skeleton/hand/left",
-      "requirement": "suggested"
-    },
-    {
-      "name": "/actions/Default/in/RightSkeleton",
-      "type": "skeleton",
-      "skeleton": "/skeleton/hand/right"
-    },
-    {
       "name": "/actions/Default/in/LeftPose",
       "type": "pose",
       "requirement": "mandatory"

@@ -12,18 +12,19 @@ public class Menu_MachinesList : MonoBehaviour
     public Transform scrollViewParent;     // Parent to spawn machine buttons underneath
     public GameObject machineButtonPrefab;
     public Menu_MachineDetail detailPanel;
+    public UIPanelSwitcher switcher;
 
-    private void Awake() {
+    private void OnEnable()
+    {
         Debug.Assert(detailPanel != null,
             "[Menu: MachinesList] Could not get ref to machine detail panel!");
         Debug.Assert(machineButtonPrefab != null,
             "[Menu: MachinesList] Could not get ref to machine button prefab!");
         Debug.Assert(MachineManager.Instance != null,
             "[Menu: MachinesList] Could not get ref to MachineManager!");
-    }
+        Debug.Assert(switcher != null,
+            "[Menu: MachinesList] Could not get ref to switcher!");
 
-    private void Start()
-    {
         GenerateMachineButtons();
     }
 
@@ -31,6 +32,7 @@ public class Menu_MachinesList : MonoBehaviour
 
     public void MachineClick(Machine m) {
         detailPanel.DisplayMachine(m);
+        switcher.ChangeMenu(detailPanel.gameObject);
     }
 
     /* Private Methods */
@@ -48,7 +50,7 @@ public class Menu_MachinesList : MonoBehaviour
 
             // Push machine to stack so button works correctly
             Machine buttonM = m;
-            g.GetComponent<Button>().onClick.AddListener(() => MachineClick(buttonM));
+            g.GetComponent<Button>().onClick.AddListener(delegate { MachineClick(buttonM); });
         }
     }
 }

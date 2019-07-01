@@ -13,7 +13,7 @@ public class UIPanelSwitcher : MonoBehaviour {
         Debug.Assert(initialPanel != null);
     }
 
-    private void Start() {
+    private void OnEnable() {
         // Disable all children
         if (setInactive)
             foreach (GameObject g in UIPanels)

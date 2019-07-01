@@ -21,10 +21,6 @@ namespace Valve.VR
         
         private static SteamVR_Action_Boolean p_default_InteractUI;
         
-        private static SteamVR_Action_Skeleton p_default_LeftSkeleton;
-        
-        private static SteamVR_Action_Skeleton p_default_RightSkeleton;
-        
         private static SteamVR_Action_Pose p_default_LeftPose;
         
         private static SteamVR_Action_Pose p_default_RightPose;
@@ -44,22 +40,6 @@ namespace Valve.VR
             get
             {
                 return SteamVR_Actions.p_default_InteractUI.GetCopy<SteamVR_Action_Boolean>();
-            }
-        }
-        
-        public static SteamVR_Action_Skeleton default_LeftSkeleton
-        {
-            get
-            {
-                return SteamVR_Actions.p_default_LeftSkeleton.GetCopy<SteamVR_Action_Skeleton>();
-            }
-        }
-        
-        public static SteamVR_Action_Skeleton default_RightSkeleton
-        {
-            get
-            {
-                return SteamVR_Actions.p_default_RightSkeleton.GetCopy<SteamVR_Action_Skeleton>();
             }
         }
         
@@ -92,16 +72,12 @@ namespace Valve.VR
             Valve.VR.SteamVR_Input.actions = new Valve.VR.SteamVR_Action[] {
                     SteamVR_Actions.default_CallMenu,
                     SteamVR_Actions.default_InteractUI,
-                    SteamVR_Actions.default_LeftSkeleton,
-                    SteamVR_Actions.default_RightSkeleton,
                     SteamVR_Actions.default_LeftPose,
                     SteamVR_Actions.default_RightPose,
                     SteamVR_Actions.default_Haptics};
             Valve.VR.SteamVR_Input.actionsIn = new Valve.VR.ISteamVR_Action_In[] {
                     SteamVR_Actions.default_CallMenu,
                     SteamVR_Actions.default_InteractUI,
-                    SteamVR_Actions.default_LeftSkeleton,
-                    SteamVR_Actions.default_RightSkeleton,
                     SteamVR_Actions.default_LeftPose,
                     SteamVR_Actions.default_RightPose};
             Valve.VR.SteamVR_Input.actionsOut = new Valve.VR.ISteamVR_Action_Out[] {
@@ -117,9 +93,7 @@ namespace Valve.VR
             Valve.VR.SteamVR_Input.actionsSingle = new Valve.VR.SteamVR_Action_Single[0];
             Valve.VR.SteamVR_Input.actionsVector2 = new Valve.VR.SteamVR_Action_Vector2[0];
             Valve.VR.SteamVR_Input.actionsVector3 = new Valve.VR.SteamVR_Action_Vector3[0];
-            Valve.VR.SteamVR_Input.actionsSkeleton = new Valve.VR.SteamVR_Action_Skeleton[] {
-                    SteamVR_Actions.default_LeftSkeleton,
-                    SteamVR_Actions.default_RightSkeleton};
+            Valve.VR.SteamVR_Input.actionsSkeleton = new Valve.VR.SteamVR_Action_Skeleton[0];
             Valve.VR.SteamVR_Input.actionsNonPoseNonSkeletonIn = new Valve.VR.ISteamVR_Action_In[] {
                     SteamVR_Actions.default_CallMenu,
                     SteamVR_Actions.default_InteractUI};
@@ -129,8 +103,6 @@ namespace Valve.VR
         {
             SteamVR_Actions.p_default_CallMenu = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Default/in/CallMenu")));
             SteamVR_Actions.p_default_InteractUI = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Default/in/InteractUI")));
-            SteamVR_Actions.p_default_LeftSkeleton = ((SteamVR_Action_Skeleton)(SteamVR_Action.Create<SteamVR_Action_Skeleton>("/actions/Default/in/LeftSkeleton")));
-            SteamVR_Actions.p_default_RightSkeleton = ((SteamVR_Action_Skeleton)(SteamVR_Action.Create<SteamVR_Action_Skeleton>("/actions/Default/in/RightSkeleton")));
             SteamVR_Actions.p_default_LeftPose = ((SteamVR_Action_Pose)(SteamVR_Action.Create<SteamVR_Action_Pose>("/actions/Default/in/LeftPose")));
             SteamVR_Actions.p_default_RightPose = ((SteamVR_Action_Pose)(SteamVR_Action.Create<SteamVR_Action_Pose>("/actions/Default/in/RightPose")));
             SteamVR_Actions.p_default_Haptics = ((SteamVR_Action_Vibration)(SteamVR_Action.Create<SteamVR_Action_Vibration>("/actions/Default/out/Haptics")));

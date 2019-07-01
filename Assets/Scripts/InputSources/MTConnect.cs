@@ -23,6 +23,7 @@ public class MTConnect : InputSource
     //[Header("References")]
 
     // Private vars
+    IEnumerator fetchMTConnect;
     float timeToTrigger = 0.0f;
 
     private void Awake() {
@@ -37,18 +38,29 @@ public class MTConnect : InputSource
         Debug.Assert(InputManager.Instance != null, "[MTConnect] Could not get ref to InputManager!");
         if (!InputManager.Instance.AddInput(this))
             Debug.LogError("[MTConnect] Could not add self to InputManager!");
+
+        name = "MTConnect XML: " + source;
+        fetchMTConnect = null;
     }
 
     private void Update()
     {
-        // Check if time to trigger
-        if (Time.time > timeToTrigger) {
+        if (inputEnabled) {
+            // Check if time to trigger
+            if (Time.time > timeToTrigger) {
 
-            // Set new time to trigger
-            timeToTrigger += pollInterval;
+                // Set new time to trigger
+                timeToTrigger += pollInterval;
 
-            // Call GET request
-            StartCoroutine(FetchMTConnect());
+                // Call GET request, get new coroutine
+                if (fetchMTConnect != null)
+                    StopCoroutine(fetchMTConnect);
+                StartCoroutine(fetchMTConnect = FetchMTConnect());
+            }
+        } else {
+            // Disable running coroutines
+            if (fetchMTConnect != null)
+                StopCoroutine(fetchMTConnect);
         }
     }
 
@@ -70,22 +82,21 @@ public class MTConnect : InputSource
                 //Debug.Log("[INFO] GET request returned: " + www.downloadHandler.text);
 
                 // Parse XML
-                // DEBUG: Time how long it takes
-                //System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-                //sw.Start();
+                    // DEBUG: Time how long it takes
+                    //System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+                    //sw.Start();
                 ParseXML(www.downloadHandler.text);
-                //sw.Stop();
-                //Debug.Log("Parsed XML in " + sw.ElapsedMilliseconds + " ms");
+                    //sw.Stop();
+                    //Debug.Log("Parsed XML in " + sw.ElapsedMilliseconds + " ms");
             }
         }
+        fetchMTConnect = null;
     }
 
     private void ParseXML(string input) {
         XmlSerializer serializer = new XmlSerializer(typeof(MTConnectStreams));
         TextReader reader = new StringReader(input);
         MTConnectStreams xmlData = (MTConnectStreams) serializer.Deserialize(reader);
-
-        // DEBUG: Send data to MachineManager, will use InputManager in the future
 		
 		// For each device
         foreach (DeviceStream ds in xmlData.Streams.DeviceStream) {

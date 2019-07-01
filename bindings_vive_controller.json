@@ -12,20 +12,17 @@
       },
       "/actions/default" : {
          "chords" : [],
-         "haptics" : [],
+         "haptics" : [
+            {
+               "output" : "/actions/default/out/haptics",
+               "path" : "/user/hand/left/output/haptic"
+            },
+            {
+               "output" : "/actions/default/out/haptics",
+               "path" : "/user/hand/right/output/haptic"
+            }
+         ],
          "poses" : [
-            {
-               "output" : "none",
-               "path" : "/user/hand/left/pose/base"
-            },
-            {
-               "output" : "none",
-               "path" : "/user/hand/left/pose/gdc2015"
-            },
-            {
-               "output" : "none",
-               "path" : "/user/hand/right/pose/gdc2015"
-            },
             {
                "output" : "/actions/default/in/leftpose",
                "path" : "/user/hand/left/pose/raw"
@@ -35,20 +32,7 @@
                "path" : "/user/hand/right/pose/raw"
             }
          ],
-         "skeleton" : [
-            {
-               "output" : "/actions/default/in/rightskeleton",
-               "path" : "/user/hand/left/input/skeleton/right"
-            },
-            {
-               "output" : "/actions/default/in/rightskeleton",
-               "path" : "/user/hand/right/input/skeleton/right"
-            },
-            {
-               "output" : "/actions/default/in/leftskeleton",
-               "path" : "/user/hand/left/input/skeleton/left"
-            }
-         ],
+         "skeleton" : [],
          "sources" : [
             {
                "inputs" : {
@@ -99,7 +83,7 @@
    "category" : "steamvr_input",
    "controller_type" : "vive_controller",
    "description" : "Default MTConnectVR binding for HTC Vive and Vive Pro",
-   "name" : "MTConnectVR_Vive",
+   "name" : "MTConnectVR",
    "options" : {},
    "simulated_actions" : []
 }

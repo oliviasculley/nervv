@@ -185,16 +185,7 @@ public class Doosan : Machine
         }
     }
 
-    /* Private Methods */
-
-    /// <summary>
-    /// Ensures that angle will always be between 0-360
-    /// </summary>
-    /// <param name="angle">Angle in degrees</param>
-    /// <returns>Equivalent angle in degrees between 0-360</returns>
-    private float NormalizeAngle(float angle) {
-        return ((angle %= 360) < 0) ? angle + 360 : angle;
-    }
+    /* Private Methods */  
 
     /// <summary>
     /// Returns the gradient for a specific angleID

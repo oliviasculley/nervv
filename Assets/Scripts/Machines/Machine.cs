@@ -72,8 +72,20 @@ public abstract class Machine : MonoBehaviour
                     manufacturer,
                     model;
 
+    /* Static methods */
 
-    /* Public Methods */
+    /// <summary>
+    /// Ensures that angle will always be between 0-360
+    /// </summary>
+    /// <param name="angle">Angle in degrees</param>
+    /// <returns>Equivalent angle in degrees between 0-360</returns>
+    public static float NormalizeAngle(float angle)
+    {
+        return ((angle %= 360) < 0) ? angle + 360 : angle;
+    }
+
+
+    /* Public methods */
 
     /// <summary>
     /// Returns the Vector3 for the associated axis

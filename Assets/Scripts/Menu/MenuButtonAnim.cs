@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
-public class MenuButtonAnim : MonoBehaviour
+public class MenuButtonAnim : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("Properties")]
     public bool hovered;
-
-    [Header("Settings")]
-    public Sprite icon;
 
     [Header("Animation Settings")]
     public float unactivatedHeight = 0.05f;     // Resting height for sprite
@@ -20,25 +17,13 @@ public class MenuButtonAnim : MonoBehaviour
 
     [Header("References")]
     public Menu menu;                           // Menu that menuButton is attached to
-    public Image buttonIcon;                    // Reference to button image
-    public GameObject buttonBackground;         // Reference to button background
-
-    // Private vars
-    RectTransform buttonIconRectTransform;
+    public GameObject buttonBackground, buttonIcon;
 
     private void Awake() {
         Debug.Assert(menu != null,
             "[MenuButton] Could not get reference to menu!");
-        Debug.Assert(buttonIcon != null,
-            "[MenuButton] Could not get reference to icon!");
-        Debug.Assert(buttonBackground != null,
-            "[MenuButton] Could not get reference to background plane!");
-        Debug.Assert(icon != null,
-            "[MenuButton] Icon is null, will not be visible!");
-
-        buttonIconRectTransform = buttonIcon.GetComponent<RectTransform>();
-        Debug.Assert(buttonIconRectTransform != null,
-            "[MenuButton] Could not get reference to buttonIcon rectTransform!");
+        if (buttonBackground == null && buttonIcon == null)
+            Debug.LogWarning("[MenuButton] Button background and icon not set, will not animate!");
     }
 
     private void Start() {
@@ -53,9 +38,9 @@ public class MenuButtonAnim : MonoBehaviour
         );
 
         // Set buttonIcon to unhovered position
-        buttonIconRectTransform.localPosition = new Vector3(
-            buttonIconRectTransform.localPosition.x,
-            buttonIconRectTransform.localPosition.y,
+        buttonIcon.transform.localPosition = new Vector3(
+            buttonIcon.transform.localPosition.x,
+            buttonIcon.transform.localPosition.y,
             -unactivatedHeight
         );
 
@@ -69,12 +54,12 @@ public class MenuButtonAnim : MonoBehaviour
 
     private void Update() {
         // Smoothly raise or lower buttonIcon when hovered
-        buttonIconRectTransform.localPosition = new Vector3(
-            buttonIconRectTransform.localPosition.x,
-            buttonIconRectTransform.localPosition.y,
+        buttonIcon.transform.localPosition = new Vector3(
+            buttonIcon.transform.localPosition.x,
+            buttonIcon.transform.localPosition.y,
             Mathf.Lerp(
-                buttonIconRectTransform.localPosition.z,
-                -((hovered) ? activatedHeight : unactivatedHeight),
+                buttonIcon.transform.localPosition.z,
+                -(hovered ? activatedHeight : unactivatedHeight),
                 Time.deltaTime * activationSpeed
             )
         );
@@ -85,7 +70,7 @@ public class MenuButtonAnim : MonoBehaviour
             buttonBackground.transform.localPosition.y,
             Mathf.Lerp(
                 buttonBackground.transform.localPosition.z,
-                -((hovered) ? activatedHeight : unactivatedHeight),
+                -(hovered ? activatedHeight : unactivatedHeight),
                 Time.deltaTime * activationSpeed
             )
         );
@@ -93,11 +78,13 @@ public class MenuButtonAnim : MonoBehaviour
 
     /* Public methods */
 
-    /// <summary>
-    /// Sets the hovered status of this button
-    /// </summary>
-    /// <param name="hovered">Boolean of hovered status</param>
-    public void SetHovered(bool hovered) {
-        this.hovered = hovered;
+    public void OnPointerEnter(PointerEventData data)
+    {
+        hovered = true;
+    }
+
+    public void OnPointerExit(PointerEventData data)
+    {
+        hovered = false;
     }
 }
