@@ -21,7 +21,8 @@ public class Menu : MonoBehaviour
                 t.gameObject.SetActive(false);
 
             // Set UI panel switcher enabled or disabled
-            background.SetActive(value);
+            foreach (GameObject g in menuElements)
+                g.SetActive(value);
             uiSwitcher.enabled = value;
         }
     }
@@ -30,11 +31,11 @@ public class Menu : MonoBehaviour
     public SteamVR_Action_Boolean callMenu;
     public Vector3 offset;      // Offset used when smoothing towards camera
     public float epsilon = 5f,  // Stops smoothing towards target position
-        smoothSpeed = 0.03f,    // Speed to move towards target position
+        smoothTime = 0.05f,     // Speed to move towards target position
         menuPitch = 45;         // Angle to pitch menu up
 
     [Header("References")]
-    public GameObject background;
+    public GameObject[] menuElements;   // Menu elements that mirror menu visibility
 
     // Private vars
     private UIPanelSwitcher uiSwitcher;
@@ -44,8 +45,6 @@ public class Menu : MonoBehaviour
         uiSwitcher = GetComponent<UIPanelSwitcher>();
         Debug.Assert(uiSwitcher != null,
             "[Menu] Could not get reference to UIPanelSwitcher!");
-        Debug.Assert(background != null,
-            "[Menu] Could not get reference to background!");
     }
 
     private void Start() {
@@ -78,7 +77,7 @@ public class Menu : MonoBehaviour
                 transform.position,
                 GetTargetPos(),
                 ref vel,
-                smoothSpeed
+                smoothTime
             );
 
             // Look at camera

@@ -14,25 +14,38 @@
          "chords" : [],
          "haptics" : [
             {
-               "output" : "/actions/default/out/haptics",
+               "output" : "/actions/default/out/haptic",
                "path" : "/user/hand/left/output/haptic"
             },
             {
-               "output" : "/actions/default/out/haptics",
+               "output" : "/actions/default/out/haptic",
                "path" : "/user/hand/right/output/haptic"
             }
          ],
          "poses" : [
             {
-               "output" : "/actions/default/in/leftpose",
+               "output" : "/actions/default/in/pose",
                "path" : "/user/hand/left/pose/raw"
             },
             {
-               "output" : "/actions/default/in/rightpose",
+               "output" : "/actions/default/in/pose",
                "path" : "/user/hand/right/pose/raw"
+            },
+            {
+               "output" : "none",
+               "path" : "/user/hand/right/pose/handgrip"
             }
          ],
-         "skeleton" : [],
+         "skeleton" : [
+            {
+               "output" : "/actions/default/in/rightskeleton",
+               "path" : "/user/hand/left/input/skeleton/right"
+            },
+            {
+               "output" : "/actions/default/in/rightskeleton",
+               "path" : "/user/hand/right/input/skeleton/right"
+            }
+         ],
          "sources" : [
             {
                "inputs" : {
@@ -46,20 +59,20 @@
             {
                "inputs" : {
                   "click" : {
-                     "output" : "/actions/default/in/interactui"
-                  }
-               },
-               "mode" : "trigger",
-               "path" : "/user/hand/right/input/trigger"
-            },
-            {
-               "inputs" : {
-                  "click" : {
                      "output" : "/actions/default/in/callmenu"
                   }
                },
                "mode" : "button",
                "path" : "/user/hand/left/input/application_menu"
+            },
+            {
+               "inputs" : {
+                  "scroll" : {
+                     "output" : "/actions/default/in/scrollui"
+                  }
+               },
+               "mode" : "scroll",
+               "path" : "/user/hand/left/input/trackpad"
             },
             {
                "inputs" : {
@@ -69,6 +82,24 @@
                },
                "mode" : "button",
                "path" : "/user/hand/right/input/application_menu"
+            },
+            {
+               "inputs" : {
+                  "scroll" : {
+                     "output" : "/actions/default/in/scrollui"
+                  }
+               },
+               "mode" : "scroll",
+               "path" : "/user/hand/right/input/trackpad"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/default/in/interactui"
+                  }
+               },
+               "mode" : "trigger",
+               "path" : "/user/hand/right/input/trigger"
             }
          ]
       },

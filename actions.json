@@ -11,17 +11,27 @@
       "requirement": "mandatory"
     },
     {
-      "name": "/actions/Default/in/LeftPose",
+      "name": "/actions/Default/in/Pose",
       "type": "pose",
       "requirement": "mandatory"
     },
     {
-      "name": "/actions/Default/in/RightPose",
-      "type": "pose",
+      "name": "/actions/Default/in/LeftSkeleton",
+      "type": "skeleton",
+      "skeleton": "/skeleton/hand/left"
+    },
+    {
+      "name": "/actions/Default/in/ScrollUI",
+      "type": "vector2",
       "requirement": "mandatory"
     },
     {
-      "name": "/actions/Default/out/Haptics",
+      "name": "/actions/Default/in/RightSkeleton",
+      "type": "skeleton",
+      "skeleton": "/skeleton/hand/right"
+    },
+    {
+      "name": "/actions/Default/out/Haptic",
       "type": "vibration",
       "requirement": "suggested"
     }

@@ -20,12 +20,9 @@ namespace Valve.VR.Extras
         bool isActive = false;
         public bool addRigidBody = false;
         public Transform reference;
-        public event PointerEventHandler
-            PointerIn,
-            PointerOut,
-            PointerClick,
-            PointerDown,
-            PointerUp;
+        public event PointerEventHandler PointerIn;
+        public event PointerEventHandler PointerOut;
+        public event PointerEventHandler PointerClick;
 
         Transform previousContact = null;
 
@@ -91,18 +88,6 @@ namespace Valve.VR.Extras
                 PointerOut(this, e);
         }
 
-        public virtual void OnPointerDown(PointerEventArgs e)
-        {
-            if (PointerDown != null)
-                PointerDown(this, e);
-        }
-
-        public virtual void OnPointerUp(PointerEventArgs e)
-        {
-            if (PointerUp != null)
-                PointerUp(this, e);
-        }
-
         
         private void Update()
         {
@@ -138,31 +123,16 @@ namespace Valve.VR.Extras
                 OnPointerIn(argsIn);
                 previousContact = hit.transform;
             }
-            if (!bHit || interactWithUI.GetStateUp(pose.inputSource)) {
-                PointerEventArgs argsClick = new PointerEventArgs();
-                argsClick.fromInputSource = pose.inputSource;
-                argsClick.distance = hit.distance;
-                argsClick.flags = 0;
-                argsClick.target = previousContact;
-                OnPointerUp(argsClick);
-
+            if (!bHit)
+            {
                 previousContact = null;
             }
             if (bHit && hit.distance < 100f)
             {
                 dist = hit.distance;
             }
-            
-            if (bHit && interactWithUI.GetStateDown(pose.inputSource)) {
-                PointerEventArgs argsClick = new PointerEventArgs();
-                argsClick.fromInputSource = pose.inputSource;
-                argsClick.distance = hit.distance;
-                argsClick.flags = 0;
-                argsClick.target = hit.transform;
-                OnPointerDown(argsClick);
-            }
 
-            if (interactWithUI.GetStateUp(pose.inputSource))
+            if (bHit && interactWithUI.GetStateUp(pose.inputSource))
             {
                 PointerEventArgs argsClick = new PointerEventArgs();
                 argsClick.fromInputSource = pose.inputSource;

@@ -33,27 +33,43 @@ namespace Valve.VR
             }
         }
         
-        public virtual SteamVR_Action_Pose LeftPose
+        public virtual SteamVR_Action_Pose Pose
         {
             get
             {
-                return SteamVR_Actions.default_LeftPose;
+                return SteamVR_Actions.default_Pose;
             }
         }
         
-        public virtual SteamVR_Action_Pose RightPose
+        public virtual SteamVR_Action_Skeleton LeftSkeleton
         {
             get
             {
-                return SteamVR_Actions.default_RightPose;
+                return SteamVR_Actions.default_LeftSkeleton;
             }
         }
         
-        public virtual SteamVR_Action_Vibration Haptics
+        public virtual SteamVR_Action_Vector2 ScrollUI
         {
             get
             {
-                return SteamVR_Actions.default_Haptics;
+                return SteamVR_Actions.default_ScrollUI;
+            }
+        }
+        
+        public virtual SteamVR_Action_Skeleton RightSkeleton
+        {
+            get
+            {
+                return SteamVR_Actions.default_RightSkeleton;
+            }
+        }
+        
+        public virtual SteamVR_Action_Vibration Haptic
+        {
+            get
+            {
+                return SteamVR_Actions.default_Haptic;
             }
         }
     }
