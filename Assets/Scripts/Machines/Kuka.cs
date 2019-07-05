@@ -97,26 +97,26 @@ public class Kuka : Machine
 
             // X rotation
             case "a2":
-                found.SetValue(NormalizeAngle(-(value + 90f)));
+                found.SetValue(-(value + 90f));
                 break;
             case "a3":
-                found.SetValue(NormalizeAngle(-(value - 90f)));
+                found.SetValue(-(value - 90f));
                 break;
             case "a5":
-                found.SetValue(NormalizeAngle(-value));
+                found.SetValue(-value);
                 break;
 
             // Y rotation
             case "a1":
-                found.SetValue(NormalizeAngle(value));
+                found.SetValue(value);
                 break;
 
             // Z rotation
             case "a4":
-                found.SetValue(NormalizeAngle(-value));
+                found.SetValue(-value);
                 break;
             case "a6":
-                found.SetValue(NormalizeAngle(value));
+                found.SetValue(value);
                 break;
 
             default:
@@ -184,9 +184,11 @@ public class Kuka : Machine
             if (i == 3 || i == 5)
                 continue;
 
-            axes[i].SetValue(NormalizeAngle( axes[i].GetValue() - learningRate
-                                        * PartialGradient(target, axes, i)
-                                        * Time.deltaTime));
+            axes[i].SetValue(
+                axes[i].GetValue() - learningRate
+                * PartialGradient(target, axes, i)
+                * Time.deltaTime
+            );
         }
     }
 

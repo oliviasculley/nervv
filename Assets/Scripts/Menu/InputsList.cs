@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 using TMPro;
 
-public class Menu_InputsList : MonoBehaviour
+public class InputsList : MonoBehaviour
 {
     [Header("References")]
     public Transform scrollViewParent;     // Parent to spawn machine buttons underneath

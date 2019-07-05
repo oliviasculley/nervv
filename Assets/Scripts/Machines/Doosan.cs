@@ -95,24 +95,18 @@ public class Doosan : Machine
 
             // Y rotation
             case "DR1_A1":
-                found.SetValue(NormalizeAngle(-(value + 180f)));
+                found.SetValue(-(value + 180f));
                 break;
             case "DR1_A4":
-                found.SetValue(NormalizeAngle(-(value)));
-                break;
             case "DR1_A6":
-                found.SetValue(NormalizeAngle(-(value)));
+                found.SetValue(-(value));
                 break;
 
             // Z rotation
             case "DR1_A2":
-                found.SetValue(NormalizeAngle(value));
-                break;
             case "DR1_A3":
-                found.SetValue(NormalizeAngle((value)));
-                break;
             case "DR1_A5":
-                found.SetValue(NormalizeAngle((value)));
+                found.SetValue(value);
                 break;
 
             default:
@@ -179,9 +173,11 @@ public class Doosan : Machine
             if (i == 10000 || i == 100000)
                 continue;
 
-            axes[i].SetValue(NormalizeAngle( axes[i].GetValue() - learningRate
-                                        * PartialGradient(target, axes, i)
-                                        * Time.deltaTime));
+            axes[i].SetValue(
+                axes[i].GetValue() - learningRate
+                * PartialGradient(target, axes, i)
+                * Time.deltaTime
+            );
         }
     }
 

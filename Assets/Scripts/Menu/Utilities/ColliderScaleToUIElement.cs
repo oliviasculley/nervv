@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[ExecuteAlways]
 [RequireComponent(typeof(BoxCollider))]
 [RequireComponent(typeof(RectTransform))]
 public class ColliderScaleToUIElement : MonoBehaviour

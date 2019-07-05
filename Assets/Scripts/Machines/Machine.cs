@@ -49,9 +49,13 @@ public abstract class Machine : MonoBehaviour
 
         public void SetValue(float newValue) {
             if (minValue != maxValue)
-                this.value = Mathf.Clamp(newValue, minValue, maxValue);
+                value = Mathf.Clamp(
+                    NormalizeAngle(newValue),
+                    minValue,
+                    maxValue
+                );
             else
-                this.value = newValue;
+                value = NormalizeAngle(newValue);
         }
 
         public float GetValue() {
@@ -83,7 +87,6 @@ public abstract class Machine : MonoBehaviour
     {
         return ((angle %= 360) < 0) ? angle + 360 : angle;
     }
-
 
     /* Public methods */
 

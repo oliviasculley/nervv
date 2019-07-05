@@ -8,16 +8,11 @@ using Valve.VR.Extras;
 [RequireComponent(typeof(SteamVR_LaserPointer))]
 public class SteamVRLaserPointerWrapper : MonoBehaviour
 {
-    [Header("UI Scroll")]
-    public SteamVR_Action_Vector2 scrollUI;
-
     [Header("References")]
     public Menu menu;
 
     // Private vars
     private SteamVR_LaserPointer steamVrLaserPointer;
-    private bool clicking = false;
-    private Transform lastTarget;
 
     private void Awake()
     {
@@ -27,24 +22,12 @@ public class SteamVRLaserPointerWrapper : MonoBehaviour
         steamVrLaserPointer.PointerIn += OnPointerIn;
         steamVrLaserPointer.PointerOut += OnPointerOut;
         steamVrLaserPointer.PointerClick += OnPointerClick;
-
-        clicking = false;
     }
 
     public void Update()
     {
         // Set laser pointers active if menu is visible
         transform.Find("New Game Object").gameObject.SetActive(steamVrLaserPointer.active = menu.visible);
-
-        // Trigger on scroll
-        if (lastTarget != null && scrollUI.active) {
-            IScrollHandler sh = lastTarget.GetComponent<IScrollHandler>();
-            if (sh != null) {
-                PointerEventData data = new PointerEventData(EventSystem.current);
-                data.delta = scrollUI.delta;
-                sh.OnScroll(data);
-            }
-        }
     }
 
     private void OnPointerClick(object sender, PointerEventArgs e)
@@ -59,12 +42,10 @@ public class SteamVRLaserPointerWrapper : MonoBehaviour
         IPointerExitHandler pointerExitHandler = e.target.GetComponent<IPointerExitHandler>();
         if (pointerExitHandler != null)
             pointerExitHandler.OnPointerExit(new PointerEventData(EventSystem.current));
-        lastTarget = null;
     }
 
     private void OnPointerIn(object sender, PointerEventArgs e)
     {
-        lastTarget = e.target;
         IPointerEnterHandler pointerEnterHandler = e.target.GetComponent<IPointerEnterHandler>();
         if (pointerEnterHandler != null)
             pointerEnterHandler.OnPointerEnter(new PointerEventData(EventSystem.current));
