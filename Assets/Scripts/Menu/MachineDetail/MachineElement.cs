@@ -1,7 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
+[RequireComponent(typeof(Button))]
+[RequireComponent(typeof(BoxCollider))]
 public class MachineElement : MonoBehaviour {
     /// <summary>
     /// Returns string with capitalized first letter
@@ -23,16 +26,26 @@ public class MachineElement : MonoBehaviour {
 
     [Header("Element Properties")]
     public bool _visible;
-    public bool visible {
+    public bool Visible {
         get { return _visible; }
         set {
+            if (buttons == null) buttons = GetComponentsInChildren<Button>();
+            if (colliders == null) colliders = GetComponentsInChildren<BoxCollider>();
+            Debug.Assert(buttons != null && colliders != null, "Could not get button and boxCollider!");
+
             _visible = value;
-            foreach (Transform t in transform)
-                t.gameObject.SetActive(_visible);
+            foreach (Button b in buttons)
+                b.enabled = _visible;
+            foreach (BoxCollider c in colliders)
+                c.enabled = _visible;
         }
     }
 
+    // Private vars
+    Button[] buttons;
+    BoxCollider[] colliders;
+
     public void OnEnable() {
-        visible = true;
+        Visible = true;
     }
 }

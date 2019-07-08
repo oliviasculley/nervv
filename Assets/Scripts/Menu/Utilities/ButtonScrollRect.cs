@@ -19,8 +19,10 @@ namespace UnityEngine.UI {
 
         [Header("Button Settings")]
         [Range(0, 1)]
-        public float scrollDelta = 0.25f;   // Amount to scroll by
+        [SerializeField] 
+        public float scrollDelta = 0.27f;   // Amount to scroll by
         [Range(0, 1)]
+        [SerializeField]
         public float scrollSpeed = 0.3f;    // Speed to scroll viewport
 
         private new void OnEnable() {

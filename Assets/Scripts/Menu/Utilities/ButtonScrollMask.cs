@@ -7,6 +7,8 @@ public class ButtonScrollMask : MonoBehaviour {
     
     [Header("Properties")]
     public Transform content;
+    [Range(0, 1)]
+    public float minHeight, maxHeight;
 
     // Private vars
     RectTransform t;
@@ -24,10 +26,8 @@ public class ButtonScrollMask : MonoBehaviour {
             MachineElement e = obj.GetComponent<MachineElement>();
             if (e != null) {
                 float yDelta = (transform.position - obj.position).y;
-                e.visible = yDelta >= -(t.rect.height / 2) && yDelta <= (t.rect.height / 2);
+                e.Visible = yDelta >= minHeight && yDelta <= maxHeight;
             }
-                
-        }
-            
+        }  
     }
 }

@@ -11,7 +11,6 @@ public class MachineStringElement : MachineElement
     [Header("Properties")]
     public string fieldName;
     public Machine currMachine;
-    public bool keyboardShowing = false;      // Is keyboard activated?
 
     [Header("Settings")]
     public bool useKeyboardMinimalMode = true;  // Use SteamVR minimal keyboard mode
@@ -80,11 +79,10 @@ public class MachineStringElement : MachineElement
     #region SteamVR Keyboard Helper functions
 
     public void OpenKeyboard() {
-        if (keyboardShowing)
+        if (activeKeyboard == null)
+            activeKeyboard = this;
+        else
             return;
-
-        keyboardShowing = true;
-        activeKeyboard = this;
 
         // Open OpenVR keyboard
         SteamVR.instance.overlay.ShowKeyboard(
@@ -99,6 +97,9 @@ public class MachineStringElement : MachineElement
     }
 
     private void OnKeyboard(VREvent_t args) {
+        if (activeKeyboard != this)
+            return;
+
         // Code used from OpenVR Samples
         // https://github.com/ValveSoftware/openvr/blob/41bfc14efef21b2959394d8b4c29b82c3bdd7d12/samples/unity_keyboard_sample/Assets/KeyboardSample.cs
 
@@ -118,7 +119,7 @@ public class MachineStringElement : MachineElement
                 // Close the keyboard
                 var vr = SteamVR.instance;
                 vr.overlay.HideKeyboard();
-                keyboardShowing = false;
+                activeKeyboard = null;
             } else {
                 text += input;
             }
@@ -130,14 +131,14 @@ public class MachineStringElement : MachineElement
 
         // Set field with value from keyboard
         SetField(text);
+        UpdateText();
     }
 
     private void OnKeyboardClosed(VREvent_t args) {
         if (activeKeyboard != this)
             return;
-
-        keyboardShowing = false;
-        activeKeyboard = null;
+        else
+            activeKeyboard = null;
     }
 
     #endregion

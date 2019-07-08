@@ -1001,7 +1001,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 299015279}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -1200242548, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
@@ -1039,7 +1039,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9f69f1173f8ba14789c21d2dc036348, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  content: {fileID: 1350860564}
+  content: {fileID: 628353443}
+  minHeight: 0.05
+  maxHeight: 0.45
 --- !u!1 &307011776
 GameObject:
   m_ObjectHideFlags: 0
@@ -3699,6 +3701,11 @@ PrefabInstance:
       propertyPath: actionSet.actionSetPath
       value: /actions/Default
       objectReference: {fileID: 0}
+    - target: {fileID: 114000010474703086, guid: dc06161b6d97feb419f45f03b62e14b9,
+        type: 3}
+      propertyPath: disableAllOtherActionSets
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dc06161b6d97feb419f45f03b62e14b9, type: 3}
 --- !u!114 &1190652097 stripped
@@ -4319,6 +4326,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1350860564}
   - component: {fileID: 1350860565}
+  - component: {fileID: 1350860566}
   m_Layer: 0
   m_Name: Content
   m_TagString: Untagged
@@ -4359,18 +4367,32 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
-    m_Left: 5
-    m_Right: 5
-    m_Top: 5
-    m_Bottom: 5
+    m_Left: 10
+    m_Right: 10
+    m_Top: 10
+    m_Bottom: 10
   m_ChildAlignment: 4
-  m_Spacing: 5
+  m_Spacing: 10
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
+--- !u!114 &1350860566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1350860563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1741964061, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HorizontalFit: 0
+  m_VerticalFit: 1
 --- !u!1001 &1396403727
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6907,6 +6929,11 @@ PrefabInstance:
       propertyPath: m_Size.y
       value: 100
       objectReference: {fileID: 0}
+    - target: {fileID: 5893852334406048231, guid: f6640c6711a23e7dc818cd1e62696480,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f6640c6711a23e7dc818cd1e62696480, type: 3}
 --- !u!224 &2005004469 stripped
@@ -7529,7 +7556,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2118124470}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: -1200242548, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
@@ -7568,6 +7595,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   content: {fileID: 628353443}
+  minHeight: 0.05
+  maxHeight: 0.45
 --- !u!1001 &678641920746671459
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8507,12 +8536,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5661292061207468640, guid: 70bbe43cb437ac57094709865bf5b9cd,
         type: 3}
-      propertyPath: m_SizeDelta.x
+      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5661292061207468640, guid: 70bbe43cb437ac57094709865bf5b9cd,
         type: 3}
-      propertyPath: m_AnchoredPosition.y
+      propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5661292061207468640, guid: 70bbe43cb437ac57094709865bf5b9cd,
