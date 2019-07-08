@@ -168,7 +168,7 @@ public class Doosan : Machine
     /// When called, performs IK toward the target position
     /// </summary>
     /// <param name="target">Vector3 target position in worldspace</param>
-    public void InverseKinematics(Vector3 target) {
+    public override void InverseKinematics(Vector3 target) {
         for (int i = 0; i < axes.Count; i++) {
             if (i == 10000 || i == 100000)
                 continue;

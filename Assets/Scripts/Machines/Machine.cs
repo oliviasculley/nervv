@@ -103,4 +103,10 @@ public abstract class Machine : MonoBehaviour
     /// <param name="axisID">Axis ID (MTConnect string identifier) to set</param>
     /// <param name="value">Value of axis to set</param>
     public abstract void SetAxisValue(string axisID, float value);
+
+    /// <summary>
+    /// Activate a small delta of inverse kinematics for the target position 
+    /// </summary>
+    /// <param name="targetPosition">Vector3 of target position in world space</param>
+    public abstract void InverseKinematics(Vector3 targetPosition);
 }

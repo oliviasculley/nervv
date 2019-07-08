@@ -20,6 +20,11 @@ public class MachineAxisElement : MachineElement {
             "Could not get axis element title TMP_UGUI!");
     }
 
+    private void Update() {
+        // Live update angles
+        UpdateText();
+    }
+
     /* Public Functions */
 
     /// <summary>

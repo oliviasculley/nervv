@@ -100,4 +100,12 @@ public class Shark : Machine
                 return new Vector3(0, 0, 0);
         }
 	}
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="targetPosition"></param>
+    public override void InverseKinematics(Vector3 targetPosition) {
+        throw new System.NotImplementedException();
+    }
 }

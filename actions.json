@@ -16,6 +16,11 @@
       "requirement": "mandatory"
     },
     {
+      "name": "/actions/Default/in/activateIK",
+      "type": "boolean",
+      "requirement": "suggested"
+    },
+    {
       "name": "/actions/Default/out/Haptic",
       "type": "vibration",
       "requirement": "suggested"
