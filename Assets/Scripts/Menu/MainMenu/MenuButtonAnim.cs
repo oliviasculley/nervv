@@ -10,13 +10,18 @@ public class MenuButtonAnim : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public bool hovered;
 
     [Header("Animation Settings")]
-    public float unactivatedHeight = 0.05f;     // Resting height for sprite
-    public float activatedHeight = 0.025f;      // Height of activated sprite
-    public float activationSpeed = 1f;          // Speed to activate icons
-    public readonly float planeRatio = 1f;  // Ratio of background plane to image
+    [Tooltip("Resting height for sprite")]
+    public float unactivatedHeight = 0.05f;
+    [Tooltip("Height of activated sprite")]
+    public float activatedHeight = 0.025f;
+    [Tooltip("Speed to activate icons")]
+    public float activationSpeed = 1f;
+    [Tooltip("Ratio of background plane to image")]
+    public readonly float planeRatio = 1f;
 
     [Header("References")]
-    public Menu menu;                           // Menu that menuButton is attached to
+    [Tooltip("Menu that menuButton is attached to")]
+    public Menu menu;
     public GameObject buttonBackground, buttonIcon;
 
     private void Awake() {
@@ -76,15 +81,25 @@ public class MenuButtonAnim : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         );
     }
 
-    /* Public methods */
+    #region Public methods
 
+    /// <summary>
+    /// Hover on OnPointerEnter
+    /// </summary>
+    /// <param name="data">Event system data</param>
     public void OnPointerEnter(PointerEventData data)
     {
         hovered = true;
     }
 
+    /// <summary>
+    /// Unhover on OnPointerExit
+    /// </summary>
+    /// <param name="data">Event system data</param>
     public void OnPointerExit(PointerEventData data)
     {
         hovered = false;
     }
+
+    #endregion
 }

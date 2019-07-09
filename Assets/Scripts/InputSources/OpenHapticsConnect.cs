@@ -22,4 +22,6 @@ public class OpenHapticsConnect : InputSource
     void Update()
     {
     }
+
+    public OpenHapticsConnect() : base("OpenHapticsConnect", true) { }
 }

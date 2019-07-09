@@ -12,12 +12,14 @@ public class MachineManager : MonoBehaviour
     public static MachineManager Instance;
 
     [Header("Properties")]
-    public List<Machine> machines;  // List of machines in scene
+    public List<IMachine> machines;  // List of machines in scene
 
     public void Awake() {
         if (Instance != null)
             Debug.LogWarning("[MachineManager] Static ref to self was not null!\nOverriding...");
         Instance = this;
+
+        machines = new List<IMachine>();
     }
 
     /* Public Methods */
@@ -27,7 +29,7 @@ public class MachineManager : MonoBehaviour
     /// </summary>
     /// <param name="machine">Machine to add</param>
     /// <returns>Succesfully added?</returns>
-    public bool AddMachine(Machine machine) {
+    public bool AddMachine(IMachine machine) {
         // Check for duplicate machines
         if (machines.Contains(machine))
             return false;
@@ -41,7 +43,7 @@ public class MachineManager : MonoBehaviour
     /// </summary>
     /// <param name="machine">Machine to remove</param>
     /// <returns>Succesfully removed?</returns>
-    public bool RemoveMachine(Machine machine) {
+    public bool RemoveMachine(IMachine machine) {
         return machines.Remove(machine);
     }
 
@@ -50,10 +52,10 @@ public class MachineManager : MonoBehaviour
     /// </summary>
     /// <typeparam name="T">Type of machine to return</typeparam>
     /// <returns>List<Machine> of machines</returns>
-    public List<Machine> GetMachines<T>() {
-        List<Machine> foundMachines = new List<Machine>();
+    public List<IMachine> GetMachines<T>() {
+        List<IMachine> foundMachines = new List<IMachine>();
 
-        foreach (Machine m in machines)
+        foreach (IMachine m in machines)
             if (m.GetType() == typeof(T))
                 foundMachines.Add(m);
 
@@ -65,10 +67,10 @@ public class MachineManager : MonoBehaviour
     /// </summary>
     /// <param name="type">Type of machine to return</param>
     /// <returns>List<Machine> of machines</returns>
-    public List<Machine> GetMachines(System.Type type) {
-        List<Machine> foundMachines = new List<Machine>();
+    public List<IMachine> GetMachines(System.Type type) {
+        List<IMachine> foundMachines = new List<IMachine>();
 
-        foreach (Machine m in machines)
+        foreach (IMachine m in machines)
             if (m.GetType() == type)
                 foundMachines.Add(m);
 

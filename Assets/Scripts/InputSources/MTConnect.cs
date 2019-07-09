@@ -15,10 +15,10 @@ using MTConnectStreamsXML;
 public class MTConnect : InputSource
 {
     [Header("MTConnect Settings")]
-    public readonly string source = "";
-    public float pollInterval;  // Interval in seconds to poll
-    public char delim;
-    public char[] trimChars;
+    [Tooltip("Current MTConnect data URL")]
+    public string URL = "";
+    [Tooltip("Interval in seconds to poll")]
+    public float pollInterval;
 
     //[Header("References")]
 
@@ -28,9 +28,13 @@ public class MTConnect : InputSource
 
     private void Awake() {
         // Safety checks
-        Debug.Assert(!string.IsNullOrEmpty(source), "MTConnectURL is null or empty!");
+        Debug.Assert(!string.IsNullOrEmpty(URL), "MTConnectURL is null or empty!");
         if (pollInterval == 0)
             Debug.LogWarning("Poll interval set to 0, will send GET request every frame!");
+
+        // Init vars
+        name = "MTConnect XML: " + URL;
+        fetchMTConnect = null;
     }
 
     private void Start() {
@@ -38,14 +42,11 @@ public class MTConnect : InputSource
         Debug.Assert(InputManager.Instance != null, "[MTConnect] Could not get ref to InputManager!");
         if (!InputManager.Instance.AddInput(this))
             Debug.LogError("[MTConnect] Could not add self to InputManager!");
-
-        name = "MTConnect XML: " + source;
-        fetchMTConnect = null;
     }
 
     private void Update()
     {
-        if (inputEnabled) {
+        if (IsActive()) {
             // Check if time to trigger
             if (Time.time > timeToTrigger) {
 
@@ -64,16 +65,18 @@ public class MTConnect : InputSource
         }
     }
 
-    /* Private Methods */
+    public MTConnect() : base("MTConnect XML", false) { }
+
+    #region Private Methods
 
     /// <summary>
     /// Sends GET request to MTConnectURL
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Unity Coroutine</returns>
     private IEnumerator FetchMTConnect() {
 
         WWWForm form = new WWWForm();
-        using (UnityWebRequest www = UnityWebRequest.Get(source)) {
+        using (UnityWebRequest www = UnityWebRequest.Get(URL)) {
             yield return www.SendWebRequest();
 
             if (www.isNetworkError || www.isHttpError) {
@@ -100,18 +103,20 @@ public class MTConnect : InputSource
 		
 		// For each device
         foreach (DeviceStream ds in xmlData.Streams.DeviceStream) {
-            Machine m = MachineManager.Instance.machines.Find(x => x.uuid == ds.Uuid);
-			if (m == null)
+            Machine m = (Machine) MachineManager.Instance.machines.Find(
+                x => x.GetType() == typeof(Machine) && ((Machine)x).UUID == ds.Uuid
+            );
+            if (m == null)
 				continue;
 			
 			// Go through each component
 			foreach (ComponentStream cs in ds.ComponentStream) {
-				Machine.Axis a = m.axes.Find(x => x.GetID() == cs.ComponentId);
+				Machine.Axis a = m.Axes.Find(x => x.ID == cs.ComponentId);
 				if (a == null)
 					continue;
 
-				switch (a.GetAxisType()) {
-					case Machine.AxisType.Linear:
+				switch (a.Type) {
+					case Machine.Axis.AxisType.Linear:
 						// Linear axis, get latest position
 						if (cs.Samples.Position.Count == 0)
 							break;
@@ -123,10 +128,10 @@ public class MTConnect : InputSource
 
 						// Set axis
 						//Debug.Log("[MTConnect] Set Position " + a.GetID() + "'s value: " + p.Text);
-                        m.SetAxisValue(a.GetID(), float.Parse(p.Text, CultureInfo.InvariantCulture));
+                        m.SetAxisValue(a.ID, float.Parse(p.Text, CultureInfo.InvariantCulture));
 						break;
 
-					case Machine.AxisType.Rotary:
+					case Machine.Axis.AxisType.Rotary:
 						// Rotary axis, get latest angle
 						if (cs.Samples.Angle.Count == 0)
 							break;
@@ -138,7 +143,7 @@ public class MTConnect : InputSource
 						
 						// Set axis
 						//Debug.Log("[MTConnect] Set Angle " + a.GetID() + "'s value: " + angle.Text);
-						m.SetAxisValue(a.GetID(), float.Parse(angle.Text, CultureInfo.InvariantCulture));
+						m.SetAxisValue(a.ID, float.Parse(angle.Text, CultureInfo.InvariantCulture));
 						break;
 
 					default:
@@ -150,8 +155,11 @@ public class MTConnect : InputSource
         }
     }
 
-	/* Private Methods */
-	private class PositionTimeStampCompare : IComparer<Position> {
+    #endregion
+
+    #region IComparer Helpers
+
+    private class PositionTimeStampCompare : IComparer<Position> {
 		public int Compare(Position x, Position y) {
 			if (x == null || y == null)
 				return 0;
@@ -172,6 +180,8 @@ public class MTConnect : InputSource
 			return x.Timestamp.CompareTo(y.Timestamp);
 		}
 	}
+
+    #endregion
 
 }
 

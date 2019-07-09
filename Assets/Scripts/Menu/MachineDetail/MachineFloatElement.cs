@@ -12,7 +12,8 @@ public class MachineFloatElement : MachineElement
     public Machine currMachine;
 
     [Header("Settings")]
-    public float delta = 1f;    // Delta to increment or decrement value by
+    [Tooltip("Delta to increment or decrement value by")]
+    public float delta = 1f;
     public float minValue, maxValue;
 
     [Header("References")]
@@ -23,7 +24,7 @@ public class MachineFloatElement : MachineElement
             "Could not get Float element title TMP_UGUI!");
     }
 
-    /* Public Functions */
+    #region Public Functions
 
     /// <summary>
     /// Initialize float element with needed parameters
@@ -55,7 +56,9 @@ public class MachineFloatElement : MachineElement
         UpdateText();
     }
 
-    /* Private Functions */
+    #endregion
+
+    #region Private Functions
 
     /// <summary>
     /// Gets field value with reflection
@@ -89,4 +92,6 @@ public class MachineFloatElement : MachineElement
             ": " +
             GetField().ToString();
     }
+
+    #endregion
 }

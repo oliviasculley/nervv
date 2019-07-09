@@ -6,9 +6,9 @@ using UnityEngine;
 public class ButtonScrollMask : MonoBehaviour {
     
     [Header("Properties")]
-    public Transform content;
-    [Range(0, 1)]
-    public float minHeight, maxHeight;
+        public Transform content;
+        [Range(0, 1)]
+        public float minHeight, maxHeight;
 
     // Private vars
     RectTransform t;

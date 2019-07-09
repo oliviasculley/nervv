@@ -29,13 +29,18 @@ public class Menu : MonoBehaviour
 
     [Header("Settings")]
     public SteamVR_Action_Boolean callMenu;
-    public Vector3 offset;      // Offset used when smoothing towards camera
-    public float epsilon = 5f,  // Stops smoothing towards target position
-        smoothTime = 0.05f,     // Speed to move towards target position
-        menuPitch = 45;         // Angle to pitch menu up
+    [Tooltip("Offset used when smoothing towards camera")]
+    public Vector3 offset;
+    [Tooltip("Stops smoothing towards target position")]
+    public float epsilon = 5f;
+    [Tooltip("Speed to move towards target position")]
+    public float smoothTime = 0.05f;
+    [Tooltip("Angle to pitch menu up")]
+    public float menuPitch = 45;
 
     [Header("References")]
-    public GameObject[] menuElements;   // Menu elements that mirror menu visibility
+    [Tooltip("Menu elements that mirror menu visibility")]
+    public GameObject[] menuElements;
 
     // Private vars
     private UIPanelSwitcher uiSwitcher;
@@ -51,6 +56,8 @@ public class Menu : MonoBehaviour
         // Initial menu state
         lerping = visible = false;
     }
+
+    #region Public methods
 
     /// <summary>
     /// Set menu visible
@@ -90,7 +97,9 @@ public class Menu : MonoBehaviour
         }
     }
 
-    /* Private methods */
+    #endregion
+
+    #region Private methods
 
     /// <summary>
     /// Return target menu location to move toward
@@ -100,4 +109,6 @@ public class Menu : MonoBehaviour
         return Camera.main.transform.forward +
             Camera.main.transform.TransformPoint(offset);
     }
+
+    #endregion
 }

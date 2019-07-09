@@ -12,7 +12,7 @@ public class InputManager : MonoBehaviour
     public static InputManager Instance;
 
     [Header("Properties")]
-    public List<InputSource> inputs; // List of input sources in scene
+    public List<IInputSource> inputs; // List of input sources in scene
 
     // Private vars
     List<System.Type> knownExclusives;  // Keeps track of exclusive types in inputs
@@ -22,10 +22,10 @@ public class InputManager : MonoBehaviour
         if (Instance != null)
             Debug.LogWarning("[InputManager] Static ref to self was not null!\nOverriding...");
         Instance = this;
-    }
 
-    private void Start() {
+        // Initialize vars
         knownExclusives = new List<System.Type>();
+        inputs = new List<IInputSource>();
     }
 
     /* Public Methods */
@@ -35,7 +35,7 @@ public class InputManager : MonoBehaviour
     /// </summary>
     /// <param name="input">Input source to add</param>
     /// <returns>Succesfully added?</returns>
-    public bool AddInput(InputSource input) {
+    public bool AddInput(IInputSource input) {
         // Check for duplicate inputs
         if (inputs.Contains(input))
             return false;
@@ -45,7 +45,7 @@ public class InputManager : MonoBehaviour
             return false;
 
         // Add to knownExclusives if exclusive
-        if (input.exclusiveType)
+        if (input.IsExclusive())
             knownExclusives.Add(input.GetType());
 
         // Add to list of inputs
@@ -60,7 +60,7 @@ public class InputManager : MonoBehaviour
     /// <returns>Succesfully removed?</returns>
     public bool RemoveInput(InputSource input) {
         // If exclusive, remove from exclusives list
-        if (input.exclusiveType)
+        if (input.IsExclusive())
             knownExclusives.Remove(input.GetType());
 
         // Remove from list of inputs

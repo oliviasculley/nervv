@@ -115,6 +115,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -126,6 +127,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -230,14 +232,43 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1d141ac7ac0f474fbd7b77ddd4e7002, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  angles:
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  axisTypes: 000000000000000000000000000000000000000000000000
+  axes:
+  - id: A_1
+    name: a1
+    value: 0
+    minValue: 0
+    maxValue: 0
+    type: 0
+  - id: A_2
+    name: a2
+    value: 0
+    minValue: 0
+    maxValue: 0
+    type: 0
+  - id: A_3
+    name: a3
+    value: 0
+    minValue: 0
+    maxValue: 0
+    type: 0
+  - id: A_4
+    name: a4
+    value: 0
+    minValue: 0
+    maxValue: 0
+    type: 0
+  - id: A_5
+    name: a5
+    value: 0
+    minValue: 0
+    maxValue: 0
+    type: 0
+  - id: A_6
+    name: a6
+    value: 0
+    minValue: 0
+    maxValue: 0
+    type: 0
   axisCount: 6
   maxSpeed: 1
   name: KUKA_Robot
@@ -246,20 +277,6 @@ MonoBehaviour:
   model: H
   lerpSpeed: 10
   interpolation: 0
-  minAngles:
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  maxAngles:
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
-  - 0
   samplingDistance: 0.1
   learningRate: 20000
 --- !u!1 &5332587870461650945
@@ -396,11 +413,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5332587870792879133}
     m_Modifications:
-    - target: {fileID: 2250600698889181321, guid: 2eace18fe1d006243a297ae5221ab1c2,
-        type: 3}
-      propertyPath: m_Name
-      value: A6
-      objectReference: {fileID: 0}
     - target: {fileID: 2250600698889536681, guid: 2eace18fe1d006243a297ae5221ab1c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -455,6 +467,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 2250600698889181321, guid: 2eace18fe1d006243a297ae5221ab1c2,
+        type: 3}
+      propertyPath: m_Name
+      value: A6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2eace18fe1d006243a297ae5221ab1c2, type: 3}
@@ -546,11 +563,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5332587870461650944}
     m_Modifications:
-    - target: {fileID: 2780264795908064870, guid: 7b0816bd0fbab9642b4fb163d3b7cdf9,
-        type: 3}
-      propertyPath: m_Name
-      value: A5
-      objectReference: {fileID: 0}
     - target: {fileID: 2780264795907578438, guid: 7b0816bd0fbab9642b4fb163d3b7cdf9,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -605,6 +617,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 2780264795908064870, guid: 7b0816bd0fbab9642b4fb163d3b7cdf9,
+        type: 3}
+      propertyPath: m_Name
+      value: A5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7b0816bd0fbab9642b4fb163d3b7cdf9, type: 3}
@@ -699,6 +716,21 @@ PrefabInstance:
     - target: {fileID: 845178166885224227, guid: e3b306bfc30803b4f9dc31a51910c802,
         type: 3}
       propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 12a3336ee87081b43867b4e1bc12fe36, type: 2}
+    - target: {fileID: 845178166885224227, guid: e3b306bfc30803b4f9dc31a51910c802,
+        type: 3}
+      propertyPath: m_Materials.Array.data[2]
+      value: 
+      objectReference: {fileID: 2100000, guid: 12a3336ee87081b43867b4e1bc12fe36, type: 2}
+    - target: {fileID: 845178166885224227, guid: e3b306bfc30803b4f9dc31a51910c802,
+        type: 3}
+      propertyPath: m_Materials.Array.data[3]
+      value: 
+      objectReference: {fileID: 2100000, guid: 12a3336ee87081b43867b4e1bc12fe36, type: 2}
+    - target: {fileID: 845178166885224227, guid: e3b306bfc30803b4f9dc31a51910c802,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 12a3336ee87081b43867b4e1bc12fe36, type: 2}
     m_RemovedComponents: []

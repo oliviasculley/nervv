@@ -6,26 +6,41 @@ using UnityEngine.UI;
 using TMPro;
 
 public class MachineAxisElement : MachineElement {
+
     [Header("Properties")]
-    public Machine.Axis axis;
+    public Machine.Axis Axis;
 
     [Header("Settings")]
-    public float delta = 1f;
+    public float AxisSpeed = 100f;
 
     [Header("References")]
-    public TextMeshProUGUI elementTitle;
+    public TextMeshProUGUI ElementTitle;
+
+    // Private vars
+    private bool
+        changingAxis,   // Is changing axis?
+        axisDirection;  // Which direction (incrementing/decrementing)?
 
     private new void OnEnable() {
-        Debug.Assert(elementTitle != null,
+        Debug.Assert(ElementTitle != null,
             "Could not get axis element title TMP_UGUI!");
     }
 
     private void Update() {
+        // If updating axis, modify
+        if (changingAxis) {
+            Debug.Assert(Axis != null,
+                "Invalid axis!");
+
+            // Set axis value depending on direction
+            Axis.Value += (axisDirection ? Time.deltaTime : -Time.deltaTime) * AxisSpeed;
+        }
+
         // Live update angles
         UpdateText();
     }
 
-    /* Public Functions */
+    #region Public Functions
 
     /// <summary>
     /// Initialize float element with needed parameters
@@ -36,40 +51,43 @@ public class MachineAxisElement : MachineElement {
         Debug.Assert(axis != null,
             "Invalid axis!");
 
-        this.axis = axis;
+        this.Axis = axis;
 
         UpdateText();
     }
 
-    public void Increment() {
-        Debug.Assert(axis != null,
-            "Invalid axis!");
-
-        axis.SetValue(axis.GetValue() + delta);
-        UpdateText();
+    /// <summary>
+    /// Starts increasing or decreasing axis value
+    /// </summary>
+    /// <param name="direction">Direction to start changing axis value</param>
+    public void StartChanging(bool direction) {
+        Debug.Log("Changing!");
+        changingAxis = true;
+        axisDirection = direction;
     }
 
-    public void Decrement() {
-        Debug.Assert(axis != null,
-            "Invalid axis!");
-
-        axis.SetValue(axis.GetValue() - delta);
-        UpdateText();
+    /// <summary>
+    /// Stops modifying axis value
+    /// </summary>
+    public void StopChanging() {
+        Debug.Log("Stopped!");
+        changingAxis = false;
     }
 
-    /* Private Functions */
+    #endregion
+
+    #region Private Functions
 
     /// <summary>
     /// Update text readout with current value
     /// </summary>
     private void UpdateText() {
-        Debug.Assert(axis != null,
+        Debug.Assert(Axis != null,
             "Invalid axis!");
 
         // Set text with current value
-        elementTitle.text =
-            axis.GetName() +
-            ": " +
-            axis.GetValue();
+        ElementTitle.text = Axis.Name + ": " + Axis.Value;
     }
+
+    #endregion
 }

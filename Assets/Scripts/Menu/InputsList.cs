@@ -25,14 +25,16 @@ public class InputsList : MonoBehaviour
         GenerateInputButtons();
     }
 
-    /* Public Methods */
+    #region Public Methods
 
-    public void ToggleInput(InputSource i) {
-        i.inputEnabled = !i.inputEnabled;
+    public void ToggleInput(IInputSource i) {
+        i.SetSourceActive(!i.IsActive());
         GenerateInputButtons();
     }
 
-    /* Private Methods */
+    #endregion
+
+    #region Private Methods
 
     private void GenerateInputButtons() {
         // Delete old objects
@@ -41,15 +43,17 @@ public class InputsList : MonoBehaviour
 
         // Spawn buttons for each machine
         GameObject g;
-        foreach (InputSource i in InputManager.Instance.inputs) {
+        foreach (IInputSource i in InputManager.Instance.inputs) {
             g = Instantiate(inputButtonPrefab, scrollViewParent);
 
-            g.transform.Find("InputName").GetComponent<TextMeshProUGUI>().text = "Name:\n" + i.name;
-            g.transform.Find("ToggleEnabled").GetComponent<Toggle>().isOn = i.inputEnabled;
+            g.transform.Find("InputName").GetComponent<TextMeshProUGUI>().text = "Name:\n" + i.GetName();
+            g.transform.Find("ToggleEnabled").GetComponent<Toggle>().isOn = i.IsActive();
 
             // Push machine to stack so button works correctly
-            InputSource buttonInput = i;
+            IInputSource buttonInput = i;
             g.GetComponent<Button>().onClick.AddListener(delegate { ToggleInput(buttonInput); });
         }
     }
+
+    #endregion
 }

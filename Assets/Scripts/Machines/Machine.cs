@@ -2,27 +2,138 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Machine : MonoBehaviour
-{
-    public enum AxisType { Rotary, Linear, None }
+public abstract class Machine : MonoBehaviour, IMachine {
+
+    [Header("Machine Properties")]
+    public List<Axis> Axes;
+
+    [Header("Machine Settings")]
+    [Tooltip("Max speed of machine")]
+    [SerializeField] private float _maxSpeed;
+    public float MaxSpeed {
+        get { return _maxSpeed; }
+        set { _maxSpeed = value; }
+    }
+
+    [Tooltip("Individual ID")]
+    [SerializeField] private string _name;
+    public string Name {
+        get { return _name; }
+        set { _name = value; }
+    }
+
+    [SerializeField] private string _uuid;
+    public string UUID {
+        get { return _uuid; }
+        set { _uuid = value; }
+    }
+
+    [SerializeField] private string _manufacturer;
+    public string Manufacturer {
+        get { return _manufacturer; }
+        set { _manufacturer = value; }
+    }
+
+    [SerializeField] private string _model;
+    public string Model {
+        get { return _model; }
+        set { _model = value; }
+    }
+
+    #region IMachine Public Methods
+
+    /// <summary>
+    /// Returns the Vector3 for the associated axis
+    /// </summary>
+    /// <param name="axis">Axis to get Vector3</param>
+    /// <returns>Vector3 of axis value in local space</returns>
+    public abstract Vector3 GetAxisVector3(Machine.Axis axis);
+
+    /// <summary>
+    /// Sets the value of a certain axis by axis' ID. Use this function to apply offsets or mirrors to incoming values!
+    /// </summary>
+    /// <param name="axisID">Axis ID (MTConnect string identifier) to set</param>
+    /// <param name="value">Value of axis to set</param>
+    public abstract void SetAxisValue(string axisID, float value);
+
+    /// <summary>
+    /// Activate a small delta of inverse kinematics for the target position.
+    /// </summary>
+    /// <param name="targetPosition">Vector3 of target position in world space</param>
+    public abstract void InverseKinematics(Vector3 targetPosition);
+
+    #endregion
+
+    #region Axis Class
 
     [System.Serializable]
     public class Axis {
-        [SerializeField] private string id, name;
-        [SerializeField] private float value, minValue, maxValue;
-        [SerializeField] private AxisType type;
+
+        [SerializeField] private string _id;
+        public string ID {
+            get { return _id; }
+            set { _id = value; }
+        }
+
+        [SerializeField] private string _name;
+        public string Name {
+            get { return _name; }
+            set { _name = value; }
+        }
+
+        [SerializeField] private float _value;
+        public float Value {
+            get { return _value; }
+            set {
+                if (MinValue != MaxValue)
+                    value = Mathf.Clamp(
+                        Mathf.Repeat(value, 360),
+                        MinValue,
+                        MaxValue
+                    );
+                else
+                    value = Mathf.Repeat(value, 360);
+            }
+        }
+
+        [SerializeField] private float _minValue;
+        public float MinValue {
+            get { return _minValue; }
+            set { _minValue = value; }
+        }
+
+        [SerializeField] private float _maxValue;
+        public float MaxValue {
+            get { return _maxValue; }
+            set { _maxValue = value; }
+        }
+
+        [SerializeField] private float _inertia;
+        public float Inertia {
+            get { return _inertia; }
+            set { _inertia = value; }
+        }
+
+        public enum AxisType { Rotary, Linear, None }
+        [SerializeField] private AxisType _type;
+        public AxisType Type {
+            get { return _type; }
+            set { _type = value; }
+        }
+
+        #region Constructors
 
         public Axis(string id, string name) {
-            this.id = id;
-            this.name = name;
+            ID = id;
+            Name = name;
         }
 
         public Axis(string id,
                     string name,
                     float value,
                     AxisType type) : this(id, name) {
-            this.value = value;
-            this.type = type;
+            Value = value;
+            Type = type;
         }
 
         public Axis(string id,
@@ -31,82 +142,12 @@ public abstract class Machine : MonoBehaviour
                     AxisType type,
                     float minValue,
                     float maxValue) : this(id, name, value, type) {
-            this.minValue = minValue;
-            this.maxValue = maxValue;
+            MinValue = minValue;
+            MaxValue = maxValue;
         }
 
-        public string GetID() {
-            return id;
-        }
-
-        public string GetName() {
-            return name;
-        }
-
-        public AxisType GetAxisType() {
-            return type;
-        }
-
-        public void SetValue(float newValue) {
-            if (minValue != maxValue)
-                value = Mathf.Clamp(
-                    NormalizeAngle(newValue),
-                    minValue,
-                    maxValue
-                );
-            else
-                value = NormalizeAngle(newValue);
-        }
-
-        public float GetValue() {
-            return value;
-        }
-
+        #endregion
     }
 
-    [Header("Machine Properties")]
-    [SerializeField]
-    public List<Axis> axes;
-
-    [Header("Machine Settings")]
-    public int axisCount;           // Number of axes on machine
-    public float maxSpeed;          // Max speed of machine
-    public new string name;         // Individual ID
-    public string   uuid,
-                    manufacturer,
-                    model;
-
-    /* Static methods */
-
-    /// <summary>
-    /// Ensures that angle will always be between 0-360
-    /// </summary>
-    /// <param name="angle">Angle in degrees</param>
-    /// <returns>Equivalent angle in degrees between 0-360</returns>
-    public static float NormalizeAngle(float angle)
-    {
-        return ((angle %= 360) < 0) ? angle + 360 : angle;
-    }
-
-    /* Public methods */
-
-    /// <summary>
-    /// Returns the Vector3 for the associated axis
-    /// </summary>
-    /// <param name="axis">Axis to get Vector3</param>
-    /// <returns>Vector3 of axis value in local space</returns>
-    public abstract Vector3 GetAxisVector3(Axis axis);
-
-    /// <summary>
-    /// Sets the value of a certain axis by axis' ID
-    /// </summary>
-    /// <param name="axisID">Axis ID (MTConnect string identifier) to set</param>
-    /// <param name="value">Value of axis to set</param>
-    public abstract void SetAxisValue(string axisID, float value);
-
-    /// <summary>
-    /// Activate a small delta of inverse kinematics for the target position 
-    /// </summary>
-    /// <param name="targetPosition">Vector3 of target position in world space</param>
-    public abstract void InverseKinematics(Vector3 targetPosition);
+    #endregion
 }

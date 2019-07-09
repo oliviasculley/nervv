@@ -13,7 +13,8 @@ public class MachineStringElement : MachineElement
     public Machine currMachine;
 
     [Header("Settings")]
-    public bool useKeyboardMinimalMode = true;  // Use SteamVR minimal keyboard mode
+    [Tooltip("Use SteamVR minimal keyboard mode")]
+    public bool useKeyboardMinimalMode = true;
 
     [Header("References")]
     public TextMeshProUGUI elementTitle;
@@ -31,7 +32,7 @@ public class MachineStringElement : MachineElement
         SteamVR_Events.System(EVREventType.VREvent_KeyboardClosed).Listen(OnKeyboardClosed);
     }
 
-    /* Public Functions */
+    #region Public Functions
 
     /// <summary>
     /// Initialize float element with needed parameters
@@ -47,7 +48,9 @@ public class MachineStringElement : MachineElement
         UpdateText();
     }
 
-    /* Private Functions */
+    #endregion
+
+    #region Private Functions
 
     /// <summary>
     /// Gets field value with reflection
@@ -75,6 +78,8 @@ public class MachineStringElement : MachineElement
             ": " +
             GetField().ToString();
     }
+
+    #endregion
 
     #region SteamVR Keyboard Helper functions
 

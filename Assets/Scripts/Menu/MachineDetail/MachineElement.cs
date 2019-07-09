@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-[RequireComponent(typeof(Button))]
-[RequireComponent(typeof(BoxCollider))]
 public class MachineElement : MonoBehaviour {
     /// <summary>
     /// Returns string with capitalized first letter
@@ -31,19 +30,25 @@ public class MachineElement : MonoBehaviour {
         set {
             if (buttons == null) buttons = GetComponentsInChildren<Button>();
             if (colliders == null) colliders = GetComponentsInChildren<BoxCollider>();
-            Debug.Assert(buttons != null && colliders != null, "Could not get button and boxCollider!");
+            if (triggers == null) triggers = GetComponentsInChildren<EventTrigger>();
+            Debug.Assert(
+                buttons != null && colliders != null && triggers != null,
+                "Could not get button and boxCollider!");
 
             _visible = value;
             foreach (Button b in buttons)
                 b.enabled = _visible;
             foreach (BoxCollider c in colliders)
                 c.enabled = _visible;
+            foreach (EventTrigger t in triggers)
+                t.enabled = _visible;
         }
     }
 
     // Private vars
     Button[] buttons;
     BoxCollider[] colliders;
+    EventTrigger[] triggers;
 
     public void OnEnable() {
         Visible = true;

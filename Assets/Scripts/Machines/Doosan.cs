@@ -2,29 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Doosan : Machine
-{
+public class Doosan : Machine {
+
     [Header("Doosan Settings")]
-    public float lerpSpeed = 10f;           // Speed of lerping to correct position
-    public bool interpolation = true;       // Toggles lerping to correct position
+    [Tooltip("Speed of lerping to correct position")]
+    public float LerpSpeed = 10f;
+    [Tooltip("Toggles lerping to correct position")]
+    public bool Interpolation = true;
     [Range(0.00001f, 1)]
-    public float samplingDistance;   // Sampling distance used to calculate gradient
+    [Tooltip("Sampling distance used to calculate gradient")]
+    public float SamplingDistance;
     [Range(0, 50000)]
-    public float learningRate;          // Learning rate of gradient descent
+    [Tooltip("Learning rate of gradient descent")]
+    public float LearningRate;
 
     // Private Vars
     private Transform[] components;
 
-    // DEBUG
-    private Color[] randomColors;
-
     private void Awake() {
         // Init arrays
-        components = new Transform[axisCount];
+        components = new Transform[Axes.Count];
 
         // Recursively populate components with Transform references
-        Transform t = this.transform;
-        for (int i = 0; i < axisCount; i++) {                   // For each component
+        Transform t = transform;
+        for (int i = 0; i < Axes.Count; i++) {                   // For each component
             for (int j = 0; j < t.childCount; j++) {            // Go through current transform
                 if (t.GetChild(j).name == ("A" + (i + 1))) {    // If name matches
                     components[i] = (t = t.GetChild(j));        // Set new child and components
@@ -34,11 +35,11 @@ public class Doosan : Machine
         }
 
         // Safety checks
-        for (int i = 0; i < axisCount; i++)
+        for (int i = 0; i < Axes.Count; i++)
             Debug.Assert(components[i] != null, "Could not find component " + i + "!");
-        if (lerpSpeed == 0)
+        if (LerpSpeed == 0)
             Debug.LogWarning("LerpSpeed is 0, will never move!");
-        if (maxSpeed == 0)
+        if (MaxSpeed == 0)
             Debug.LogWarning("MaxSpeed set to 0, will not be able to move!");
     }
 
@@ -49,31 +50,26 @@ public class Doosan : Machine
         } else {
             MachineManager.Instance.AddMachine(this);
         }
-        
-        // DEBUG: Random colors
-        randomColors = new Color[axisCount];
-        for (int i = 0; i < axisCount; i++)
-            randomColors[i] = Random.ColorHSV();
     }
 
     private void Update() {
-        if (interpolation) {
+        if (Interpolation) {
             // Continually lerp towards final position
-            for (int i = 0; i < axes.Count; i++)
+            for (int i = 0; i < Axes.Count; i++)
                 components[i].localRotation = Quaternion.Lerp(components[i].localRotation,
-                                                                Quaternion.Euler(GetAxisVector3(axes[i])),
-                                                                Mathf.Clamp(lerpSpeed * Time.deltaTime, 0, 1));
+                                                                Quaternion.Euler(GetAxisVector3(Axes[i])),
+                                                                Mathf.Clamp(LerpSpeed * Time.deltaTime, 0, 1));
         } else {
             // Get latest correct axis angle
-            for (int i = 0; i < axisCount; i++)
-                components[i].localEulerAngles = GetAxisVector3(axes[i]);
+            for (int i = 0; i < Axes.Count; i++)
+                components[i].localEulerAngles = GetAxisVector3(Axes[i]);
         }
 
         // Debug
-        ForwardKinematics(axes);
+        ForwardKinematics(Axes);
     }
 
-    /* Public Methods */
+    #region Public Methods
 
     /// <summary>
     /// Sets the value of a certain axis by axis' ID
@@ -84,33 +80,33 @@ public class Doosan : Machine
 
         // Get Axis with axisID
         Axis found;
-        if ((found = axes.Find(x => x.GetID() == axisID)) == null)
+        if ((found = Axes.Find(x => x.ID == axisID)) == null)
             return;
 
         // Axis convention conversions
-        switch (found.GetID()) {
+        switch (found.ID) {
 
             // X rotation
             // None
 
             // Y rotation
             case "DR1_A1":
-                found.SetValue(-(value + 180f));
+                found.Value = -(value + 180f);
                 break;
             case "DR1_A4":
             case "DR1_A6":
-                found.SetValue(-(value));
+                found.Value = -(value);
                 break;
 
             // Z rotation
             case "DR1_A2":
             case "DR1_A3":
             case "DR1_A5":
-                found.SetValue(value);
+                found.Value = value;
                 break;
 
             default:
-                Debug.LogWarning("[Doosan] Could not find axis with ID: " + found.GetID());
+                Debug.LogWarning("[Doosan] Could not find axis with ID: " + found.ID);
                 break;
         }
     }
@@ -122,25 +118,25 @@ public class Doosan : Machine
     /// <returns>Vector3 of rotation for selected axis in local space</returns>
     public override Vector3 GetAxisVector3(Axis axis) {
         // Switch based on axisID
-        switch (axis.GetID()) {
+        switch (axis.ID) {
 
             // X rotation
             // None
-            
+
             // Y rotation
             case "DR1_A1":
             case "DR1_A4":
             case "DR1_A6":
-                return new Vector3(0, axis.GetValue(), 0);
+                return new Vector3(0, axis.Value, 0);
 
             // Z rotation
             case "DR1_A2":
             case "DR1_A3":
             case "DR1_A5":
-                return new Vector3(0, 0, axis.GetValue());
+                return new Vector3(0, 0, axis.Value);
 
             default:
-                Debug.LogWarning("[Doosan] Could not find axis for ID: " + axis.GetID());
+                Debug.LogWarning("[Doosan] Could not find axis for ID: " + axis.ID);
                 return Vector3.zero;
         }
     }
@@ -155,9 +151,9 @@ public class Doosan : Machine
         Quaternion rotation = Quaternion.identity;
 
         for (int i = 0; i < anglesToCalculate.Count - 1; i++) {
-            rotation *= Quaternion.AngleAxis(NormalizeAngle(anglesToCalculate[i].GetValue()), GetAxisVector3(axes[i]));
+            rotation *= Quaternion.AngleAxis(Mathf.Repeat(anglesToCalculate[i].Value, 360), GetAxisVector3(Axes[i]));
             Vector3 nextPoint = prevPoint + (rotation * components[i + 1].localPosition);
-            Debug.DrawRay(prevPoint, rotation * components[i + 1].localPosition, randomColors[i]);
+            Debug.DrawRay(prevPoint, rotation * components[i + 1].localPosition, Color.red);
             prevPoint = nextPoint;
         }
 
@@ -169,19 +165,17 @@ public class Doosan : Machine
     /// </summary>
     /// <param name="target">Vector3 target position in worldspace</param>
     public override void InverseKinematics(Vector3 target) {
-        for (int i = 0; i < axes.Count; i++) {
+        for (int i = 0; i < Axes.Count; i++) {
             if (i == 10000 || i == 100000)
                 continue;
 
-            axes[i].SetValue(
-                axes[i].GetValue() - learningRate
-                * PartialGradient(target, axes, i)
-                * Time.deltaTime
-            );
+            Axes[i].Value -= LearningRate * PartialGradient(target, Axes, i) * Time.deltaTime;
         }
     }
 
-    /* Private Methods */  
+    #endregion
+
+    #region Private Methods
 
     /// <summary>
     /// Returns the gradient for a specific angleID
@@ -189,23 +183,25 @@ public class Doosan : Machine
     /// <param name="target">Vector3 target location in worldspace</param>
     /// <param name="anglesToCalculate">Angles to calculate from</param>
     /// <param name="axisToCalculate">Angle to return gradient</param>
-    /// <returns></returns>
-    private float PartialGradient(Vector3 target, List<Axis> anglesToCalculate, int axisToCalculate) {
+    /// <returns>Partial gradient as float</returns>
+    private float PartialGradient(Vector3 target, List<Machine.Axis> anglesToCalculate, int axisToCalculate) {
 
         // Safety checks
         Debug.Assert(axisToCalculate >= 0 && axisToCalculate < anglesToCalculate.Count,
             "[Doosan] Invalid axisID: " + axisToCalculate);
-        Debug.Assert(anglesToCalculate.Count == axisCount,
+        Debug.Assert(anglesToCalculate.Count == Axes.Count,
             "Invalid number of angles passed!");
 
-        float cachedAngle = anglesToCalculate[axisToCalculate].GetValue();
+        float cachedAngle = anglesToCalculate[axisToCalculate].Value;
         // Gradient : [F(x+SamplingDistance) - F(axisToCalculate)] / h
         float f_x = Vector3.SqrMagnitude(target - ForwardKinematics(anglesToCalculate));
 
-        anglesToCalculate[axisToCalculate].SetValue(anglesToCalculate[axisToCalculate].GetValue() + samplingDistance);
+        anglesToCalculate[axisToCalculate].Value += SamplingDistance;
         float f_x_plus_d = Vector3.SqrMagnitude(target - ForwardKinematics(anglesToCalculate));
-        anglesToCalculate[axisToCalculate].SetValue(cachedAngle);
+        anglesToCalculate[axisToCalculate].Value = cachedAngle;
 
-        return (f_x_plus_d - f_x) / samplingDistance;
+        return (f_x_plus_d - f_x) / SamplingDistance;
     }
+
+    #endregion
 }

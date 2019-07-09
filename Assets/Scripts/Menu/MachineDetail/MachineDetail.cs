@@ -65,7 +65,7 @@ public class MachineDetail : MonoBehaviour
 
         // Generate angles
         if (generateAngles)
-            foreach (Machine.Axis a in currMachine.axes)
+            foreach (Machine.Axis a in currMachine.Axes)
                 GenerateAxisElement(a);
     }
 
