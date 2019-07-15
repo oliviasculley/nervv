@@ -22,8 +22,7 @@ public class MachineAxisElement : MachineElement {
         axisDirection;  // Which direction (incrementing/decrementing)?
 
     private new void OnEnable() {
-        Debug.Assert(ElementTitle != null,
-            "Could not get axis element title TMP_UGUI!");
+        Debug.Assert(ElementTitle != null, "Could not get axis element title TMP_UGUI!");
     }
 
     private void Update() {
@@ -61,7 +60,6 @@ public class MachineAxisElement : MachineElement {
     /// </summary>
     /// <param name="direction">Direction to start changing axis value</param>
     public void StartChanging(bool direction) {
-        Debug.Log("Changing!");
         changingAxis = true;
         axisDirection = direction;
     }
@@ -70,7 +68,6 @@ public class MachineAxisElement : MachineElement {
     /// Stops modifying axis value
     /// </summary>
     public void StopChanging() {
-        Debug.Log("Stopped!");
         changingAxis = false;
     }
 
@@ -86,7 +83,9 @@ public class MachineAxisElement : MachineElement {
             "Invalid axis!");
 
         // Set text with current value
-        ElementTitle.text = Axis.Name + ": " + Axis.Value;
+        ElementTitle.text =
+            Axis.Name + ": " + Axis.Value + "\n" +  // Axis 1: <value>
+            "Torque: " + Axis.Torque;               // Torque: <value>
     }
 
     #endregion

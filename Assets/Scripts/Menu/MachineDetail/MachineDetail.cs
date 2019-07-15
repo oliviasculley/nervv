@@ -4,37 +4,48 @@ using System.Reflection;
 
 using UnityEngine;
 using UnityEngine.UI;
+using Valve.VR;
 
 using TMPro;
 
 public class MachineDetail : MonoBehaviour
 {
     [Header("Properties")]
-    public Machine currMachine;
+        public Machine currMachine;
 
     [Header("Settings")]
-    public string[] stringFieldNamesToGenerate; // String fields to generate handlers for
-    public string[] floatFieldNamesToGenerate;  // Float fields to generate handlers for
-    public bool generateAngles = true;          // Generate angle modifiers
+        public SteamVR_Action_Boolean activateIK;
+        [Tooltip("String fields to generate handlers for")]
+        public string[] stringFieldNamesToGenerate;
+        [Tooltip("Float fields to generate handlers for")]
+        public string[] floatFieldNamesToGenerate;
+        [Tooltip("Generates axis elements")]
+        public bool generateAxisElements = true;
 
     [Header("References")]
-    public TextMeshProUGUI machineTitle;
-    public Transform machineElementParent;
+        [Tooltip("Title element")]
+        public TextMeshProUGUI machineTitle;
+        [Tooltip("Parent to spawn machine elements")]
+        public Transform machineElementParent;
+        [Tooltip("Sphere on controller to signal IK")]
+        public GameObject IKSphere;
 
     [Header("Prefabs")]
-    public GameObject machineElementStringPrefab;   // Changeable machine element
-    public GameObject machineElementFloatPrefab, machineElementAxisPrefab;
+        public GameObject machineElementStringPrefab;   // Changeable machine element
+        public GameObject machineElementFloatPrefab, machineElementAxisPrefab;
 
     private void OnEnable() {
         // Get references
         Debug.Assert(machineTitle != null,
             "[Menu: Machine Detail] Could not get ref to machine title!");
-        Debug.Assert(machineElementStringPrefab != null &&
+        Debug.Assert(
+            machineElementStringPrefab != null &&
             machineElementFloatPrefab != null &&
             machineElementAxisPrefab != null,
             "[Menu: Machine Detail] Could not get machine element prefabs!");
         Debug.Assert(machineElementParent != null,
             "[Menu: Machine Detail] Could not get machine element parent!");
+        Debug.Assert(IKSphere != null, "Could not get reference to sphere!");
 
         // Safety checks
         foreach (string s in stringFieldNamesToGenerate)
@@ -42,11 +53,20 @@ public class MachineDetail : MonoBehaviour
                 "[Menu: Machine Detail] Invalid string field name!");
     }
 
-    /* Public methods */
+    private void Update() {
+        // If activated, perform IK on current menu machine
+        if (activateIK.state && currMachine != null)
+            currMachine.InverseKinematics(IKSphere.transform.position);
+
+        // Set sphere visualizer visibility
+        IKSphere.SetActive(activateIK.state);
+    }
+
+    #region Public methods
 
     public void DisplayMachine(Machine m) {
         // Safety checks
-        if ((currMachine = m) == null) {
+        if ((currMachine = m) != null && currMachine.GetType() == typeof(Machine)) {
             Debug.LogWarning("[Menu: Machine Detail] Invalid machine! Skipping...");
             return;
         }
@@ -64,12 +84,12 @@ public class MachineDetail : MonoBehaviour
             GenerateFloatElement(s);
 
         // Generate angles
-        if (generateAngles)
+        if (generateAxisElements)
             foreach (Machine.Axis a in currMachine.Axes)
                 GenerateAxisElement(a);
     }
 
-    /* Private methods */
+    #endregion
 
     #region Element Generators
 

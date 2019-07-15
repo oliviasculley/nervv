@@ -21,7 +21,6 @@ public class Kuka : Machine
 
     private void Awake() {
         // Init arrays
-        Axes = new List<Axis>();
         components = new Transform[Axes.Count];
 
         // Recursively populate components with Transform references
@@ -154,6 +153,9 @@ public class Kuka : Machine
     /// <param name="anglesToCalculate">Array of floats with angles to calculate</param>
     /// <returns>Vector3 of final position in world space</returns>
     public Vector3 ForwardKinematics(List<Axis> anglesToCalculate) {
+        if (components.Length == 0)
+            return Vector3.zero;
+
         Vector3 prevPoint = components[0].position;
         Quaternion rotation = Quaternion.identity;
 

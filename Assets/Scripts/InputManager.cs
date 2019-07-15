@@ -12,7 +12,11 @@ public class InputManager : MonoBehaviour
     public static InputManager Instance;
 
     [Header("Properties")]
-    public List<IInputSource> inputs; // List of input sources in scene
+        [Tooltip("List of input sources in scene")]
+        [SerializeField] private List<IInputSource> _inputs;
+        public List<IInputSource> Inputs {
+            get { return _inputs; }
+        }
 
     // Private vars
     List<System.Type> knownExclusives;  // Keeps track of exclusive types in inputs
@@ -25,10 +29,10 @@ public class InputManager : MonoBehaviour
 
         // Initialize vars
         knownExclusives = new List<System.Type>();
-        inputs = new List<IInputSource>();
+        _inputs = new List<IInputSource>();
     }
 
-    /* Public Methods */
+    #region Public Methods
 
     /// <summary>
     /// Adds an input to list of inputs
@@ -37,7 +41,7 @@ public class InputManager : MonoBehaviour
     /// <returns>Succesfully added?</returns>
     public bool AddInput(IInputSource input) {
         // Check for duplicate inputs
-        if (inputs.Contains(input))
+        if (_inputs.Contains(input))
             return false;
 
         // Check for same type for exclusive types
@@ -45,11 +49,11 @@ public class InputManager : MonoBehaviour
             return false;
 
         // Add to knownExclusives if exclusive
-        if (input.IsExclusive())
+        if (input.ExclusiveType)
             knownExclusives.Add(input.GetType());
 
         // Add to list of inputs
-        inputs.Add(input);
+        _inputs.Add(input);
         return true;
     }
 
@@ -58,13 +62,13 @@ public class InputManager : MonoBehaviour
     /// </summary>
     /// <param name="input">Input source to remove</param>
     /// <returns>Succesfully removed?</returns>
-    public bool RemoveInput(InputSource input) {
+    public bool RemoveInput(IInputSource input) {
         // If exclusive, remove from exclusives list
-        if (input.IsExclusive())
+        if (input.ExclusiveType)
             knownExclusives.Remove(input.GetType());
 
         // Remove from list of inputs
-        return inputs.Remove(input);
+        return _inputs.Remove(input);
     }
 
     /// <summary>
@@ -72,10 +76,10 @@ public class InputManager : MonoBehaviour
     /// </summary>
     /// <typeparam name="T">Type of input to return</typeparam>
     /// <returns>List<InputSource> of inputs</returns>
-    public List<InputSource> GetInputs<T>() {
-        List<InputSource> foundInputs = new List<InputSource>();
+    public List<IInputSource> GetInputs<T>() {
+        List<IInputSource> foundInputs = new List<IInputSource>();
 
-        foreach (InputSource i in inputs)
+        foreach (IInputSource i in _inputs)
             if (i.GetType() == typeof(T))
                 foundInputs.Add(i);
 
@@ -87,13 +91,15 @@ public class InputManager : MonoBehaviour
     /// </summary>
     /// <param name="type">String of name of type of input to return</param>
     /// <returns>List<InputSource> of inputs</returns>
-    public List<InputSource> GetInputs(string type) {
-        List<InputSource> foundInputs = new List<InputSource>();
+    public List<IInputSource> GetInputs(string type) {
+        List<IInputSource> foundInputs = new List<IInputSource>();
 
-        foreach (InputSource i in inputs)
+        foreach (IInputSource i in _inputs)
             if (i.GetType().ToString() == type)
                 foundInputs.Add(i);
 
         return foundInputs;
     }
+
+    #endregion
 }

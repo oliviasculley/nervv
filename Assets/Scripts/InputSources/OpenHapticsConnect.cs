@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OpenHapticsConnect : InputSource
-{
+public class OpenHapticsConnect : InputSource {
     [Header("References")]
-    public HapticPlugin HapticDevice = null;
+        public HapticPlugin HapticDevice = null;
 
-    void Start()
-    {
+    void Start() {
         // Get ref to HapticPlugin
         HapticDevice = (HapticPlugin)FindObjectOfType(typeof(HapticPlugin));
         Debug.Assert(HapticDevice != null, "[OpenHapticsConnect] Could not find HapticPlugin script in scene!");
@@ -18,10 +16,4 @@ public class OpenHapticsConnect : InputSource
         if (!InputManager.Instance.AddInput(this))
             Debug.LogError("[OpenHapticsConnect] Could not add self to InputManager!");
     }
-
-    void Update()
-    {
-    }
-
-    public OpenHapticsConnect() : base("OpenHapticsConnect", true) { }
 }

@@ -7,44 +7,44 @@ using Valve.VR;
 public class Menu : MonoBehaviour
 {
     // Properties
-    public bool visible {
-        get {
-            // If any children are active, menu is active
-            foreach (Transform t in transform)
-                if (t.gameObject.activeSelf)
-                    return true;
-            return false;
-        }
-        set {
-            // Set all children of menu false
-            foreach (Transform t in transform)
-                t.gameObject.SetActive(false);
+        public bool visible {
+            get {
+                // If any children are active, menu is active
+                foreach (Transform t in transform)
+                    if (t.gameObject.activeSelf)
+                        return true;
+                return false;
+            }
+            set {
+                // Set all children of menu false
+                foreach (Transform t in transform)
+                    t.gameObject.SetActive(false);
 
-            // Set UI panel switcher enabled or disabled
-            foreach (GameObject g in menuElements)
-                g.SetActive(value);
-            uiSwitcher.enabled = value;
+                // Set UI panel switcher enabled or disabled
+                foreach (GameObject g in menuElements)
+                    g.SetActive(value);
+                uiSwitcher.enabled = value;
+            }
         }
-    }
 
     [Header("Settings")]
-    public SteamVR_Action_Boolean callMenu;
-    [Tooltip("Offset used when smoothing towards camera")]
-    public Vector3 offset;
-    [Tooltip("Stops smoothing towards target position")]
-    public float epsilon = 5f;
-    [Tooltip("Speed to move towards target position")]
-    public float smoothTime = 0.05f;
-    [Tooltip("Angle to pitch menu up")]
-    public float menuPitch = 45;
+        public SteamVR_Action_Boolean callMenu;
+        [Tooltip("Offset used when smoothing towards camera")]
+        public Vector3 offset;
+        [Tooltip("Stops smoothing towards target position")]
+        public float epsilon = 5f;
+        [Tooltip("Speed to move towards target position")]
+        public float smoothTime = 0.05f;
+        [Tooltip("Angle to pitch menu up")]
+        public float menuPitch = 45;
 
     [Header("References")]
-    [Tooltip("Menu elements that mirror menu visibility")]
-    public GameObject[] menuElements;
+        [Tooltip("Menu elements that mirror menu visibility")]
+        public GameObject[] menuElements;
 
     // Private vars
-    private UIPanelSwitcher uiSwitcher;
-    private bool lerping;
+        private UIPanelSwitcher uiSwitcher;
+        private bool lerping;
 
     private void Awake() {
         uiSwitcher = GetComponent<UIPanelSwitcher>();

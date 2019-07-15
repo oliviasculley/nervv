@@ -128,6 +128,12 @@ public class LaserPointer : MonoBehaviour {
 
     private void OnPointerOut() {
         foreach (Transform prevTransform in enteredTransforms.ToArray()) {
+            // Check if destroyed
+            if (prevTransform == null) {
+                enteredTransforms.Remove(null);
+                continue;
+            }
+
             bool found = false; // is prevTransform in list of raycasts?
 
             // Go through all hits and find found
@@ -162,8 +168,10 @@ public class LaserPointer : MonoBehaviour {
                 onPointerIn.OnPointerEnter(new PointerEventData(EventSystem.current));
 
                 // If exit handler, add to be checked for exiting
-                if (h.transform.GetComponent<IPointerExitHandler>() != null)
+                if (h.transform.GetComponent<IPointerExitHandler>() != null) {
                     enteredTransforms.Add(h.transform);
+                }
+                    
 
                 // Set pointer length
                 SetPointerLength(h.distance);

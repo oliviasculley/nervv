@@ -5,23 +5,24 @@ using UnityEngine;
 using TMPro;
 using Valve.VR;
 using Valve.VR.InteractionSystem;
+using System.Reflection;
 
 public class MachineStringElement : MachineElement
 {
     [Header("Properties")]
-    public string fieldName;
-    public Machine currMachine;
+        public string fieldName;
+        public Machine currMachine;
 
     [Header("Settings")]
-    [Tooltip("Use SteamVR minimal keyboard mode")]
-    public bool useKeyboardMinimalMode = true;
+        [Tooltip("Use SteamVR minimal keyboard mode")]
+        public bool useKeyboardMinimalMode = true;
 
     [Header("References")]
-    public TextMeshProUGUI elementTitle;
+        public TextMeshProUGUI elementTitle;
 
     // Private vars
-    private static MachineStringElement activeKeyboard = null;
-    private string text = "";
+        private static MachineStringElement activeKeyboard = null;
+        private string text = "";
 
     private new void OnEnable() {
         Debug.Assert(elementTitle != null,
@@ -55,9 +56,16 @@ public class MachineStringElement : MachineElement
     /// <summary>
     /// Gets field value with reflection
     /// </summary>
-    /// <returns>Field value</returns>
-    private string GetField() {
-        return (string)typeof(Machine).GetField(fieldName).GetValue(currMachine);
+    /// <returns>Field value, can return null!</returns>
+    private string GetFieldValue() {
+        FieldInfo info;
+        if ((info = typeof(Machine).GetField(
+                fieldName,
+                BindingFlags.NonPublic | BindingFlags.Instance)
+            ) != null)
+            return (string)info.GetValue(currMachine);
+        Debug.LogError("Could not get field value: " + fieldName);
+        return null;
     }
 
     /// <summary>
@@ -65,7 +73,15 @@ public class MachineStringElement : MachineElement
     /// </summary>
     /// <param name="value">Field value</param>
     private void SetField(string value) {
-        typeof(Machine).GetField(fieldName).SetValue(currMachine, value);
+        FieldInfo info;
+        if (currMachine != null &&
+            (info = typeof(Machine).GetField(
+                fieldName,
+                BindingFlags.NonPublic | BindingFlags.Instance)
+            ) != null)
+            info.SetValue(currMachine, value);
+        else
+            Debug.LogError("Could not set field value: " + fieldName);
     }
 
     /// <summary>
@@ -73,10 +89,9 @@ public class MachineStringElement : MachineElement
     /// </summary>
     private void UpdateText() {
         // Set text with current value
-        elementTitle.text =
-            CapitalizeFirstLetter(fieldName) +
-            ": " +
-            GetField().ToString();
+        elementTitle.text = CapitalizeFirstLetter(fieldName.Substring(1)) + ": ";
+        if (GetFieldValue() != null)
+            elementTitle.text += GetFieldValue().ToString();
     }
 
     #endregion
@@ -90,15 +105,24 @@ public class MachineStringElement : MachineElement
             return;
 
         // Open OpenVR keyboard
-        SteamVR.instance.overlay.ShowKeyboard(
-            (int)EGamepadTextInputMode.k_EGamepadTextInputModeNormal,                       // Input mode
-            (int)EGamepadTextInputLineMode.k_EGamepadTextInputLineModeSingleLine,           // Line mode
-            "MTConnectVR keyboard",                                                         // Description
-            256,                                                                            // Max string length
-            (string)typeof(Machine).GetField(fieldName).GetValue(currMachine),              // Starting text
-            useKeyboardMinimalMode,                                                         // Keyboard minimal mode
-            0                                                                               // User value
-        );
+        if (GetFieldValue() != null && SteamVR.instance != null && SteamVR.instance.overlay != null) {
+            SteamVR.instance.overlay.ShowKeyboard(
+                (int)EGamepadTextInputMode.k_EGamepadTextInputModeNormal,                       // Input mode
+                (int)EGamepadTextInputLineMode.k_EGamepadTextInputLineModeSingleLine,           // Line mode
+                "MTConnectVR keyboard",                                                         // Description
+                256,                                                                            // Max string length
+                GetFieldValue() ?? "",                                                          // Starting text
+                useKeyboardMinimalMode,                                                         // Keyboard minimal mode
+                0                                                                               // User value
+            );
+        } else {
+            if (GetFieldValue() == null)
+                Debug.LogError("FieldValue null for: " + fieldName);
+            if (SteamVR.instance == null)
+                Debug.LogError("Could not get SteamVR Instance");
+            if (SteamVR.instance != null && SteamVR.instance.overlay == null)
+                Debug.LogError("Could not get SteamVR Instance Overlay");
+        }
     }
 
     private void OnKeyboard(VREvent_t args) {

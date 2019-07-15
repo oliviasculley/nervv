@@ -20,10 +20,13 @@ public class MachinesList : MonoBehaviour
             "[Menu: MachinesList] Could not get ref to machine detail panel!");
         Debug.Assert(machineButtonPrefab != null,
             "[Menu: MachinesList] Could not get ref to machine button prefab!");
-        Debug.Assert(MachineManager.Instance != null,
-            "[Menu: MachinesList] Could not get ref to MachineManager!");
         Debug.Assert(switcher != null,
             "[Menu: MachinesList] Could not get ref to switcher!");
+    }
+
+    private void Start() {
+        Debug.Assert(MachineManager.Instance != null,
+            "[Menu: MachinesList] Could not get ref to MachineManager!");
 
         GenerateMachineButtons();
     }

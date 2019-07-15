@@ -28,7 +28,7 @@ public class InputsList : MonoBehaviour
     #region Public Methods
 
     public void ToggleInput(IInputSource i) {
-        i.SetSourceActive(!i.IsActive());
+        i.InputEnabled = !i.InputEnabled;
         GenerateInputButtons();
     }
 
@@ -43,11 +43,11 @@ public class InputsList : MonoBehaviour
 
         // Spawn buttons for each machine
         GameObject g;
-        foreach (IInputSource i in InputManager.Instance.inputs) {
+        foreach (IInputSource i in InputManager.Instance.Inputs) {
             g = Instantiate(inputButtonPrefab, scrollViewParent);
 
-            g.transform.Find("InputName").GetComponent<TextMeshProUGUI>().text = "Name:\n" + i.GetName();
-            g.transform.Find("ToggleEnabled").GetComponent<Toggle>().isOn = i.IsActive();
+            g.transform.Find("InputName").GetComponent<TextMeshProUGUI>().text = "Name:\n" + i.Name;
+            g.transform.Find("ToggleEnabled").GetComponent<Toggle>().isOn = i.InputEnabled;
 
             // Push machine to stack so button works correctly
             IInputSource buttonInput = i;
