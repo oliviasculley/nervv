@@ -55,8 +55,10 @@ public class MachineDetail : MonoBehaviour
 
     private void Update() {
         // If activated, perform IK on current menu machine
-        if (activateIK.state && currMachine != null)
+        if (activateIK.state && currMachine != null) {
             currMachine.InverseKinematics(IKSphere.transform.position);
+        }
+            
 
         // Set sphere visualizer visibility
         IKSphere.SetActive(activateIK.state);

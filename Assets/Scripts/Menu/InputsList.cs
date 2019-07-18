@@ -11,14 +11,11 @@ public class InputsList : MonoBehaviour
     [Header("References")]
     public Transform scrollViewParent;     // Parent to spawn machine buttons underneath
     public GameObject inputButtonPrefab;
-    public UIPanelSwitcher switcher;
 
     private void OnEnable()
     {
         Debug.Assert(inputButtonPrefab != null,
             "[Menu: MachinesList] Could not get ref to input button prefab!");
-        Debug.Assert(switcher != null,
-            "[Menu: MachinesList] Could not get ref to switcher!");
         Debug.Assert(InputManager.Instance != null,
             "[Menu: MachinesList] Could not get ref to InputManager instance!");
 
@@ -46,7 +43,7 @@ public class InputsList : MonoBehaviour
         foreach (IInputSource i in InputManager.Instance.Inputs) {
             g = Instantiate(inputButtonPrefab, scrollViewParent);
 
-            g.transform.Find("InputName").GetComponent<TextMeshProUGUI>().text = "Name:\n" + i.Name;
+            g.transform.Find("InputName").GetComponent<TextMeshProUGUI>().text = i.Name;
             g.transform.Find("ToggleEnabled").GetComponent<Toggle>().isOn = i.InputEnabled;
 
             // Push machine to stack so button works correctly

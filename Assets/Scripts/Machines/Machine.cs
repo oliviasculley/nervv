@@ -71,25 +71,35 @@ public abstract class Machine : MonoBehaviour, IMachine {
 
         [Header("Properties")]
 
-        [Tooltip("Value of axis in Unity worldspace")]
-        [SerializeField] protected float _value;
-        /// <summary>Value of axis</summary>
-        public virtual float Value {
-            get { return _value; }
-            set {
-                // Apply value
-                _value = Mathf.Repeat(value, 360);
-
-                // If MinMax different values, apply clamp
-                if (MinValue != MaxValue)
-                    _value = Mathf.Clamp(_value, MinValue, MaxValue);
+        /// <summary>Value of axis in external worldspace</summary>
+        [SerializeField] protected float _externalValue;
+        public virtual float ExternalValue {
+            get {
+                if (MaxDelta == 0)
+                    return _externalValue;
+                else
+                    return _externalValue % MaxDelta;
             }
+            set { _externalValue = value; }
         }
 
-        /// <summary>Value of axis in external worldspace</summary>
-        public virtual float ExternalValue {
-            get { return (Value * ScaleFactor) - Offset; }
-            set { Value = (value + Offset) * ScaleFactor; }
+        /// <summary>Value of axis in Unity worldspace</summary>
+        public virtual float Value {
+            get {
+                // Get value with offset and external value
+                float value = (_externalValue + Offset) * ScaleFactor;
+
+                // If rotary, keep between 0 and 360
+                if (Type == AxisType.Rotary)
+                    value = Mathf.Repeat(value, 360);
+
+                // If maxDelta is set, utilize
+                if (MaxDelta != 0)
+                    value = Mathf.Clamp(value, -MaxDelta, MaxDelta);
+
+                return value;
+            }
+            set { _externalValue += Value - value; }
         }
 
         [SerializeField] protected float _torque;
@@ -125,23 +135,15 @@ public abstract class Machine : MonoBehaviour, IMachine {
             set { _desc = value; }
         }
 
-        [Tooltip("Minimum allowed value")]
-        [SerializeField] protected float _minValue;
+        [Tooltip("Maximum allowed deviation")]
+        [SerializeField] protected float _maxDelta;
         /// <summary>Minimum allowed value</summary>
-        public virtual float MinValue {
-            get { return _minValue; }
-            set { _minValue = value; }
+        public virtual float MaxDelta {
+            get { return _maxDelta; }
+            set { _maxDelta = value; }
         }
 
-        [Tooltip("Maximum allowed value")]
-        [SerializeField] protected float _maxValue;
-        /// <summary>Maximum allowed value</summary>
-        public virtual float MaxValue {
-            get { return _maxValue; }
-            set { _maxValue = value; }
-        }
-
-        [Tooltip("Offset to add to external values")]
+        [Tooltip("Offset used to correct from an external worldspace to Unity's worldspace")]
         [SerializeField] protected float _offset;
         /// <summary>Offset to add to external values</summary>
         public virtual float Offset {
@@ -149,9 +151,9 @@ public abstract class Machine : MonoBehaviour, IMachine {
             set { _offset = value; }
         }
 
-        [Tooltip("Used to scale external value after offset")]
+        [Tooltip("Scale used to correct from an external worldspace to Unity's worldspace")]
         [SerializeField] protected float _scaleFactor = 1f;
-        /// <summary>Used to scale external value after offset</summary>
+        /// <summary>Scale used to correct between an external worldspace and Unity's worldspace</summary>
         public virtual float ScaleFactor {
             get { return _scaleFactor; }
             set { _scaleFactor = value; }

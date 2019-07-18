@@ -13,10 +13,13 @@ using MTConnectStreamsXML;
 
 public class MTConnect : InputSource {
     [Header("MTConnect Settings")]
-        [Tooltip("Current MTConnect data URL")]
-        public string URL = "";
-        [Tooltip("Interval in seconds to poll")]
-        public float pollInterval;
+
+    [Tooltip("Used to specify adjustments to incoming values for individual axes")]
+    public AxisValueAdjustment[] adjustments;
+    [Tooltip("Current MTConnect data URL")]
+    public string URL = "";
+    [Tooltip("Interval in seconds to poll")]
+    public float pollInterval = 0.1f;
 
     // Private vars
     IEnumerator fetchMTConnect;
@@ -34,9 +37,9 @@ public class MTConnect : InputSource {
 
     private void Start() {
         // Add self to InputManager
-        Debug.Assert(InputManager.Instance != null, "[MTConnect] Could not get ref to InputManager!");
+        Debug.Assert(InputManager.Instance != null, "Could not get ref to InputManager!");
         if (!InputManager.Instance.AddInput(this))
-            Debug.LogError("[MTConnect] Could not add self to InputManager!");
+            Debug.LogError("Could not add self to InputManager!");
     }
 
     private void Update() {
@@ -102,16 +105,15 @@ public class MTConnect : InputSource {
                 Debug.LogWarning("Did not find matching machine: " + ds.Uuid);
                 continue;
             }
-                
 
             // Go through each component
             foreach (ComponentStream cs in ds.ComponentStream) {
                 Machine.Axis a = m.Axes.Find(x => x.ID == cs.ComponentId);
                 if (a == null) {
-                    Debug.LogWarning("Did not find matching Axis: " + cs.ComponentId);
+                    //Debug.LogWarning("Did not find matching Axis: " + cs.ComponentId);
                     continue;
                 }
-                    
+
                 // Depending on axis type
                 switch (a.Type) {
                     case Machine.Axis.AxisType.Linear:
@@ -153,7 +155,6 @@ public class MTConnect : InputSource {
 
                             a.Torque = float.Parse(torque.Text, CultureInfo.InvariantCulture);
                         }
-
                         break;
 
                     default:
@@ -199,6 +200,25 @@ public class MTConnect : InputSource {
                 x.Timestamp.CompareTo(y.Timestamp));
             return x.Timestamp.CompareTo(y.Timestamp);
         }
+    }
+
+    #endregion
+
+    #region AxisValueAdjustment class
+
+    [System.Serializable]
+    public class AxisValueAdjustment {
+        [Tooltip("Machine to adjust axes for")]
+        public Machine Machine;
+
+        [Tooltip("ID of Axis to map to")]
+        public string ID;
+
+        [Tooltip("Offset used to correct between particular input's worldspace to chosen external worldspace")]
+        public float Offset;
+
+        [Tooltip("Scale factor used to correct between particular input's worldspace to chosen external worldspace")]
+        public float ScaleFactor;
     }
 
     #endregion

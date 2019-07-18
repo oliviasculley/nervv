@@ -60,13 +60,13 @@ Doosan:
             Name: "dr1_a2"
             UUID: "DR1_A2"
             Offset: 0f,
-            Flip: No
+            Flip: Yes
             Vector3: z
         - A3:
             Name: "dr1_a3"
             UUID: "DR1_A3"
             Offset: 0f,
-            Flip: No
+            Flip: Yes
             Vector3: z
         - A4:
             Name: "dr1_a4"
@@ -78,7 +78,7 @@ Doosan:
             Name: "dr1_a5"
             UUID: "DR1_A5"
             Offset: 0f,
-            Flip: No
+            Flip: Yes
             Vector3: z
         - A6:
             Name: "dr1_a6"

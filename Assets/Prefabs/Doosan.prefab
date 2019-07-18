@@ -1002,68 +1002,62 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _axes:
-  - _value: 0
+  - _externalValue: 0
     _torque: 0
     _id: DR1_A1
     _name: dr1_a1
     _desc: 
-    _minValue: 0
-    _maxValue: 0
+    _maxDelta: 0
     _offset: 180
     _scaleFactor: -1
     _type: 0
     _axisVector3: {x: 0, y: 1, z: 0}
-  - _value: 0
+  - _externalValue: 0
     _torque: 0
     _id: DR1_A2
     _name: dr1_a2
     _desc: 
-    _minValue: 0
-    _maxValue: 0
+    _maxDelta: 0
     _offset: 0
     _scaleFactor: 1
     _type: 0
     _axisVector3: {x: 0, y: 0, z: 1}
-  - _value: 0
+  - _externalValue: 0
     _torque: 0
     _id: DR1_A3
     _name: dr1_a3
     _desc: 
-    _minValue: 0
-    _maxValue: 0
+    _maxDelta: 0
     _offset: 0
     _scaleFactor: 1
     _type: 0
     _axisVector3: {x: 0, y: 0, z: 1}
-  - _value: 0
+  - _externalValue: 0
     _torque: 0
     _id: DR1_A4
     _name: dr1_a4
     _desc: 
-    _minValue: 0
-    _maxValue: 0
+    _maxDelta: 0
     _offset: 0
     _scaleFactor: -1
     _type: 0
     _axisVector3: {x: 0, y: 1, z: 0}
-  - _value: 0
+  - _externalValue: 0
     _torque: 0
     _id: DR1_A5
     _name: dr1_a5
     _desc: 
-    _minValue: 0
-    _maxValue: 0
+    _maxDelta: 0
     _offset: 0
     _scaleFactor: 1
     _type: 0
     _axisVector3: {x: 0, y: 0, z: 1}
-  - _value: 0
+  - _externalValue: 0
     _torque: 0
     _id: DR1_A6
     _name: dr1_a6
     _desc: 
-    _minValue: 0
-    _maxValue: 0
+    _maxDelta: 0
     _offset: 0
     _scaleFactor: -1
     _type: 0

@@ -9,12 +9,11 @@ public class Doosan : Machine {
     public float LerpSpeed = 10f;
     [Tooltip("Toggles lerping to correct position")]
     public bool Interpolation = true;
-    [Range(0.00001f, 1)]
+
     [Tooltip("Sampling distance used to calculate gradient")]
-    public float SamplingDistance;
-    [Range(0, 50000)]
+    public float MaxDeltaTimeDelta;
     [Tooltip("Learning rate of gradient descent")]
-    public float LearningRate;
+    public float SpeedFactor;
 
     // Private Vars
     private Transform[] components;
@@ -36,11 +35,14 @@ public class Doosan : Machine {
 
         // Safety checks
         for (int i = 0; i < Axes.Count; i++)
-            Debug.Assert(components[i] != null, "Could not find component " + i + "!");
+            Debug.Assert(components[i] != null,
+                "Could not find component " + i + "!");
         if (LerpSpeed == 0)
             Debug.LogWarning("LerpSpeed is 0, will never move!");
         if (MaxSpeed == 0)
             Debug.LogWarning("MaxSpeed set to 0, will not be able to move!");
+        if (SpeedFactor == 0 || MaxDeltaTimeDelta == 0)
+            Debug.LogWarning("IK Learning rate or sampling distance invalid, will behave unpredictably!");
     }
 
     private void Start() {
@@ -102,7 +104,12 @@ public class Doosan : Machine {
             if (i == 10000 || i == 100000)
                 continue;
 
-            Axes[i].Value -= LearningRate * PartialGradient(target, Axes, i) * Time.deltaTime;
+            Debug.Log("Axis " + i + ": " + PartialGradient(target, Axes, i));
+            Axes[i].Value -= Mathf.Clamp(
+                SpeedFactor * PartialGradient(target, Axes, i),
+                -MaxDeltaTimeDelta,
+                MaxDeltaTimeDelta
+            );
         }
     }
 
@@ -117,7 +124,7 @@ public class Doosan : Machine {
     /// <param name="anglesToCalculate">Angles to calculate from</param>
     /// <param name="axisToCalculate">Angle to return gradient</param>
     /// <returns>Partial gradient as float</returns>
-    private float PartialGradient(Vector3 target, List<Machine.Axis> anglesToCalculate, int axisToCalculate) {
+    private float PartialGradient(Vector3 target, List<Axis> anglesToCalculate, int axisToCalculate) {
 
         // Safety checks
         Debug.Assert(axisToCalculate >= 0 && axisToCalculate < anglesToCalculate.Count,
@@ -125,15 +132,15 @@ public class Doosan : Machine {
         Debug.Assert(anglesToCalculate.Count == Axes.Count,
             "Invalid number of angles passed!");
 
-        float cachedAngle = anglesToCalculate[axisToCalculate].Value;
-        // Gradient : [F(x+SamplingDistance) - F(axisToCalculate)] / h
+        
+        // Gradient : [F(x+Time per frame) - F(axisToCalculate)] / h
         float f_x = Vector3.SqrMagnitude(target - ForwardKinematics(anglesToCalculate));
 
-        anglesToCalculate[axisToCalculate].Value += SamplingDistance;
-        float f_x_plus_d = Vector3.SqrMagnitude(target - ForwardKinematics(anglesToCalculate));
-        anglesToCalculate[axisToCalculate].Value = cachedAngle;
+        List<Axis> tempAngles = anglesToCalculate;
+        tempAngles[axisToCalculate].Value += Time.deltaTime;
+        float f_x_plus_d = Vector3.SqrMagnitude(target - ForwardKinematics(tempAngles));
 
-        return (f_x_plus_d - f_x) / SamplingDistance;
+        return f_x_plus_d - f_x;
     }
 
     #endregion

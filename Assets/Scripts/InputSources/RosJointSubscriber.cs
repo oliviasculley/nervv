@@ -57,7 +57,7 @@ public class RosJointSubscriber : InputSource {
         [Tooltip("Topic to subscribe from")]
         public string Topic = "/joint_states";
         [Tooltip("Axes to bind")]
-        public string[] axesName;
+        public AxisValueAdjustment[] axesToBind;
 
     [Header("Settings")]
         [Tooltip("Machine to set angles from /joint_states")]
@@ -76,14 +76,19 @@ public class RosJointSubscriber : InputSource {
         private string topicID = "";    // Used to unsubscribe from topic on close
 
     private void OnEnable() {
+        // Add self to InputManager
+        Debug.Assert(InputManager.Instance != null, "Could not get ref to InputManager!");
+        if (!InputManager.Instance.AddInput(this))
+            Debug.LogError("Could not add self to InputManager!");
+
         // Safety checks
         if (machineToSet == null) {
             Debug.LogError("Machine null, disabling self...");
             _inputEnabled = false;
         }
-        foreach (string s in axesName) {
-            if (string.IsNullOrEmpty(s)) {
-                Debug.LogError("AxisName null, disabling self...");
+        foreach (AxisValueAdjustment a in axesToBind) {
+            if (string.IsNullOrEmpty(a.ID)) {
+                Debug.LogError("Axis ID is null, disabling self...");
                 _inputEnabled = false;
             }
         }
@@ -139,9 +144,9 @@ public class RosJointSubscriber : InputSource {
     /// <param name="message"></param>
     private void ReceiveMessage(JointState message) {
         if (InputEnabled)
-            for (int i = 0; i < message.name.Length && i < axesName.Length; i++)
-                machineToSet.Axes.Find(x => x.Name == axesName[i]).ExternalValue = 
-                    (float)message.position[i] * Mathf.Rad2Deg;
+            for (int i = 0; i < message.name.Length && i < axesToBind.Length; i++)
+                machineToSet.Axes.Find(x => x.ID == axesToBind[i].ID).ExternalValue = 
+                    (((float)message.position[i] * Mathf.Rad2Deg) + axesToBind[i].Offset) * axesToBind[i].ScaleFactor;
     }
 
     private void OnConnected(object sender, EventArgs e) {
@@ -150,6 +155,22 @@ public class RosJointSubscriber : InputSource {
 
     private void OnDisconnected(object sender, EventArgs e) {
         Debug.Log("Disconnected from RosBridge: " + URL);
+    }
+
+    #endregion
+
+    #region AxisValueAdjustment Convenience Class
+
+    [System.Serializable]
+    public class AxisValueAdjustment {
+        [Tooltip("ID of Axis to map to")]
+        public string ID;
+        
+        [Tooltip("Offset used to correct between particular input's worldspace to chosen external worldspace")]
+        public float Offset;
+
+        [Tooltip("Scale factor used to correct between particular input's worldspace to chosen external worldspace")]
+        public float ScaleFactor;
     }
 
     #endregion

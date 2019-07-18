@@ -218,7 +218,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4423197391627548595}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
@@ -238,6 +238,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!114 &4423197391627548599
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -247,12 +248,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 4423197391627548595}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1679637790, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_IgnoreLayout: 0
-  m_MinWidth: -1
-  m_MinHeight: 100
+  m_MinWidth: 300
+  m_MinHeight: 75
   m_PreferredWidth: -1
   m_PreferredHeight: -1
   m_FlexibleWidth: 1
@@ -267,7 +268,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4423197391627548595}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -405508275, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Padding:
@@ -295,9 +296,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b634d739d719984d91af51e4a52b308, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _visible: 0
   fieldName: 
   currMachine: {fileID: 0}
-  keyboardShowing: 0
   useKeyboardMinimalMode: 0
   elementTitle: {fileID: 4423197391337011292}
 --- !u!114 &661635358
@@ -309,7 +310,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4423197391627548595}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:

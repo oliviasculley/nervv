@@ -14,15 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _visible: 0
   Axis:
-    _value: 0
+    _externalValue: 0
     _torque: 0
     _id: 
     _name: 
     _desc: 
-    _minValue: 0
-    _maxValue: 0
+    _maxDelta: 0
+    _offset: 0
+    _scaleFactor: 1
     _type: 0
-  AxisSpeed: 100
+    _axisVector3: {x: 0, y: 0, z: 0}
+  AxisSpeed: 10
   ElementTitle: {fileID: 1185268238265361334}
 --- !u!114 &4875530437037599891
 MonoBehaviour:
