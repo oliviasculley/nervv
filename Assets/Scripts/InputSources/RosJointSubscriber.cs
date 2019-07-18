@@ -140,10 +140,8 @@ public class RosJointSubscriber : InputSource {
     private void ReceiveMessage(JointState message) {
         if (InputEnabled)
             for (int i = 0; i < message.name.Length && i < axesName.Length; i++)
-                machineToSet.SetAxisValue(
-                    axesName[i],
-                    (float)message.position[i] * Mathf.Rad2Deg
-                );
+                machineToSet.Axes.Find(x => x.Name == axesName[i]).ExternalValue = 
+                    (float)message.position[i] * Mathf.Rad2Deg;
     }
 
     private void OnConnected(object sender, EventArgs e) {

@@ -5,63 +5,59 @@ using UnityEngine;
 public abstract class Machine : MonoBehaviour, IMachine {
 
     [Header("Machine Properties")]
-        public List<Axis> _axes;
-        public List<Axis> Axes {
-            get { return _axes; }
-            set { _axes = value; }
-        }
+    public List<Axis> _axes;
+    /// <summary>Machine axes of possible movement/rotation</summary>
+    public virtual List<Axis> Axes {
+        get { return _axes; }
+        set { _axes = value; }
+    }
 
     [Header("Machine Settings")]
-        [Tooltip("Max speed of machine")]
-        [SerializeField] private float _maxSpeed;
-        public float MaxSpeed {
-            get { return _maxSpeed; }
-            set { _maxSpeed = value; }
-        }
+    [Tooltip("Max speed of machine")]
+    [SerializeField] protected float _maxSpeed;
+    /// <summary>Max speed of machine</summary>
+    public virtual float MaxSpeed {
+        get { return _maxSpeed; }
+        set { _maxSpeed = value; }
+    }
 
-        [Tooltip("Individual ID")]
-        [SerializeField] private string _name;
-        public string Name {
-            get { return _name; }
-            set { _name = value; }
-        }
 
-        [SerializeField] private string _uuid;
-        public string UUID {
-            get { return _uuid; }
-            set { _uuid = value; }
-        }
+    [Tooltip("Name of Machine")]
+    [SerializeField] protected string _name;
+    /// <summary>Name of Machine</summary>
+    public virtual string Name {
+        get { return _name; }
+        set { _name = value; }
+    }
 
-        [SerializeField] private string _manufacturer;
-        public string Manufacturer {
-            get { return _manufacturer; }
-            set { _manufacturer = value; }
-        }
+    [Tooltip("Individual ID, used for individual machine identification and matching")]
+    [SerializeField] protected string _uuid;
+    /// <summary>Individual ID, used for individual machine identification and matching</summary>
+    public virtual string UUID {
+        get { return _uuid; }
+        set { _uuid = value; }
+    }
 
-        [SerializeField] private string _model;
-        public string Model {
-            get { return _model; }
-            set { _model = value; }
-        }
+    [Tooltip("Name of machine manufacturer")]
+    [SerializeField] protected string _manufacturer;
+    /// <summary>Name of machine manufacturer</summary>
+    public virtual string Manufacturer {
+        get { return _manufacturer; }
+        set { _manufacturer = value; }
+    }
+
+    [Tooltip("Model of machine")]
+    [SerializeField] protected string _model;
+    /// <summary>Model of machine</summary>
+    public virtual string Model {
+        get { return _model; }
+        set { _model = value; }
+    }
 
     #region IMachine Public Methods
 
     /// <summary>
-    /// Returns the Vector3 for the associated axis
-    /// </summary>
-    /// <param name="axis">Axis to get Vector3</param>
-    /// <returns>Vector3 of axis value in local space</returns>
-    public abstract Vector3 GetAxisVector3(Machine.Axis axis);
-
-    /// <summary>
-    /// Sets the value of a certain axis by axis' ID. Use this function to apply offsets or mirrors to incoming values!
-    /// </summary>
-    /// <param name="axisID">Axis ID (MTConnect string identifier) to set</param>
-    /// <param name="value">Value of axis to set</param>
-    public abstract void SetAxisValue(string axisID, float value);
-
-    /// <summary>
-    /// Activate a small delta of inverse kinematics for the target position.
+    /// Performs inverse kinematics on the machine by a small delta
     /// </summary>
     /// <param name="targetPosition">Vector3 of target position in world space</param>
     public abstract void InverseKinematics(Vector3 targetPosition);
@@ -74,64 +70,109 @@ public abstract class Machine : MonoBehaviour, IMachine {
     public class Axis {
 
         [Header("Properties")]
-            [SerializeField] private float _value;
-            public float Value {
-                get { return _value; }
-                set {
-                    if (MinValue != MaxValue)
-                        _value = Mathf.Clamp(
-                            Mathf.Repeat(value, 360),
-                            MinValue,
-                            MaxValue
-                        );
-                    else
-                        _value = Mathf.Repeat(value, 360);
-                }
-            }
 
-            [SerializeField] private float _torque;
-            public float Torque {
-                get { return _torque; }
-                set { _torque = value; }
+        [Tooltip("Value of axis in Unity worldspace")]
+        [SerializeField] protected float _value;
+        /// <summary>Value of axis</summary>
+        public virtual float Value {
+            get { return _value; }
+            set {
+                // Apply value
+                _value = Mathf.Repeat(value, 360);
+
+                // If MinMax different values, apply clamp
+                if (MinValue != MaxValue)
+                    _value = Mathf.Clamp(_value, MinValue, MaxValue);
             }
+        }
+
+        /// <summary>Value of axis in external worldspace</summary>
+        public virtual float ExternalValue {
+            get { return (Value * ScaleFactor) - Offset; }
+            set { Value = (value + Offset) * ScaleFactor; }
+        }
+
+        [SerializeField] protected float _torque;
+        /// <summary></summary>
+        public virtual float Torque {
+            get { return _torque; }
+            set { _torque = value; }
+        }
 
         [Header("Settings")]
-            [SerializeField] private string _id;
-            public string ID {
-                get { return _id; }
-                set { _id = value; }
-            }
 
-            [SerializeField] private string _name;
-            public string Name {
-                get { return _name; }
-                set { _name = value; }
-            }
+        [Tooltip("ID of axis, used for matching")]
+        [SerializeField] protected string _id;
+        /// <summary>ID of axis, used for matching</summary>
+        public virtual string ID {
+            get { return _id; }
+            set { _id = value; }
+        }
 
-            [SerializeField] private string _desc;
-            public string Description {
-                get { return _desc; }
-                set { _desc = value; }
-            }
+        [Tooltip("Name of axis")]
+        [SerializeField] protected string _name;
+        /// <summary>Name of axis</summary>
+        public virtual string Name {
+            get { return _name; }
+            set { _name = value; }
+        }
 
-            [SerializeField] private float _minValue;
-            public float MinValue {
-                get { return _minValue; }
-                set { _minValue = value; }
-            }
+        [Tooltip("Short description of axis")]
+        [SerializeField] protected string _desc;
+        /// <summary>Short description of axis</summary>
+        public virtual string Description {
+            get { return _desc; }
+            set { _desc = value; }
+        }
 
-            [SerializeField] private float _maxValue;
-            public float MaxValue {
-                get { return _maxValue; }
-                set { _maxValue = value; }
-            }
+        [Tooltip("Minimum allowed value")]
+        [SerializeField] protected float _minValue;
+        /// <summary>Minimum allowed value</summary>
+        public virtual float MinValue {
+            get { return _minValue; }
+            set { _minValue = value; }
+        }
 
-            public enum AxisType { Rotary, Linear, None }
-            [SerializeField] private AxisType _type;
-            public AxisType Type {
-                get { return _type; }
-                set { _type = value; }
-            }
+        [Tooltip("Maximum allowed value")]
+        [SerializeField] protected float _maxValue;
+        /// <summary>Maximum allowed value</summary>
+        public virtual float MaxValue {
+            get { return _maxValue; }
+            set { _maxValue = value; }
+        }
+
+        [Tooltip("Offset to add to external values")]
+        [SerializeField] protected float _offset;
+        /// <summary>Offset to add to external values</summary>
+        public virtual float Offset {
+            get { return _offset; }
+            set { _offset = value; }
+        }
+
+        [Tooltip("Used to scale external value after offset")]
+        [SerializeField] protected float _scaleFactor = 1f;
+        /// <summary>Used to scale external value after offset</summary>
+        public virtual float ScaleFactor {
+            get { return _scaleFactor; }
+            set { _scaleFactor = value; }
+        }
+
+        public enum AxisType { Rotary, Linear, None }
+        [Tooltip("Type of axis")]
+        [SerializeField] protected AxisType _type;
+        /// <summary></summary>
+        public virtual AxisType Type {
+            get { return _type; }
+            set { _type = value; }
+        }
+
+        [Tooltip("Vector3 Location/Rotation in Unity worldspace. Scales with Value")]
+        [SerializeField] protected Vector3 _axisVector3;
+        /// <summary>Vector3 Location/Rotation in Unity worldspace. Scales with Value</summary>
+        public virtual Vector3 AxisVector3 {
+            get { return _axisVector3 * Value; }
+            set { _axisVector3 = value.normalized; }
+        }
     }
 
     #endregion

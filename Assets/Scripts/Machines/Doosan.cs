@@ -57,12 +57,12 @@ public class Doosan : Machine {
             // Continually lerp towards final position
             for (int i = 0; i < Axes.Count; i++)
                 components[i].localRotation = Quaternion.Lerp(components[i].localRotation,
-                                                                Quaternion.Euler(GetAxisVector3(Axes[i])),
+                                                                Quaternion.Euler(Axes[i].AxisVector3),
                                                                 Mathf.Clamp(LerpSpeed * Time.deltaTime, 0, 1));
         } else {
             // Get latest correct axis angle
             for (int i = 0; i < Axes.Count; i++)
-                components[i].localEulerAngles = GetAxisVector3(Axes[i]);
+                components[i].localEulerAngles = Axes[i].AxisVector3;
         }
 
         // Debug
@@ -70,76 +70,6 @@ public class Doosan : Machine {
     }
 
     #region Public Methods
-
-    /// <summary>
-    /// Sets the value of a certain axis by axis' ID
-    /// </summary>
-    /// <param name="axisID">Axis ID (MTConnect string identifier) to set</param>
-    /// <param name="value">Value of axis to set</param>
-    public override void SetAxisValue(string axisID, float value) {
-
-        // Get Axis with axisID
-        Axis found;
-        if ((found = Axes.Find(x => x.ID == axisID)) == null)
-            return;
-
-        // Axis convention conversions
-        switch (found.ID) {
-
-            // X rotation
-            // None
-
-            // Y rotation
-            case "DR1_A1":
-                found.Value = -(value + 180f);
-                break;
-            case "DR1_A4":
-            case "DR1_A6":
-                found.Value = -(value);
-                break;
-
-            // Z rotation
-            case "DR1_A2":
-            case "DR1_A3":
-            case "DR1_A5":
-                found.Value = value;
-                break;
-
-            default:
-                Debug.LogWarning("[Doosan] Could not find axis with ID: " + found.ID);
-                break;
-        }
-    }
-
-    /// <summary>
-    /// Returns the Vector3 for the associated axis in local space
-    /// </summary>
-    /// <param name="axis">Axis to return Vector3</param>
-    /// <returns>Vector3 of rotation for selected axis in local space</returns>
-    public override Vector3 GetAxisVector3(Axis axis) {
-        // Switch based on axisID
-        switch (axis.ID) {
-
-            // X rotation
-            // None
-
-            // Y rotation
-            case "DR1_A1":
-            case "DR1_A4":
-            case "DR1_A6":
-                return new Vector3(0, axis.Value, 0);
-
-            // Z rotation
-            case "DR1_A2":
-            case "DR1_A3":
-            case "DR1_A5":
-                return new Vector3(0, 0, axis.Value);
-
-            default:
-                Debug.LogWarning("[Doosan] Could not find axis for ID: " + axis.ID);
-                return Vector3.zero;
-        }
-    }
 
     /// <summary>
     /// Returns the final location of the robotic arm using forward kinematics
@@ -154,7 +84,7 @@ public class Doosan : Machine {
         Quaternion rotation = Quaternion.identity;
 
         for (int i = 0; i < anglesToCalculate.Count - 1; i++) {
-            rotation *= Quaternion.AngleAxis(Mathf.Repeat(anglesToCalculate[i].Value, 360), GetAxisVector3(Axes[i]));
+            rotation *= Quaternion.AngleAxis(Mathf.Repeat(anglesToCalculate[i].Value, 360), Axes[i].AxisVector3);
             Vector3 nextPoint = prevPoint + (rotation * components[i + 1].localPosition);
             Debug.DrawRay(prevPoint, rotation * components[i + 1].localPosition, Color.red);
             prevPoint = nextPoint;

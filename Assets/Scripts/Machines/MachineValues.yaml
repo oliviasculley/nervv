@@ -1,0 +1,115 @@
+Kuka:
+    Name: "KUKA_Robot"
+    ID: "robot_1"
+    UUID: "KUKA_Robot"
+    Manufacturer: "MTC"
+    Model: "H"
+    Description: "KUKA R6 700"
+    Axes:
+        - A1:
+            Name: "A1"
+            UUID: "a1"
+            Offset: 0f,
+            Flip: No
+            Vector3: y
+        - A2:
+            Name: "A2"
+            UUID: "a2"
+            Offset: 90f
+            Flip: Yes
+            Vector3: x
+        - A3:
+            Name: "A3"
+            UUID: "a3"
+            Offset: -90f
+            Flip: Yes
+            Vector3: x
+        - A4:
+            Name: "A4"
+            UUID: "a4"
+            Offset: 0f,
+            Flip: Yes
+            Vector3: z
+        - A5:
+            Name: "A5"
+            UUID: "a5"
+            Offset: 0f,
+            Flip: Yes
+            Vector3: x
+        - A6:
+            Name: "A6"
+            UUID: "a6"
+            Offset: 0f,
+            Flip: No
+            Vector3: z
+Doosan:
+    Name: "doosan_robot1"
+    ID: "DOOSAN_ROBOT"
+    UUID: "doosan_robot"
+    Manufacturer: "Doosan Robotics"
+    Model: "M0609"
+    Description: "Collaboration robot"
+    Axes:
+        - A1:
+            Name: "dr1_a1"
+            UUID: "DR1_A1"
+            Offset: 180f
+            Flip: Yes
+            Vector3: y
+        - A2:
+            Name: "dr1_a2"
+            UUID: "DR1_A2"
+            Offset: 0f,
+            Flip: No
+            Vector3: z
+        - A3:
+            Name: "dr1_a3"
+            UUID: "DR1_A3"
+            Offset: 0f,
+            Flip: No
+            Vector3: z
+        - A4:
+            Name: "dr1_a4"
+            UUID: "DR1_A4"
+            Offset: 0f,
+            Flip: Yes
+            Vector3: y
+        - A5:
+            Name: "dr1_a5"
+            UUID: "DR1_A5"
+            Offset: 0f,
+            Flip: No
+            Vector3: z
+        - A6:
+            Name: "dr1_a6"
+            UUID: "DR1_A6"
+            Offset: 0f,
+            Flip: Yes
+            Vector3: y
+
+Shark:
+    Name: "Shark_CNC"
+    ID: "Shark_CNC_1"
+    UUID: "Shark_CNC"
+    Manufacturer: "MTC"
+    Model: "H"
+    Description: "Shark CNC HD4 router"
+    Axes:
+        - A1:
+            Name: "X"
+            UUID: "x_axis"
+            Offset: 0f
+            Scale: 0.0254f
+            Vector3: y
+        - A2:
+            Name: "Y"
+            UUID: "y_axis"
+            Offset: 0f
+            Scale: 0.0254f
+            Vector3: x
+        - A3:
+            Name: "Z"
+            UUID: "z_axis"
+            Offset: 0f
+            Scale: 0.0254f
+            Vector3: z

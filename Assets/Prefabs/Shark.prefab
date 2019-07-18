@@ -1055,12 +1055,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5450925302eb73744a14ea32c0905301, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _axes: []
+  _axes:
+  - _value: 0
+    _torque: 0
+    _id: x_axis
+    _name: X
+    _desc: 
+    _minValue: 0
+    _maxValue: 0
+    _offset: 0
+    _scaleFactor: 0.0254
+    _type: 0
+    _axisVector3: {x: 0, y: 1, z: 0}
+  - _value: 0
+    _torque: 0
+    _id: y_axis
+    _name: Y
+    _desc: 
+    _minValue: 0
+    _maxValue: 0
+    _offset: 0
+    _scaleFactor: 0.0254
+    _type: 0
+    _axisVector3: {x: 1, y: 0, z: 0}
+  - _value: 0
+    _torque: 0
+    _id: z_axis
+    _name: Z
+    _desc: 
+    _minValue: 0
+    _maxValue: 0
+    _offset: 0
+    _scaleFactor: 0.0254
+    _type: 0
+    _axisVector3: {x: 0, y: 0, z: 1}
   _maxSpeed: 0
-  _name: 
-  _uuid: 
-  _manufacturer: 
-  _model: 
+  _name: Shark_CNC
+  _uuid: Shark_CNC
+  _manufacturer: MTC
+  _model: H
   LerpSpeed: 10
   Interpolation: 1
 --- !u!1 &3935998331109424834

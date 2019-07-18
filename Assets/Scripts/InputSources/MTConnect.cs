@@ -126,7 +126,7 @@ public class MTConnect : InputSource {
 
                         // Set axis
                         //Debug.Log("[MTConnect] Set Position " + a.GetID() + "'s value: " + p.Text);
-                        m.SetAxisValue(a.ID, float.Parse(p.Text, CultureInfo.InvariantCulture));
+                        a.ExternalValue = float.Parse(p.Text, CultureInfo.InvariantCulture);
                         break;
 
                     case Machine.Axis.AxisType.Rotary:
@@ -140,7 +140,7 @@ public class MTConnect : InputSource {
 
                             // Set axis
                             //Debug.Log("[MTConnect] Set Angle " + a.GetID() + "'s value: " + angle.Text);
-                            m.SetAxisValue(a.ID, float.Parse(angle.Text, CultureInfo.InvariantCulture));
+                            a.ExternalValue = float.Parse(angle.Text, CultureInfo.InvariantCulture);
                         }
 
                         // Get latest torque

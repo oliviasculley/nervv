@@ -878,7 +878,73 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1d141ac7ac0f474fbd7b77ddd4e7002, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _axes: []
+  _axes:
+  - _value: 0
+    _torque: 0
+    _id: a1
+    _name: A1
+    _desc: 
+    _minValue: 0
+    _maxValue: 0
+    _offset: 0
+    _scaleFactor: 1
+    _type: 0
+    _axisVector3: {x: 0, y: 1, z: 0}
+  - _value: 0
+    _torque: 0
+    _id: a2
+    _name: A2
+    _desc: 
+    _minValue: 0
+    _maxValue: 0
+    _offset: 90
+    _scaleFactor: -1
+    _type: 0
+    _axisVector3: {x: 1, y: 0, z: 0}
+  - _value: 0
+    _torque: 0
+    _id: a3
+    _name: A3
+    _desc: 
+    _minValue: 0
+    _maxValue: 0
+    _offset: -90
+    _scaleFactor: -1
+    _type: 0
+    _axisVector3: {x: 1, y: 0, z: 0}
+  - _value: 0
+    _torque: 0
+    _id: a4
+    _name: A4
+    _desc: 
+    _minValue: 0
+    _maxValue: 0
+    _offset: 0
+    _scaleFactor: -1
+    _type: 0
+    _axisVector3: {x: 0, y: 0, z: 1}
+  - _value: 0
+    _torque: 0
+    _id: a5
+    _name: A5
+    _desc: 
+    _minValue: 0
+    _maxValue: 0
+    _offset: 0
+    _scaleFactor: -1
+    _type: 0
+    _axisVector3: {x: 1, y: 0, z: 0}
+  - _value: 0
+    _torque: 0
+    _id: a6
+    _name: A6
+    _desc: 
+    _minValue: 0
+    _maxValue: 0
+    _offset: 0
+    _scaleFactor: 1
+    _type: 0
+    _axisVector3: {x: 0, y: 0, z: 1}
   _maxSpeed: 100
   _name: KUKA_Robot
   _uuid: KUKA_Robot
@@ -2068,14 +2134,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5332587869845000386}
     m_Modifications:
-    - target: {fileID: 100000, guid: 8620b0e87570e8b4b98a97f030d29b27, type: 3}
-      propertyPath: m_Name
-      value: kuka_geom_215
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 8620b0e87570e8b4b98a97f030d29b27, type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 8620b0e87570e8b4b98a97f030d29b27, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2119,6 +2177,14 @@ PrefabInstance:
     - target: {fileID: 400000, guid: 8620b0e87570e8b4b98a97f030d29b27, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 8620b0e87570e8b4b98a97f030d29b27, type: 3}
+      propertyPath: m_Name
+      value: kuka_geom_215
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 8620b0e87570e8b4b98a97f030d29b27, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 8620b0e87570e8b4b98a97f030d29b27, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -2230,14 +2296,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5332587869845000386}
     m_Modifications:
-    - target: {fileID: 100000, guid: e93d36208074d6c4ea4ea24331984920, type: 3}
-      propertyPath: m_Name
-      value: kuka_geom_185
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: e93d36208074d6c4ea4ea24331984920, type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: e93d36208074d6c4ea4ea24331984920, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2282,6 +2340,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: e93d36208074d6c4ea4ea24331984920, type: 3}
+      propertyPath: m_Name
+      value: kuka_geom_185
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: e93d36208074d6c4ea4ea24331984920, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: e93d36208074d6c4ea4ea24331984920, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -2301,14 +2367,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5332587869845000386}
     m_Modifications:
-    - target: {fileID: 100000, guid: 69877cdfa8ccb334b9792513c17c9637, type: 3}
-      propertyPath: m_Name
-      value: kuka_geom_40
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: 69877cdfa8ccb334b9792513c17c9637, type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 69877cdfa8ccb334b9792513c17c9637, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2353,6 +2411,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 69877cdfa8ccb334b9792513c17c9637, type: 3}
+      propertyPath: m_Name
+      value: kuka_geom_40
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: 69877cdfa8ccb334b9792513c17c9637, type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 69877cdfa8ccb334b9792513c17c9637, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -2372,14 +2438,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5332587869845000386}
     m_Modifications:
-    - target: {fileID: 100000, guid: b0ed3ad664019a24d9cea9ce4450d5e5, type: 3}
-      propertyPath: m_Name
-      value: kuka_geom_300
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: b0ed3ad664019a24d9cea9ce4450d5e5, type: 3}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: b0ed3ad664019a24d9cea9ce4450d5e5, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2423,6 +2481,14 @@ PrefabInstance:
     - target: {fileID: 400000, guid: b0ed3ad664019a24d9cea9ce4450d5e5, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: b0ed3ad664019a24d9cea9ce4450d5e5, type: 3}
+      propertyPath: m_Name
+      value: kuka_geom_300
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: b0ed3ad664019a24d9cea9ce4450d5e5, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: b0ed3ad664019a24d9cea9ce4450d5e5, type: 3}
       propertyPath: m_Materials.Array.data[0]

@@ -44,62 +44,31 @@ public class Shark : Machine
         if (Interpolation) {
             // Continually lerp towards final position
             Vector3 vel = Vector3.zero;
-            head.localPosition = Vector3.Lerp(  head.localPosition,
-                                                GetAxisVector3(Axes[0]),
-                                                LerpSpeed * Time.deltaTime);
-			//Debug.Log("Shark  dsfbkjasb"+ GetAxisVector3(Axes[2]));
-            holder.localPosition = Vector3.Lerp(holder.localPosition,
-                                                GetAxisVector3(Axes[1]),
-                                                LerpSpeed * Time.deltaTime);
-            base_y.localPosition = Vector3.Lerp(base_y.localPosition,
-                                                GetAxisVector3(Axes[2]),
-                                                LerpSpeed * Time.deltaTime);
+
+            head.localPosition = Vector3.Lerp(
+                head.localPosition,
+                Axes[0].AxisVector3,
+                LerpSpeed * Time.deltaTime
+            );
+            holder.localPosition = Vector3.Lerp(
+                holder.localPosition,
+                Axes[1].AxisVector3,
+                LerpSpeed * Time.deltaTime
+            );
+            base_y.localPosition = Vector3.Lerp(
+                base_y.localPosition,
+                Axes[2].AxisVector3,
+                LerpSpeed * Time.deltaTime
+            );
         } else {
             // Get latest correct axis angle
-            head.localPosition = GetAxisVector3(Axes[2]);
-            holder.localPosition = GetAxisVector3(Axes[1]);
-            base_y.localPosition = GetAxisVector3(Axes[0]);
+            head.localPosition = Axes[2].AxisVector3;
+            holder.localPosition = Axes[1].AxisVector3;
+            base_y.localPosition = Axes[0].AxisVector3;
         }
     }
 
-    /* Public Methods */
-
-    /// <summary>
-    /// Sets the value of a certain axis by axis' ID
-    /// </summary>
-    /// <param name="axisID">Axis ID (MTConnect string identifier) to set</param>
-    /// <param name="value">Value of axis to set</param>
-    public override void SetAxisValue(string axisID, float value) {
-
-        // Get Axis with axisID
-        Axis found;
-        if ((found = Axes.Find(x => x.ID == axisID)) == null)
-            return;
-
-        found.Value = value;
-    }
-
-    /// <summary>
-    /// Returns the Vector3 for the associated axis in local space
-    /// </summary>
-    /// <param name="axis">Axis to return Vector3</param>
-    /// <returns>Vector3 of rotation for selected axis in local space</returns>
-    public override Vector3 GetAxisVector3(Axis axis) {
-        switch (axis.ID) {
-            case "x_axis":
-                return new Vector3(0, axis.Value, 0) * scaleFactor;
-
-            case "y_axis":
-                return new Vector3(axis.Value, 0, 0) * scaleFactor;
-
-            case "z_axis":
-                return new Vector3(0, 0, axis.Value) * scaleFactor;
-
-            default:
-                Debug.LogError("[Shark] Could not find axis with id: " + axis.ID);
-                return new Vector3(0, 0, 0);
-        }
-	}
+    #region Public Methods
 
     /// <summary>
     /// 
@@ -108,4 +77,6 @@ public class Shark : Machine
     public override void InverseKinematics(Vector3 targetPosition) {
         Debug.LogWarning("Not implemented yet!");
     }
+
+    #endregion
 }
