@@ -6,14 +6,13 @@ using UnityEngine.UI;
 
 using TMPro;
 
-public class InputsList : MonoBehaviour
-{
+public class InputsList : MonoBehaviour {
     [Header("References")]
+
     public Transform scrollViewParent;     // Parent to spawn machine buttons underneath
     public GameObject inputButtonPrefab;
 
-    private void OnEnable()
-    {
+    private void OnEnable() {
         Debug.Assert(inputButtonPrefab != null,
             "[Menu: MachinesList] Could not get ref to input button prefab!");
         Debug.Assert(InputManager.Instance != null,

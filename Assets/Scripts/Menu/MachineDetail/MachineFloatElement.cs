@@ -6,118 +6,121 @@ using UnityEngine.UI;
 using TMPro;
 using System.Reflection;
 
-public class MachineFloatElement : MachineElement
-{
-    [Header("Properties")]
-    public string fieldName;
-    public Machine currMachine;
+using MTConnectVR;
 
-    [Header("Settings")]
-    [Tooltip("Delta to increment or decrement value by")]
-    public float delta = 1f;
-    public float minValue, maxValue;
+namespace MTConnectVR.Menu {
+    public class MachineFloatElement : MachineElement {
+        [Header("Properties")]
+        public string fieldName;
+        public IMachine currMachine;
 
-    [Header("References")]
-    public TextMeshProUGUI elementTitle;
+        [Header("Settings")]
+        [Tooltip("Delta to increment or decrement value by")]
+        public float delta = 1f;
+        public float minValue, maxValue;
 
-    private new void OnEnable() {
-        Debug.Assert(elementTitle != null,
-            "Could not get Float element title TMP_UGUI!");
-    }
+        [Header("References")]
+        public TextMeshProUGUI elementTitle;
 
-    #region Public Functions
+        private new void OnEnable() {
+            Debug.Assert(elementTitle != null,
+                "Could not get Float element title TMP_UGUI!");
+        }
 
-    /// <summary>
-    /// Initialize float element with needed parameters
-    /// </summary>
-    /// <param name="fieldName"></param>
-    /// <param name="currMachine"></param>
-    public void InitializeElement(string fieldName, Machine currMachine, float minValue = default, float maxValue = default) {
-        Debug.Assert(currMachine != null && !string.IsNullOrEmpty(fieldName));
+        #region Public Functions
 
-        this.fieldName = fieldName;
-        this.currMachine = currMachine;
-        this.minValue = minValue;
-        this.maxValue = maxValue;
+        /// <summary>
+        /// Initialize float element with needed parameters
+        /// </summary>
+        /// <param name="fieldName"></param>
+        /// <param name="currMachine"></param>
+        public void InitializeElement(string fieldName, IMachine currMachine, float minValue = default, float maxValue = default) {
+            Debug.Assert(currMachine != null && !string.IsNullOrEmpty(fieldName));
 
-        UpdateText();
-    }
+            this.fieldName = fieldName;
+            this.currMachine = currMachine;
+            this.minValue = minValue;
+            this.maxValue = maxValue;
 
-    public void Increment() {
-        Debug.Assert(currMachine != null && !string.IsNullOrEmpty(fieldName));
-
-        if (GetFieldValue() != null) {
-            SetField((float)GetFieldValue() + delta);
             UpdateText();
         }
-    }
 
-    public void Decrement() {
-        Debug.Assert(currMachine != null && !string.IsNullOrEmpty(fieldName));
+        public void Increment() {
+            Debug.Assert(currMachine != null && !string.IsNullOrEmpty(fieldName));
 
-        if (GetFieldValue() != null) {
-            SetField((float)GetFieldValue() - delta);
-            UpdateText();
+            if (GetFieldValue() != null) {
+                SetField((float)GetFieldValue() + delta);
+                UpdateText();
+            }
         }
-    }
 
-    #endregion
+        public void Decrement() {
+            Debug.Assert(currMachine != null && !string.IsNullOrEmpty(fieldName));
 
-    #region Private Functions
+            if (GetFieldValue() != null) {
+                SetField((float)GetFieldValue() - delta);
+                UpdateText();
+            }
+        }
 
-    /// <summary>
-    /// Gets field value with reflection
-    /// </summary>
-    /// <returns>Field value</returns>
-    private float? GetFieldValue() {
-        System.Reflection.FieldInfo info;
-        if ((info = typeof(Machine).GetField(
-                fieldName,
-                BindingFlags.NonPublic | BindingFlags.Instance
-            )) != null)
-            return (float)info.GetValue(currMachine);
-        Debug.LogError("Could not get field value: " + fieldName);
-        return null;
-    }
+        #endregion
 
-    /// <summary>
-    /// Sets field value with reflection
-    /// </summary>
-    /// <param name="value">Field value</param>
-    private void SetField(float value) {
-       FieldInfo info;
-        if (currMachine != null &&
-            (info = typeof(Machine).GetField(
-                fieldName,
-                BindingFlags.NonPublic | BindingFlags.Instance)
-            ) != null) {
-            // Use min/max if values are available
-            if (minValue != default || maxValue != default)
-                typeof(Machine).GetField(
+        #region Private Functions
+
+        /// <summary>
+        /// Gets field value with reflection
+        /// </summary>
+        /// <returns>Field value</returns>
+        private float? GetFieldValue() {
+            System.Reflection.FieldInfo info;
+            if ((info = typeof(Machine).GetField(
                     fieldName,
                     BindingFlags.NonPublic | BindingFlags.Instance
-                ).SetValue(currMachine,
-                    Mathf.Clamp(value, minValue, maxValue)
-                );
-            else
-                typeof(Machine).GetField(
-                    fieldName,
-                    BindingFlags.NonPublic | BindingFlags.Instance
-                ).SetValue(currMachine, value);
-        } else {
-            Debug.LogError("Could not set field value: " + fieldName);
+                )) != null)
+                return (float)info.GetValue(currMachine);
+            Debug.LogError("Could not get field value: " + fieldName);
+            return null;
         }
-    }
 
-    /// <summary>
-    /// Update text readout with current value
-    /// </summary>
-    private void UpdateText() {
-        // Set text with current value
-        elementTitle.text = CapitalizeFirstLetter(fieldName.Substring(1)) + ": ";
-        if (GetFieldValue() != null)
-            elementTitle.text += GetFieldValue().ToString();
-    }
+        /// <summary>
+        /// Sets field value with reflection
+        /// </summary>
+        /// <param name="value">Field value</param>
+        private void SetField(float value) {
+            FieldInfo info;
+            if (currMachine != null &&
+                (info = typeof(Machine).GetField(
+                    fieldName,
+                    BindingFlags.NonPublic | BindingFlags.Instance)
+                ) != null) {
+                // Use min/max if values are available
+                if (minValue != default || maxValue != default)
+                    typeof(Machine).GetField(
+                        fieldName,
+                        BindingFlags.NonPublic | BindingFlags.Instance
+                    ).SetValue(currMachine,
+                        Mathf.Clamp(value, minValue, maxValue)
+                    );
+                else
+                    typeof(Machine).GetField(
+                        fieldName,
+                        BindingFlags.NonPublic | BindingFlags.Instance
+                    ).SetValue(currMachine, value);
+            } else {
+                Debug.LogError("Could not set field value: " + fieldName);
+            }
+        }
 
-    #endregion
+        /// <summary>
+        /// Update text readout with current value
+        /// </summary>
+        private void UpdateText() {
+            // Set text with current value
+            elementTitle.text = CapitalizeFirstLetter(fieldName.Substring(1)) + ": ";
+            if (GetFieldValue() != null)
+                elementTitle.text += GetFieldValue().ToString();
+        }
+
+        #endregion
+    }
 }

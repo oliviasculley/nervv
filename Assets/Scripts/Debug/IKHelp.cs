@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IKHelp : MonoBehaviour
-{
+using MTConnectVR;
+
+public class IKHelp : MonoBehaviour {
     public Machine machine;
 
     public void Update() {

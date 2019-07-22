@@ -10,93 +10,89 @@ using RosSharp.RosBridgeClient.Messages.Sensor;
 using Newtonsoft.Json;
 using RosSharp.RosBridgeClient.Messages.Standard;
 
+using MTConnectVR;
+
 public class RosJointSubscriber : InputSource {
 
-    // Input Properties
-    public new bool InputEnabled {
-        get { return _inputEnabled; }
-        set {
-            // If disabling input
-            if (!(_inputEnabled = value)) {
-                OnDisable();
-                return;
-            }
-
-            // Else, enabling input
-            // Init vars
-            rosConnect = null;
-
-            // Get protocol object
-            IProtocol p = null;
-            switch (Protocol) {
-                case ProtocolSelection.WebSocketSharp:
-                    p = new WebSocketSharpProtocol(URL);
-                    break;
-
-                case ProtocolSelection.WebSocketNET:
-                    p = new WebSocketNetProtocol(URL);
-                    break;
-
-                default:
-                    Debug.LogError("Could not get find matching protocol for RosSocket!");
-                    break;
-            }
-
-            if (p != null) {
-                // OnConnected and OnClosed event handlers
-                p.OnConnected += OnConnected;
-                p.OnClosed += OnDisconnected;
-
-                // Start coroutine
-                rosConnect = StartCoroutine(ConnectToRos(p));
-            }
-        }
-    }
-
     [Header("Input Settings")]
-        [Tooltip("Topic to subscribe from")]
-        public string Topic = "/joint_states";
-        [Tooltip("Axes to bind")]
-        public AxisValueAdjustment[] axesToBind;
+
+    [Tooltip("Topic to subscribe from")]
+    public string Topic = "/joint_states";
+    [Tooltip("Axes to bind")]
+    public AxisValueAdjustment[] axesToBind;
 
     [Header("Settings")]
-        [Tooltip("Machine to set angles from /joint_states")]
-        public Machine machineToSet;
-        [Tooltip("URL of RosBridgeClient websocket to subscribe from")]
-        public string URL = "";
-        public enum ProtocolSelection { WebSocketSharp, WebSocketNET };
-        [Tooltip("Protocol to use to connect to RosBridgeClient")]
-        public ProtocolSelection Protocol = ProtocolSelection.WebSocketNET;
-        [Tooltip("Serialization mode of RosBridgeClient")]
-        public RosSocket.SerializerEnum SerializationMode = RosSocket.SerializerEnum.JSON;
+
+    [Tooltip("Machine to set angles from /joint_states")]
+    public Machine machineToSet;
+    [Tooltip("URL of RosBridgeClient websocket to subscribe from")]
+    public string URL = "";
+    public enum ProtocolSelection { WebSocketSharp, WebSocketNET };
+    [Tooltip("Protocol to use to connect to RosBridgeClient")]
+    public ProtocolSelection Protocol = ProtocolSelection.WebSocketNET;
+    [Tooltip("Serialization mode of RosBridgeClient")]
+    public RosSocket.SerializerEnum SerializationMode = RosSocket.SerializerEnum.JSON;
 
     // Private vars
-        private Coroutine rosConnect;
-        private RosSocket rosSocket;
-        private string topicID = "";    // Used to unsubscribe from topic on close
 
-    private void OnEnable() {
-        // Add self to InputManager
-        Debug.Assert(InputManager.Instance != null, "Could not get ref to InputManager!");
-        if (!InputManager.Instance.AddInput(this))
-            Debug.LogError("Could not add self to InputManager!");
+    private Coroutine rosConnect = null;
+    private RosSocket rosSocket = null;
+    private string topicID = "";    // Used to unsubscribe from topic on close
 
+    /// <summary>
+    /// Initializes input with InputManager, does error checking that won't change
+    /// </summary>
+    protected override void Start() {
+        base.Start();
         // Safety checks
         if (machineToSet == null) {
             Debug.LogError("Machine null, disabling self...");
-            _inputEnabled = false;
+            InputEnabled = false;
         }
-        foreach (AxisValueAdjustment a in axesToBind) {
+        foreach (AxisValueAdjustment a in axesToBind)
             if (string.IsNullOrEmpty(a.ID)) {
                 Debug.LogError("Axis ID is null, disabling self...");
-                _inputEnabled = false;
+                InputEnabled = false;
             }
-        }
-
-        if (_inputEnabled)
-            InputEnabled = true;
     }
 
+    /// <summary>
+    /// Initialize websocket connection
+    /// </summary>
+    private void OnEnable() {
+        if (rosConnect != null)
+            Debug.LogWarning("Socket not null! Overwriting...");
+        rosConnect = null;
+
+        // Get protocol object
+        IProtocol p = null;
+        switch (Protocol) {
+            case ProtocolSelection.WebSocketSharp:
+                p = new WebSocketSharpProtocol(URL);
+                break;
+
+            case ProtocolSelection.WebSocketNET:
+                p = new WebSocketNetProtocol(URL);
+                break;
+
+            default:
+                Debug.LogError("Could not get find matching protocol for RosSocket!");
+                return;
+        }
+
+        Debug.Assert(p != null, "Could not initialize protocol!");
+
+        // OnConnected and OnClosed event handlers
+        p.OnConnected += OnConnected;
+        p.OnClosed += OnDisconnected;
+
+        // Start coroutine
+        rosConnect = StartCoroutine(ConnectToRos(p));
+    }
+
+    /// <summary>
+    /// Disable websocket connection
+    /// </summary>
     private void OnDisable() {
         // Stop rosConnect coroutine if still running
         if (rosConnect != null)
@@ -108,13 +104,6 @@ public class RosJointSubscriber : InputSource {
                 rosSocket.Unsubscribe(topicID);
             rosSocket.Close();
         }
-    }
-
-    private void Start() {
-        // Add self to InputManager
-        Debug.Assert(InputManager.Instance != null, "[MTConnect] Could not get ref to InputManager!");
-        if (!InputManager.Instance.AddInput(this))
-            Debug.LogError("[MTConnect] Could not add self to InputManager!");
     }
 
     #region Private methods
@@ -145,7 +134,7 @@ public class RosJointSubscriber : InputSource {
     private void ReceiveMessage(JointState message) {
         if (InputEnabled)
             for (int i = 0; i < message.name.Length && i < axesToBind.Length; i++)
-                machineToSet.Axes.Find(x => x.ID == axesToBind[i].ID).ExternalValue = 
+                machineToSet.Axes.Find(x => x.ID == axesToBind[i].ID).ExternalValue =
                     (((float)message.position[i] * Mathf.Rad2Deg) + axesToBind[i].Offset) * axesToBind[i].ScaleFactor;
     }
 
@@ -165,7 +154,7 @@ public class RosJointSubscriber : InputSource {
     public class AxisValueAdjustment {
         [Tooltip("ID of Axis to map to")]
         public string ID;
-        
+
         [Tooltip("Offset used to correct between particular input's worldspace to chosen external worldspace")]
         public float Offset;
 

@@ -1007,7 +1007,7 @@ MonoBehaviour:
     _id: DR1_A1
     _name: dr1_a1
     _desc: 
-    _maxDelta: 0
+    _maxDelta: 360
     _offset: 180
     _scaleFactor: -1
     _type: 0
@@ -1017,7 +1017,7 @@ MonoBehaviour:
     _id: DR1_A2
     _name: dr1_a2
     _desc: 
-    _maxDelta: 0
+    _maxDelta: 95
     _offset: 0
     _scaleFactor: 1
     _type: 0
@@ -1027,7 +1027,7 @@ MonoBehaviour:
     _id: DR1_A3
     _name: dr1_a3
     _desc: 
-    _maxDelta: 0
+    _maxDelta: 360
     _offset: 0
     _scaleFactor: 1
     _type: 0
@@ -1037,7 +1037,7 @@ MonoBehaviour:
     _id: DR1_A4
     _name: dr1_a4
     _desc: 
-    _maxDelta: 0
+    _maxDelta: 360
     _offset: 0
     _scaleFactor: -1
     _type: 0
@@ -1047,7 +1047,7 @@ MonoBehaviour:
     _id: DR1_A5
     _name: dr1_a5
     _desc: 
-    _maxDelta: 0
+    _maxDelta: 360
     _offset: 0
     _scaleFactor: 1
     _type: 0
@@ -1057,7 +1057,7 @@ MonoBehaviour:
     _id: DR1_A6
     _name: dr1_a6
     _desc: 
-    _maxDelta: 0
+    _maxDelta: 360
     _offset: 0
     _scaleFactor: -1
     _type: 0
@@ -1067,10 +1067,10 @@ MonoBehaviour:
   _uuid: doosan_robot
   _manufacturer: Doosan Robotics
   _model: M0609
-  LerpSpeed: 10
-  Interpolation: 1
-  SamplingDistance: 0
-  LearningRate: 0
+  _lerpSpeed: 0.5
+  _interpolation: 0
+  IKSpeed: 0.1
+  SamplingDistance: 0.01
 --- !u!1 &7755182271919345808
 GameObject:
   m_ObjectHideFlags: 0

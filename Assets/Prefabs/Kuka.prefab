@@ -879,68 +879,62 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _axes:
-  - _value: 0
+  - _externalValue: 0
     _torque: 0
     _id: a1
     _name: A1
     _desc: 
-    _minValue: 0
-    _maxValue: 0
+    _maxDelta: 360
     _offset: 0
     _scaleFactor: 1
     _type: 0
     _axisVector3: {x: 0, y: 1, z: 0}
-  - _value: 0
+  - _externalValue: -90
     _torque: 0
     _id: a2
     _name: A2
     _desc: 
-    _minValue: 0
-    _maxValue: 0
+    _maxDelta: 360
     _offset: 90
     _scaleFactor: -1
     _type: 0
     _axisVector3: {x: 1, y: 0, z: 0}
-  - _value: 0
+  - _externalValue: 90
     _torque: 0
     _id: a3
     _name: A3
     _desc: 
-    _minValue: 0
-    _maxValue: 0
+    _maxDelta: 360
     _offset: -90
     _scaleFactor: -1
     _type: 0
     _axisVector3: {x: 1, y: 0, z: 0}
-  - _value: 0
+  - _externalValue: 0
     _torque: 0
     _id: a4
     _name: A4
     _desc: 
-    _minValue: 0
-    _maxValue: 0
+    _maxDelta: 360
     _offset: 0
     _scaleFactor: -1
     _type: 0
     _axisVector3: {x: 0, y: 0, z: 1}
-  - _value: 0
+  - _externalValue: 0
     _torque: 0
     _id: a5
     _name: A5
     _desc: 
-    _minValue: 0
-    _maxValue: 0
+    _maxDelta: 360
     _offset: 0
     _scaleFactor: -1
     _type: 0
     _axisVector3: {x: 1, y: 0, z: 0}
-  - _value: 0
+  - _externalValue: 0
     _torque: 0
     _id: a6
     _name: A6
     _desc: 
-    _minValue: 0
-    _maxValue: 0
+    _maxDelta: 360
     _offset: 0
     _scaleFactor: 1
     _type: 0
@@ -950,10 +944,10 @@ MonoBehaviour:
   _uuid: KUKA_Robot
   _manufacturer: MTC
   _model: H
-  LerpSpeed: 10
-  Interpolation: 1
-  SamplingDistance: 0
-  LearningRate: 0
+  _lerpSpeed: 0.5
+  _interpolation: 0
+  IKSpeed: 0.5
+  SamplingDistance: 0.1
 --- !u!1 &5332587870330665997
 GameObject:
   m_ObjectHideFlags: 0

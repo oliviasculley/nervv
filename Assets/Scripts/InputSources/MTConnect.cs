@@ -1,31 +1,42 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-// Unity
 using UnityEngine;
 using UnityEngine.Networking;
-
-// XML Parsing
-using System.Xml.Serialization;
 using System.IO;
 using System.Globalization;
-using MTConnectStreamsXML;
+using System.Xml.Serialization;
 
+using MTConnectVR;
+using MTConnectVR.XML.MTConnectStreams;
+
+
+/// <summary>
+/// MTConnect XML parsing InputSource. Connects to a specified URL
+/// and then automatically sets Axis values for multiple machines
+/// based on Machine and Axis IDs. Specify manual machine and axis
+/// rules to adjust incoming values with adjustments.
+/// </summary>
 public class MTConnect : InputSource {
     [Header("MTConnect Settings")]
 
     [Tooltip("Used to specify adjustments to incoming values for individual axes")]
+    ///<summary>Used to specify adjustments to incoming values for individual axes</summary>
     public AxisValueAdjustment[] adjustments;
+
     [Tooltip("Current MTConnect data URL")]
+    ///<summary>Current MTConnect data URL</summary>
     public string URL = "";
+
     [Tooltip("Interval in seconds to poll")]
+    ///<summary>Interval in seconds to poll</summary>
     public float pollInterval = 0.1f;
 
     // Private vars
     IEnumerator fetchMTConnect;
     float timeToTrigger = 0.0f;
 
-    private void Awake() {
+    private void OnEnable() {
         // Safety checks
         Debug.Assert(!string.IsNullOrEmpty(URL), "MTConnectURL is null or empty!");
         if (pollInterval == 0)
@@ -33,13 +44,6 @@ public class MTConnect : InputSource {
 
         // Init vars
         fetchMTConnect = null;
-    }
-
-    private void Start() {
-        // Add self to InputManager
-        Debug.Assert(InputManager.Instance != null, "Could not get ref to InputManager!");
-        if (!InputManager.Instance.AddInput(this))
-            Debug.LogError("Could not add self to InputManager!");
     }
 
     private void Update() {
@@ -51,8 +55,10 @@ public class MTConnect : InputSource {
                 timeToTrigger = Time.time + pollInterval;
 
                 // Call GET request, get new coroutine
-                if (fetchMTConnect != null)
+                if (fetchMTConnect != null) {
                     StopCoroutine(fetchMTConnect);
+                    Debug.LogWarning("Old HTTP fetch request, refetching...");
+                }
                 StartCoroutine(fetchMTConnect = FetchMTConnect());
             }
         } else {
@@ -69,7 +75,6 @@ public class MTConnect : InputSource {
     /// </summary>
     /// <returns>Unity Coroutine</returns>
     private IEnumerator FetchMTConnect() {
-
         WWWForm form = new WWWForm();
         using (UnityWebRequest www = UnityWebRequest.Get(URL)) {
             yield return www.SendWebRequest();
@@ -79,7 +84,6 @@ public class MTConnect : InputSource {
             } else {
                 //Debug.Log("[INFO] GET request returned: " + www.downloadHandler.text);
 
-                // Parse XML
                 // DEBUG: Time how long it takes
                 //System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
                 //sw.Start();
@@ -98,7 +102,7 @@ public class MTConnect : InputSource {
 
         // For each device
         foreach (DeviceStream ds in xmlData.Streams.DeviceStream) {
-            Machine m = (Machine)MachineManager.Instance.machines.Find(
+            IMachine m = MachineManager.Instance.machines.Find(
                 x => x.UUID == ds.Uuid
             );
             if (m == null) {
@@ -224,251 +228,3 @@ public class MTConnect : InputSource {
     #endregion
 
 }
-
-#region XMLSerialization
-
-namespace MTConnectStreamsXML {
-
-    [XmlRoot(ElementName = "Header", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class Header {
-        [XmlAttribute(AttributeName = "creationTime")]
-        public string CreationTime { get; set; }
-        [XmlAttribute(AttributeName = "sender")]
-        public string Sender { get; set; }
-        [XmlAttribute(AttributeName = "instanceId")]
-        public string InstanceId { get; set; }
-        [XmlAttribute(AttributeName = "version")]
-        public string Version { get; set; }
-        [XmlAttribute(AttributeName = "bufferSize")]
-        public string BufferSize { get; set; }
-        [XmlAttribute(AttributeName = "nextSequence")]
-        public string NextSequence { get; set; }
-        [XmlAttribute(AttributeName = "firstSequence")]
-        public string FirstSequence { get; set; }
-        [XmlAttribute(AttributeName = "lastSequence")]
-        public string LastSequence { get; set; }
-    }
-
-    [XmlRoot(ElementName = "MachineState", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class MachineState {
-        [XmlAttribute(AttributeName = "dataItemId")]
-        public string DataItemId { get; set; }
-        [XmlAttribute(AttributeName = "timestamp")]
-        public string Timestamp { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-        [XmlAttribute(AttributeName = "sequence")]
-        public string Sequence { get; set; }
-        [XmlText]
-        public string Text { get; set; }
-    }
-
-    [XmlRoot(ElementName = "Events", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class Events {
-        [XmlElement(ElementName = "MachineState", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-        public List<MachineState> MachineState { get; set; }
-        [XmlElement(ElementName = "AssetChanged", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-        public AssetChanged AssetChanged { get; set; }
-        [XmlElement(ElementName = "AssetRemoved", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-        public AssetRemoved AssetRemoved { get; set; }
-        [XmlElement(ElementName = "Availability", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-        public List<Availability> Availability { get; set; }
-        [XmlElement(ElementName = "RemoteState", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-        public RemoteState RemoteState { get; set; }
-    }
-
-    [XmlRoot(ElementName = "ComponentStream", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class ComponentStream {
-        [XmlElement(ElementName = "Events", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-        public Events Events { get; set; }
-        [XmlAttribute(AttributeName = "component")]
-        public string Component { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-        [XmlAttribute(AttributeName = "componentId")]
-        public string ComponentId { get; set; }
-        [XmlElement(ElementName = "Samples", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-        public Samples Samples { get; set; }
-    }
-
-    [XmlRoot(ElementName = "AssetChanged", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class AssetChanged {
-        [XmlAttribute(AttributeName = "dataItemId")]
-        public string DataItemId { get; set; }
-        [XmlAttribute(AttributeName = "timestamp")]
-        public string Timestamp { get; set; }
-        [XmlAttribute(AttributeName = "sequence")]
-        public string Sequence { get; set; }
-        [XmlAttribute(AttributeName = "assetType")]
-        public string AssetType { get; set; }
-        [XmlText]
-        public string Text { get; set; }
-    }
-
-    [XmlRoot(ElementName = "AssetRemoved", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class AssetRemoved {
-        [XmlAttribute(AttributeName = "dataItemId")]
-        public string DataItemId { get; set; }
-        [XmlAttribute(AttributeName = "timestamp")]
-        public string Timestamp { get; set; }
-        [XmlAttribute(AttributeName = "sequence")]
-        public string Sequence { get; set; }
-        [XmlAttribute(AttributeName = "assetType")]
-        public string AssetType { get; set; }
-        [XmlText]
-        public string Text { get; set; }
-    }
-
-    [XmlRoot(ElementName = "Availability", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class Availability {
-        [XmlAttribute(AttributeName = "dataItemId")]
-        public string DataItemId { get; set; }
-        [XmlAttribute(AttributeName = "timestamp")]
-        public string Timestamp { get; set; }
-        [XmlAttribute(AttributeName = "sequence")]
-        public string Sequence { get; set; }
-        [XmlText]
-        public string Text { get; set; }
-    }
-
-    [XmlRoot(ElementName = "Angle", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class Angle {
-        [XmlAttribute(AttributeName = "dataItemId")]
-        public string DataItemId { get; set; }
-        [XmlAttribute(AttributeName = "timestamp")]
-        public string Timestamp { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-        [XmlAttribute(AttributeName = "sequence")]
-        public string Sequence { get; set; }
-        [XmlAttribute(AttributeName = "subType")]
-        public string SubType { get; set; }
-        [XmlText]
-        public string Text { get; set; }
-    }
-
-    [XmlRoot(ElementName = "Torque", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class Torque {
-        [XmlAttribute(AttributeName = "dataItemId")]
-        public string DataItemId { get; set; }
-        [XmlAttribute(AttributeName = "timestamp")]
-        public string Timestamp { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-        [XmlAttribute(AttributeName = "sequence")]
-        public string Sequence { get; set; }
-        [XmlAttribute(AttributeName = "subType")]
-        public string SubType { get; set; }
-        [XmlText]
-        public string Text { get; set; }
-    }
-
-    [XmlRoot(ElementName = "Samples", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class Samples {
-        [XmlElement(ElementName = "Angle", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-        public List<Angle> Angle { get; set; }
-        [XmlElement(ElementName = "Torque", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-        public List<Torque> Torque { get; set; }
-        [XmlElement(ElementName = "Position", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-        public List<Position> Position { get; set; }
-        [XmlElement(ElementName = "AxisFeedrate", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-        public AxisFeedrate AxisFeedrate { get; set; }
-        [XmlElement(ElementName = "SoundLevel", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-        public SoundLevel SoundLevel { get; set; }
-    }
-
-    [XmlRoot(ElementName = "Position", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class Position {
-        [XmlAttribute(AttributeName = "dataItemId")]
-        public string DataItemId { get; set; }
-        [XmlAttribute(AttributeName = "timestamp")]
-        public string Timestamp { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-        [XmlAttribute(AttributeName = "sequence")]
-        public string Sequence { get; set; }
-        [XmlAttribute(AttributeName = "subType")]
-        public string SubType { get; set; }
-        [XmlText]
-        public string Text { get; set; }
-    }
-
-    [XmlRoot(ElementName = "DeviceStream", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class DeviceStream {
-        [XmlElement(ElementName = "ComponentStream", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-        public List<ComponentStream> ComponentStream { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-        [XmlAttribute(AttributeName = "uuid")]
-        public string Uuid { get; set; }
-    }
-
-    [XmlRoot(ElementName = "AxisFeedrate", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class AxisFeedrate {
-        [XmlAttribute(AttributeName = "dataItemId")]
-        public string DataItemId { get; set; }
-        [XmlAttribute(AttributeName = "timestamp")]
-        public string Timestamp { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-        [XmlAttribute(AttributeName = "sequence")]
-        public string Sequence { get; set; }
-        [XmlAttribute(AttributeName = "subType")]
-        public string SubType { get; set; }
-        [XmlText]
-        public string Text { get; set; }
-    }
-
-    [XmlRoot(ElementName = "RemoteState", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class RemoteState {
-        [XmlAttribute(AttributeName = "dataItemId")]
-        public string DataItemId { get; set; }
-        [XmlAttribute(AttributeName = "timestamp")]
-        public string Timestamp { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-        [XmlAttribute(AttributeName = "sequence")]
-        public string Sequence { get; set; }
-        [XmlText]
-        public string Text { get; set; }
-    }
-
-    [XmlRoot(ElementName = "SoundLevel", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class SoundLevel {
-        [XmlAttribute(AttributeName = "dataItemId")]
-        public string DataItemId { get; set; }
-        [XmlAttribute(AttributeName = "timestamp")]
-        public string Timestamp { get; set; }
-        [XmlAttribute(AttributeName = "name")]
-        public string Name { get; set; }
-        [XmlAttribute(AttributeName = "sequence")]
-        public string Sequence { get; set; }
-        [XmlText]
-        public string Text { get; set; }
-    }
-
-    [XmlRoot(ElementName = "Streams", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class Streams {
-        [XmlElement(ElementName = "DeviceStream", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-        public List<DeviceStream> DeviceStream { get; set; }
-    }
-
-    [XmlRoot(ElementName = "MTConnectStreams", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-    public class MTConnectStreams {
-        [XmlElement(ElementName = "Header", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-        public Header Header { get; set; }
-        [XmlElement(ElementName = "Streams", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
-        public Streams Streams { get; set; }
-        [XmlAttribute(AttributeName = "m", Namespace = "http://www.w3.org/2000/xmlns/")]
-        public string M { get; set; }
-        [XmlAttribute(AttributeName = "xmlns")]
-        public string Xmlns { get; set; }
-        [XmlAttribute(AttributeName = "xsi", Namespace = "http://www.w3.org/2000/xmlns/")]
-        public string Xsi { get; set; }
-        [XmlAttribute(AttributeName = "schemaLocation", Namespace = "http://www.w3.org/2001/XMLSchema-instance")]
-        public string SchemaLocation { get; set; }
-    }
-
-}
-
-#endregion

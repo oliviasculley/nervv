@@ -10,48 +10,9 @@ using RosSharp.RosBridgeClient.Messages.Sensor;
 using Newtonsoft.Json;
 using RosSharp.RosBridgeClient.Messages.Standard;
 
+using MTConnectVR;
+
 public class RosJointPublisher : OutputSource {
-
-    // Input Properties
-    public override bool OutputEnabled {
-        get => base.OutputEnabled;
-        set {
-            // If disabling input
-            if (!(_outputEnabled = value)) {
-                OnDisable();
-                return;
-            }
-
-            // Else, enabling input
-            // Init vars
-            rosConnect = null;
-
-            // Get protocol object
-            IProtocol p = null;
-            switch (Protocol) {
-                case ProtocolSelection.WebSocketSharp:
-                    p = new WebSocketSharpProtocol(URL);
-                    break;
-
-                case ProtocolSelection.WebSocketNET:
-                    p = new WebSocketNetProtocol(URL);
-                    break;
-
-                default:
-                    Debug.LogError("Could not get find matching protocol for RosSocket!");
-                    break;
-            }
-
-            if (p != null) {
-                // OnConnected and OnClosed event handlers
-                p.OnConnected += OnConnected;
-                p.OnClosed += OnDisconnected;
-
-                // Start coroutine
-                rosConnect = StartCoroutine(ConnectToRos(p));
-            }
-        }
-    }
 
     [Header("Settings")]
 
@@ -71,26 +32,58 @@ public class RosJointPublisher : OutputSource {
 
     // Private vars
 
-    private Coroutine rosConnect;
-    private RosSocket rosSocket;
-    private string topicID;    // Used to unsubscribe from topic on close
+    private Coroutine rosConnect = null;
+    private RosSocket rosSocket = null;
+    private string topicID = null;    // Used to unsubscribe from topic on close
     float timeToTrigger = 0.0f;
 
-    private void OnEnable() {
-        // Add self to OutputManager
-        Debug.Assert(OutputManager.Instance != null, "Could not get ref to OutputManager!");
-        if (!OutputManager.Instance.AddOutput(this))
-            Debug.LogError("Could not add self to OutputManager!");
+    protected override void Start() {
+        base.Start();
 
         // Safety checks
         if (machineToPublish == null) {
             Debug.LogError("Machine null, disabling self...");
-            _outputEnabled = false;
+            OutputEnabled = false;
         }
-
-        topicID = null;
     }
 
+    /// <summary>
+    /// Initializes socket connection when object is enabled
+    /// </summary>
+    private void OnEnable() {
+        if (rosConnect != null)
+            Debug.LogWarning("Socket not null! Overwriting...");
+        rosConnect = null;
+
+        // Get protocol object
+        IProtocol p = null;
+        switch (Protocol) {
+            case ProtocolSelection.WebSocketSharp:
+                p = new WebSocketSharpProtocol(URL);
+                break;
+
+            case ProtocolSelection.WebSocketNET:
+                p = new WebSocketNetProtocol(URL);
+                break;
+
+            default:
+                Debug.LogError("Could not get find matching protocol for RosSocket!");
+                return;
+        }
+
+        Debug.Assert(p != null, "Could not initialize protocol!");
+
+        // OnConnected and OnClosed event handlers
+        p.OnConnected += OnConnected;
+        p.OnClosed += OnDisconnected;
+
+        // Start coroutine
+        rosConnect = StartCoroutine(ConnectToRos(p));
+    }
+
+    /// <summary>
+    /// Destroys socket connection if object is disabled
+    /// </summary>
     private void OnDisable() {
         // Stop rosConnect coroutine if still running
         if (rosConnect != null)
@@ -107,23 +100,9 @@ public class RosJointPublisher : OutputSource {
         }
     }
 
-    private void Start() {
-        // Add self to InputManager
-        Debug.Assert(OutputManager.Instance != null, "Could not get ref to InputManager!");
-        if (!OutputManager.Instance.AddOutput(this))
-            Debug.LogError("Could not add self to OutputManager!");
-    }
-
     private void Update() {
-        if (OutputEnabled && rosConnect == null)
-            OutputEnabled = true;
-        if (!OutputEnabled && rosConnect != null) {
-            OutputEnabled = false;
-            return;
-        }
-
         // Check if time to trigger
-        if (UnityEngine.Time.time > timeToTrigger) {
+        if (OutputEnabled && UnityEngine.Time.time > timeToTrigger) {
             // Set new time to trigger
             timeToTrigger = UnityEngine.Time.time + pollInterval;
             SendJointsMessage();
@@ -143,7 +122,7 @@ public class RosJointPublisher : OutputSource {
         // Wait until socket is active
         yield return new WaitUntil(() => rosSocket.protocol.IsAlive());
 
-        // Subscribe to topic once socket is active
+        // Advertise Doosan joint angles topic once socket is active
         topicID = rosSocket.Advertise<JointState>(Topic);
     }
 

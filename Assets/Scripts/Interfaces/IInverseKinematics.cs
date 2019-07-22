@@ -7,29 +7,7 @@ namespace MTConnectVR {
     /// The base machine interface that must be implemented to
     /// be considered as a machine.
     /// </summary>
-    public interface IMachine {
-
-        #region Required Fields
-
-        /// <summary>List of axes of movement</summary>
-        List<Machine.Axis> Axes { get; set; }
-
-        /// <summary>Max speed of machine</summary>
-        float MaxSpeed { get; set; }
-
-        /// <summary>Individual ID</summary>
-        string Name { get; set; }
-
-        /// <summary></summary>
-        string UUID { get; set; }
-
-        /// <summary></summary>
-        string Manufacturer { get; set; }
-
-        /// <summary></summary>
-        string Model { get; set; }
-
-        #endregion
+    public interface IInverseKinematics {
 
         #region Required methods
 
@@ -38,6 +16,13 @@ namespace MTConnectVR {
         /// </summary>
         /// <param name="targetPosition">Vector3 of target position in world space</param>
         void InverseKinematics(Vector3 targetPosition);
+
+        /// <summary>
+        /// Returns the final location of the robotic arm using forward kinematics
+        /// </summary>
+        /// <param name="anglesToCalculate">Array of floats with angles to calculate</param>
+        /// <returns>Vector3 of final position in world space</returns>
+        Vector3 ForwardKinematics(Machine.Axis[] anglesToCalculate);
 
         #endregion
     }

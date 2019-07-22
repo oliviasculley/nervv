@@ -2,21 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InputManager : MonoBehaviour
-{
-    // InputManager
-    // This class handles different input sources and sends the data
-    // to the machines through the MachineManager.
+/// <summary>
+/// The InputManager handles different input sources and sends
+/// the data to the machines through the MachineManager. There
+/// should only be one instance of InputManager running at any
+/// time, referenced by InputManager.Instance.
+/// </summary>
+public class InputManager : MonoBehaviour {
 
     // Static reference to self
     public static InputManager Instance;
 
     [Header("Properties")]
-        [Tooltip("List of input sources in scene")]
-        [SerializeField] private List<IInputSource> _inputs;
-        public List<IInputSource> Inputs {
-            get { return _inputs; }
-        }
+
+    [Tooltip("List of input sources in scene")]
+    [SerializeField] private List<IInputSource> _inputs;
+    public List<IInputSource> Inputs {
+        get { return _inputs; }
+    }
 
     // Private vars
     List<System.Type> knownExclusives;  // Keeps track of exclusive types in inputs

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using MTConnectVR;
+
 public class OpenHapticsConnect : InputSource {
     [Header("References")]
         public HapticPlugin HapticDevice = null;
