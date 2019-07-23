@@ -19,14 +19,6 @@ namespace MTConnectVR {
         }
 
         [Header("Machine Settings")]
-        [Tooltip("Max speed of machine")]
-        [SerializeField] protected float _maxSpeed;
-        /// <summary>Max speed of machine</summary>
-        /// <see cref="IMachine"/>
-        public virtual float MaxSpeed {
-            get { return _maxSpeed; }
-            set { _maxSpeed = value; }
-        }
 
         [Tooltip("Name of Machine")]
         [SerializeField] protected string _name;
@@ -66,7 +58,7 @@ namespace MTConnectVR {
 
         [Header("Interpolation Settings")]
         [Tooltip("Speed to lerp to correct position")]
-        [SerializeField] protected float _lerpSpeed = 0.5f;
+        [SerializeField] protected float _lerpSpeed = 10f;
         ///<summary>Speed to lerp to correct position</summary>
         ///<seealso cref="IInterpolation"/>
         public float LerpSpeed {
@@ -75,7 +67,7 @@ namespace MTConnectVR {
         }
 
         [Tooltip("Toggles lerping to final position")]
-        [SerializeField] protected bool _interpolation;
+        [SerializeField] protected bool _interpolation = true;
         ///<summary>Toggles lerping to final position</summary>
         ///<seealso cref="IInterpolation"/>
         public bool Interpolation {
@@ -86,13 +78,15 @@ namespace MTConnectVR {
         [Header("IK Settings")]
         [Tooltip("Learning rate of gradient descent")]
         ///<summary>Learning rate of gradient descent</summary>
-        ///<see cref="IInverseKinematics"/>
-        public float IKSpeed = 0.5f;
+        public float IKSpeed = 10f;
 
         [Tooltip("Axis delta to check IK")]
         ///<summary>Axis delta to check IK</summary>
-        //////<see cref="IInverseKinematics"/>
-        public float SamplingDistance = 0.1f;
+        public float SamplingDistance = 0.01f;
+
+        [Tooltip("Minimum distance delta to apply IK")]
+        ///<summary>Minimum distance delta to apply IK</summary>
+        public float IKEpsilon = 0.0001f;
 
         // Protected Vars
         protected Transform[] components;
@@ -105,15 +99,15 @@ namespace MTConnectVR {
             for (int i = 0; i < Axes.Count; i++)
                 Debug.Assert(components[i] != null,
                     "Could not find component " + i + "!");
-            if (MaxSpeed == 0)
-                Debug.LogWarning("MaxSpeed set to 0, will not be able to move!");
             if (IKSpeed == 0)
                 Debug.LogWarning("IK Learning rate is zero, IK will not move!");
+            if (LerpSpeed == 0)
+                Debug.LogWarning("LerpSpeed is 0, will never move!");
 
             // Link to MachineManager
             Debug.Assert(MachineManager.Instance != null,
                 "Could not get ref to MachineManager!");
-            Debug.Assert(!MachineManager.Instance.AddMachine(this),
+            Debug.Assert(MachineManager.Instance.AddMachine(this),
                 "Could not add self to MachineManager!");
         }
 
@@ -122,17 +116,17 @@ namespace MTConnectVR {
         /// <summary>
         /// Returns the final location of the robotic arm using forward kinematics
         /// </summary>
-        /// <param name="anglesToCalculate">Array of floats with angles to calculate</param>
+        /// <param name="axes">Array of floats with axis values to calculate</param>
         /// <returns>Vector3 of final position in world space</returns>
-        public virtual Vector3 ForwardKinematics(Axis[] anglesToCalculate) {
+        public virtual Vector3 ForwardKinematics(Axis[] axes) {
             if (components.Length == 0)
                 return Vector3.zero;
 
             Vector3 prevPoint = components[0].position;
             Quaternion rotation = Quaternion.identity;
 
-            for (int i = 0; i < anglesToCalculate.Length - 1; i++) {
-                rotation *= Quaternion.AngleAxis(Mathf.Repeat(anglesToCalculate[i].Value, 360), Axes[i].AxisVector3);
+            for (int i = 0; i < axes.Length - 1; i++) {
+                rotation *= Quaternion.AngleAxis(Mathf.Repeat(axes[i].Value, 360), Axes[i].AxisVector3);
                 Vector3 nextPoint = prevPoint + (rotation * components[i + 1].localPosition);
                 Debug.DrawRay(prevPoint, rotation * components[i + 1].localPosition, Color.red);
                 prevPoint = nextPoint;
@@ -147,10 +141,21 @@ namespace MTConnectVR {
         /// <param name="target">Vector3 target position in worldspace</param>
         /// <see cref="IInverseKinematics"/>
         public virtual void InverseKinematics(Vector3 target) {
+            // If close enough to the target, don't need to IK anymore
+            if (Vector3.SqrMagnitude(target - ForwardKinematics(Axes.ToArray())) < IKEpsilon)
+                return;
+
+            // Run linear IK with each angle
+            float delta;
             for (int i = 0; i < Axes.Count; i++) {
-                Axes[i].ExternalValue -= 
-                    (PartialGradient(target, Axes, i) < 0) ? -IKSpeed : IKSpeed
-                 * Time.deltaTime;
+                delta = ((PartialGradient(target, Axes, i) > 0) ? IKSpeed : -IKSpeed) * Time.deltaTime;
+
+                Axes[i].ExternalValue =
+                    Mathf.Clamp(
+                        Axes[i].ExternalValue - delta,
+                        (-Axes[i].MaxDelta) + IKSpeed,
+                        Axes[i].MaxDelta - IKSpeed
+                    );
             }
         }
 
@@ -162,25 +167,23 @@ namespace MTConnectVR {
         /// Returns the gradient for a specific angleID
         /// </summary>
         /// <param name="target">Vector3 target location in worldspace</param>
-        /// <param name="anglesToCalculate">Angles to calculate from</param>
-        /// <param name="axisToCalculate">Angle to return gradient</param>
+        /// <param name="axes">Angles to calculate from</param>
+        /// <param name="axisID">Angle to return gradient for</param>
         /// <returns>Partial gradient as float</returns>
         /// <see cref="IInverseKinematics"/>
-        private float PartialGradient(Vector3 target, List<Axis> anglesToCalculate, int axisToCalculate) {
+        private float PartialGradient(Vector3 target, List<Axis> axes, int axisID) {
             // Safety checks
-            Debug.Assert(axisToCalculate >= 0 && axisToCalculate < anglesToCalculate.Count,
-                "Invalid axisID: " + axisToCalculate);
-            Debug.Assert(anglesToCalculate.Count == Axes.Count,
-                "Invalid number of angles passed!");
+            Debug.Assert(axisID >= 0 && axisID < axes.Count,
+                "Invalid axisID: " + axisID);
 
             // Gradient : [F(x+Time per frame) - F(axisToCalculate)] / h
-            Axis[] anglesArray = anglesToCalculate.ToArray();
 
-            float f_x = Vector3.SqrMagnitude(target - ForwardKinematics(anglesArray));
-            anglesArray[axisToCalculate].ExternalValue += SamplingDistance;
-            float f_x_plus_d = Vector3.SqrMagnitude(target - ForwardKinematics(anglesArray));
+            float f_x = Vector3.SqrMagnitude(target - ForwardKinematics(axes.ToArray()));
+            axes[axisID].ExternalValue += SamplingDistance;
+            float f_x_plus_d = Vector3.SqrMagnitude(target - ForwardKinematics(axes.ToArray()));
+            axes[axisID].ExternalValue -= SamplingDistance;
 
-            return f_x_plus_d - f_x;
+            return (f_x_plus_d - f_x) / SamplingDistance;
         }
 
         #endregion
@@ -216,10 +219,6 @@ namespace MTConnectVR {
                     // If rotary, keep between 0 and 360
                     if (Type == AxisType.Rotary)
                         value = Mathf.Repeat(value, 360);
-
-                    // If maxDelta is set, utilize
-                    if (MaxDelta != 0)
-                        value = Mathf.Clamp(value, -MaxDelta, MaxDelta);
 
                     return value;
                 }

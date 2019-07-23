@@ -1760,8 +1760,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   content: {fileID: 417748265255631964}
-  minHeight: 0.05
-  maxHeight: 0.45
+  minHeight: 0
+  maxHeight: 0.5
 --- !u!1 &417748263850418259
 GameObject:
   m_ObjectHideFlags: 0
@@ -3474,7 +3474,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41f7aa4b4d05e631d955773cc7ed2624, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currMachine: {fileID: 0}
   activateIK:
     actionPath: /actions/Default/in/activateIK
     needsReinit: 0
@@ -3483,8 +3482,7 @@ MonoBehaviour:
   - _uuid
   - _manufacturer
   - _model
-  floatFieldNamesToGenerate:
-  - _maxSpeed
+  floatFieldNamesToGenerate: []
   generateAxisElements: 1
   machineTitle: {fileID: 417748264741289793}
   machineElementParent: {fileID: 417748265255631964}
@@ -7273,6 +7271,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: MachinesButton
       objectReference: {fileID: 0}
+    - target: {fileID: 6680624689351998248, guid: 6e735d94502bc342a9c2bdaecda73255,
+        type: 3}
+      propertyPath: menu
+      value: 
+      objectReference: {fileID: 417748263698076165}
     - target: {fileID: 1867627505, guid: 6e735d94502bc342a9c2bdaecda73255, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -7281,11 +7284,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
       value: 
       objectReference: {fileID: 417748265267520349}
-    - target: {fileID: 6680624689351998248, guid: 6e735d94502bc342a9c2bdaecda73255,
-        type: 3}
-      propertyPath: menu
-      value: 
-      objectReference: {fileID: 417748263698076165}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6e735d94502bc342a9c2bdaecda73255, type: 3}
 --- !u!224 &417748263255453032 stripped
@@ -7411,14 +7409,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: InputsButton
       objectReference: {fileID: 0}
-    - target: {fileID: 1867627505, guid: 6e735d94502bc342a9c2bdaecda73255, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 417748263698076163}
-    - target: {fileID: 1867627505, guid: 6e735d94502bc342a9c2bdaecda73255, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
-      value: 
-      objectReference: {fileID: 417748264716375346}
     - target: {fileID: 4976157090060101029, guid: 6e735d94502bc342a9c2bdaecda73255,
         type: 3}
       propertyPath: m_LocalPosition.z
@@ -7429,6 +7419,14 @@ PrefabInstance:
       propertyPath: menu
       value: 
       objectReference: {fileID: 417748263698076165}
+    - target: {fileID: 1867627505, guid: 6e735d94502bc342a9c2bdaecda73255, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 417748263698076163}
+    - target: {fileID: 1867627505, guid: 6e735d94502bc342a9c2bdaecda73255, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
+      value: 
+      objectReference: {fileID: 417748264716375346}
     - target: {fileID: 2303566387395795302, guid: 6e735d94502bc342a9c2bdaecda73255,
         type: 3}
       propertyPath: m_Sprite
@@ -8055,14 +8053,6 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1867627505, guid: 6e735d94502bc342a9c2bdaecda73255, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 417748263698076163}
-    - target: {fileID: 1867627505, guid: 6e735d94502bc342a9c2bdaecda73255, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
-      value: 
-      objectReference: {fileID: 417748264716375346}
     - target: {fileID: 4976157090060101029, guid: 6e735d94502bc342a9c2bdaecda73255,
         type: 3}
       propertyPath: m_LocalPosition.z
@@ -8073,6 +8063,14 @@ PrefabInstance:
       propertyPath: menu
       value: 
       objectReference: {fileID: 417748263698076165}
+    - target: {fileID: 1867627505, guid: 6e735d94502bc342a9c2bdaecda73255, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 417748263698076163}
+    - target: {fileID: 1867627505, guid: 6e735d94502bc342a9c2bdaecda73255, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
+      value: 
+      objectReference: {fileID: 417748264716375346}
     - target: {fileID: 2303566387395795302, guid: 6e735d94502bc342a9c2bdaecda73255,
         type: 3}
       propertyPath: m_Sprite
@@ -8599,14 +8597,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: OutputsButton
       objectReference: {fileID: 0}
-    - target: {fileID: 1867627505, guid: 6e735d94502bc342a9c2bdaecda73255, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 417748263698076163}
-    - target: {fileID: 1867627505, guid: 6e735d94502bc342a9c2bdaecda73255, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
-      value: 
-      objectReference: {fileID: 483731899570151613}
     - target: {fileID: 4976157090060101029, guid: 6e735d94502bc342a9c2bdaecda73255,
         type: 3}
       propertyPath: m_LocalRotation.x
@@ -8642,6 +8632,14 @@ PrefabInstance:
       propertyPath: menu
       value: 
       objectReference: {fileID: 417748263698076165}
+    - target: {fileID: 1867627505, guid: 6e735d94502bc342a9c2bdaecda73255, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 417748263698076163}
+    - target: {fileID: 1867627505, guid: 6e735d94502bc342a9c2bdaecda73255, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
+      value: 
+      objectReference: {fileID: 483731899570151613}
     - target: {fileID: 2303566387395795302, guid: 6e735d94502bc342a9c2bdaecda73255,
         type: 3}
       propertyPath: m_Sprite

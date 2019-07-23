@@ -72,6 +72,8 @@ public class LaserPointer : MonoBehaviour {
 
         // Raycast all objects in path
         hits = Physics.RaycastAll(transform.position, transform.forward);
+        if (hits.Length == 0)
+            SetPointerLength(0, true);
 
         // Pointer events
         OnPointerOut();

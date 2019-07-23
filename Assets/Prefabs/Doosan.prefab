@@ -1067,10 +1067,11 @@ MonoBehaviour:
   _uuid: doosan_robot
   _manufacturer: Doosan Robotics
   _model: M0609
-  _lerpSpeed: 0.5
-  _interpolation: 0
-  IKSpeed: 0.1
+  _lerpSpeed: 10
+  _interpolation: 1
+  IKSpeed: 10
   SamplingDistance: 0.01
+  IKEpsilon: 0.0001
 --- !u!1 &7755182271919345808
 GameObject:
   m_ObjectHideFlags: 0

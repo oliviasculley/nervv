@@ -14,9 +14,6 @@ namespace MTConnectVR {
         /// <summary>List of axes of movement</summary>
         List<Machine.Axis> Axes { get; set; }
 
-        /// <summary>Max speed of machine</summary>
-        float MaxSpeed { get; set; }
-
         /// <summary>Individual ID</summary>
         string Name { get; set; }
 

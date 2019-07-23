@@ -23,15 +23,6 @@ public class Doosan : Machine {
                 }
     }
 
-    /// <summary>
-    /// Safety checks
-    /// </summary>
-    protected override void Start() {
-        base.Start();
-        if (LerpSpeed == 0)
-            Debug.LogWarning("LerpSpeed is 0, will never move!");
-    }
-
     private void Update() {
         if (Interpolation) {
             // Continually lerp towards final position

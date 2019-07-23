@@ -14,9 +14,8 @@ public class OutputSafety : MonoBehaviour {
     }
 
     public void OnTriggerStay(Collider other) {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Machines")) {
+        if (other.gameObject.layer == LayerMask.NameToLayer("Machines"))
             foreach (IOutputSource output in OutputManager.Instance.outputs)
                 output.OutputEnabled = false;
-        }
     }
 }
