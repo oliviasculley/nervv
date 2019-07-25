@@ -1,28 +1,52 @@
-﻿using System.Collections;
+﻿// System
+using System.Collections;
 using System.Collections.Generic;
+
+// Unity Engine
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class MenuButtonAnim : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
-{
+public class MenuButtonAnim : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
+
+    #region Properties
     [Header("Properties")]
+
     public bool hovered;
 
+    #endregion
+
+    #region Animation Settings
     [Header("Animation Settings")]
+
+    /// <summary>Resting height for sprite</summary>
     [Tooltip("Resting height for sprite")]
     public float unactivatedHeight = 0.05f;
+
+    /// <summary>Height of activated sprite</summary>
     [Tooltip("Height of activated sprite")]
     public float activatedHeight = 0.025f;
+
+    /// <summary>Speed to activate icons</summary>
     [Tooltip("Speed to activate icons")]
     public float activationSpeed = 1f;
+
+    /// <summary>Ratio of background plane to image</summary>
     [Tooltip("Ratio of background plane to image")]
     public readonly float planeRatio = 1f;
 
+    #endregion
+
+    #region References
     [Header("References")]
+
     [Tooltip("Menu that menuButton is attached to")]
     public Menu menu;
     public GameObject buttonBackground, buttonIcon;
+
+    #endregion
+
+    #region Unity Methods
 
     private void Awake() {
         Debug.Assert(menu != null,
@@ -81,23 +105,19 @@ public class MenuButtonAnim : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         );
     }
 
+    #endregion
+
     #region Public methods
 
-    /// <summary>
-    /// Hover on OnPointerEnter
-    /// </summary>
+    /// <summary>Hover on OnPointerEnter</summary>
     /// <param name="data">Event system data</param>
-    public void OnPointerEnter(PointerEventData data)
-    {
+    public void OnPointerEnter(PointerEventData data) {
         hovered = true;
     }
 
-    /// <summary>
-    /// Unhover on OnPointerExit
-    /// </summary>
+    /// <summary>Unhover on OnPointerExit</summary>
     /// <param name="data">Event system data</param>
-    public void OnPointerExit(PointerEventData data)
-    {
+    public void OnPointerExit(PointerEventData data) {
         hovered = false;
     }
 

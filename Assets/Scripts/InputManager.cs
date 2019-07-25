@@ -10,20 +10,32 @@ using UnityEngine;
 /// </summary>
 public class InputManager : MonoBehaviour {
 
-    // Static reference to self
+    #region Static
+
     public static InputManager Instance;
 
+    #endregion
+
+    #region Properties
     [Header("Properties")]
 
     [Tooltip("List of input sources in scene")]
     [SerializeField] private List<IInputSource> _inputs;
+    /// <summary>List of input sources in scene</summary>
     public List<IInputSource> Inputs {
         get { return _inputs; }
     }
 
-    // Private vars
-    List<System.Type> knownExclusives;  // Keeps track of exclusive types in inputs
+    #endregion
 
+    #region Private vars
+
+    /// <summary>Keeps track of exclusive types in inputs</summary>
+    List<System.Type> knownExclusives;
+
+    #endregion
+
+    #region Unity Methods
     private void Awake() {
         // Add static reference to self
         if (Instance != null)
@@ -35,11 +47,11 @@ public class InputManager : MonoBehaviour {
         _inputs = new List<IInputSource>();
     }
 
+    #endregion
+
     #region Public Methods
 
-    /// <summary>
-    /// Adds an input to list of inputs
-    /// </summary>
+    /// <summary>Adds an input to list of inputs</summary>
     /// <param name="input">Input source to add</param>
     /// <returns>Succesfully added?</returns>
     public bool AddInput(IInputSource input) {
@@ -60,9 +72,7 @@ public class InputManager : MonoBehaviour {
         return true;
     }
 
-    /// <summary>
-    /// Removes an input from list of inputs
-    /// </summary>
+    /// <summary>Removes an input from list of inputs</summary>
     /// <param name="input">Input source to remove</param>
     /// <returns>Succesfully removed?</returns>
     public bool RemoveInput(IInputSource input) {
@@ -74,9 +84,7 @@ public class InputManager : MonoBehaviour {
         return _inputs.Remove(input);
     }
 
-    /// <summary>
-    /// Returns inputs of same type
-    /// </summary>
+    /// <summary>Returns inputs of same type</summary>
     /// <typeparam name="T">Type of input to return</typeparam>
     /// <returns>List<InputSource> of inputs</returns>
     public List<IInputSource> GetInputs<T>() {
@@ -89,9 +97,7 @@ public class InputManager : MonoBehaviour {
         return foundInputs;
     }
 
-    /// <summary>
-    /// Returns inputs of same type
-    /// </summary>
+    /// <summary>Returns inputs of same type</summary>
     /// <param name="type">String of name of type of input to return</param>
     /// <returns>List<InputSource> of inputs</returns>
     public List<IInputSource> GetInputs(string type) {

@@ -1,7 +1,9 @@
-﻿using System.Collections;
+﻿// System
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
+// Unity Engine
+using UnityEngine;
 
 namespace MTConnectVR {
     /// <summary>
@@ -9,6 +11,8 @@ namespace MTConnectVR {
     /// added to the InputManager on load. View IInputSource.cs for more info.
     /// </summary>
     public abstract class InputSource : MonoBehaviour, IInputSource {
+
+        #region Input Properties
         [Header("Input Properties")]
 
         [Tooltip(
@@ -26,6 +30,9 @@ namespace MTConnectVR {
             set { _inputEnabled = value; }
         }
 
+        #endregion
+
+        #region Input Settings
         [Header("Input Settings")]
 
         [SerializeField] protected string _name;
@@ -48,11 +55,18 @@ namespace MTConnectVR {
             set { _exclusiveType = value; }
         }
 
+        #endregion
+
+        #region Unity Methods
+
         protected virtual void Start() {
             // Add self to InputManager, disabling self if failure
             Debug.Assert(InputManager.Instance != null, "Could not get ref to InputManager!");
             if (InputEnabled &= InputManager.Instance.AddInput(this))
                 Debug.LogError("Could not add self to InputManager!");
         }
+
+        #endregion
+
     }
 }

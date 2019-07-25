@@ -6,9 +6,9 @@ using MTConnectVR;
 
 public class Shark : Machine {
 
-    /// <summary>
-    /// Initialize components
-    /// </summary>
+    #region Unity Methods
+
+    /// <summary>Initialize components</summary>
     protected void Awake() {
         // Init arrays
         components = new Transform[Axes.Count];
@@ -43,4 +43,5 @@ public class Shark : Machine {
         ForwardKinematics(Axes.ToArray());
     }
 
+    #endregion
 }

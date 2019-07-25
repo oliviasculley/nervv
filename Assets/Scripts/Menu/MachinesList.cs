@@ -1,15 +1,27 @@
-﻿
+﻿// Unity Engine
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
 namespace MTConnectVR.Menu {
     public class MachinesList : MonoBehaviour {
+
+        #region References
         [Header("References")]
-        public Transform scrollViewParent;     // Parent to spawn machine buttons underneath
+
+        /// <summary>Parent to spawn machine buttons underneath</summary>
+        [Tooltip("Parent to spawn machine buttons underneath")]
+        public Transform scrollViewParent;
+
         public GameObject machineButtonPrefab;
+
         public MachineDetail detailPanel;
+
         public UIPanelSwitcher switcher;
+
+        #endregion
+
+        #region Unity Methods
 
         private void OnEnable() {
             Debug.Assert(detailPanel != null,
@@ -26,6 +38,8 @@ namespace MTConnectVR.Menu {
 
             GenerateMachineButtons();
         }
+
+        #endregion
 
         #region Public Methods
 

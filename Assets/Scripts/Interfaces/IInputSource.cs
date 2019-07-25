@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-/// <summary>
+﻿/// <summary>
 /// This is the base interface required to implement
 /// in order to be a functional input source. Generally,
 /// inputs are initialized when enabled and uninitialized
@@ -14,6 +10,8 @@ using UnityEngine;
 /// </summary>
 public interface IInputSource {
 
+    #region Required Fields
+    
     /// <summary>
     /// If the input source is actively publishing to machines
     /// or not. Note that the input source may still be inactive
@@ -29,4 +27,7 @@ public interface IInputSource {
     bool ExclusiveType { get; set; }
 
     string Name { get; set; }
+
+    #endregion
+
 }

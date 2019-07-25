@@ -8,19 +8,39 @@ using TMPro;
 namespace MTConnectVR.Menu {
     public class MachineAxisElement : MachineElement {
 
+        #region Properties
         [Header("Properties")]
+
         public Machine.Axis Axis;
 
+        #endregion
+
+        #region Settings
         [Header("Settings")]
+
         public float AxisSpeed = 100f;
 
+        #endregion
+
+
+        #region References
         [Header("References")]
+
         public TextMeshProUGUI ElementTitle;
 
-        // Private vars
-        private bool
-            changingAxis,   // Is changing axis?
-            axisDirection;  // Which direction (incrementing/decrementing)?
+        #endregion
+
+        #region Private vars
+
+        /// <summary>Is changing axis?</summary>
+        private bool changingAxis;
+
+        /// <summary>Which direction (incrementing/decrementing)?</summary>
+        private bool axisDirection;
+
+        #endregion
+
+        #region Unity Methods
 
         private new void OnEnable() {
             Debug.Assert(ElementTitle != null, "Could not get axis element title TMP_UGUI!");
@@ -40,11 +60,11 @@ namespace MTConnectVR.Menu {
             UpdateText();
         }
 
+        #endregion
+
         #region Public Functions
 
-        /// <summary>
-        /// Initialize float element with needed parameters
-        /// </summary>
+        /// <summary>Initialize float element with needed parameters</summary>
         /// <param name="fieldName"></param>
         /// <param name="currMachine"></param>
         public void InitializeElement(Machine.Axis axis) {
@@ -56,18 +76,14 @@ namespace MTConnectVR.Menu {
             UpdateText();
         }
 
-        /// <summary>
-        /// Starts increasing or decreasing axis value
-        /// </summary>
+        /// <summary>Starts increasing or decreasing axis value</summary>
         /// <param name="direction">Direction to start changing axis value</param>
         public void StartChanging(bool direction) {
             changingAxis = true;
             axisDirection = direction;
         }
 
-        /// <summary>
-        /// Stops modifying axis value
-        /// </summary>
+        /// <summary> Stops modifying axis value</summary>
         public void StopChanging() {
             changingAxis = false;
         }
@@ -76,9 +92,7 @@ namespace MTConnectVR.Menu {
 
         #region Private Functions
 
-        /// <summary>
-        /// Update text readout with current value
-        /// </summary>
+        /// <summary>Update text readout with current value</summary>
         private void UpdateText() {
             Debug.Assert(Axis != null,
                 "Invalid axis!");

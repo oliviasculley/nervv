@@ -1,16 +1,25 @@
-﻿using System.Collections;
+﻿//System
+using System.Collections;
 using System.Collections.Generic;
 
+// Unity Engine
 using UnityEngine;
 using UnityEngine.UI;
-
 using TMPro;
 
 public class InputsList : MonoBehaviour {
+
+    #region References
     [Header("References")]
 
-    public Transform scrollViewParent;     // Parent to spawn machine buttons underneath
+    /// <summary>Parent to spawn machine buttons underneath</summary>
+    [Tooltip("Parent to spawn machine buttons underneath")]
+    public Transform scrollViewParent;
     public GameObject inputButtonPrefab;
+
+    #endregion
+
+    #region Unity Methods
 
     private void OnEnable() {
         Debug.Assert(inputButtonPrefab != null,
@@ -20,6 +29,8 @@ public class InputsList : MonoBehaviour {
 
         GenerateInputButtons();
     }
+
+    #endregion
 
     #region Public Methods
 

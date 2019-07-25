@@ -5,9 +5,10 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public class MachineElement : MonoBehaviour {
-    /// <summary>
-    /// Returns string with capitalized first letter
-    /// </summary>
+
+    #region Static
+
+    /// <summary>Returns string with capitalized first letter</summary>
     /// <param name="input">string to be capitalized</param>
     /// <returns>capitalized string</returns>
     public static string CapitalizeFirstLetter(string input) {
@@ -23,6 +24,9 @@ public class MachineElement : MonoBehaviour {
         return input.Substring(0, 1).ToUpper() + input.Substring(1).ToLower();
     }
 
+    #endregion
+
+    #region Element Properties
     [Header("Element Properties")]
     public bool _visible;
     public bool Visible {
@@ -45,12 +49,21 @@ public class MachineElement : MonoBehaviour {
         }
     }
 
-    // Private vars
+    #endregion
+
+    #region Private vars
+
     Button[] buttons;
     BoxCollider[] colliders;
     EventTrigger[] triggers;
 
+    #endregion
+
+    #region Unity Methods
+
     public void OnEnable() {
         Visible = true;
     }
+
+    #endregion
 }

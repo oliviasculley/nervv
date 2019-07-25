@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿// System
+using System.Collections;
 using System.Collections.Generic;
 
+// UnityEngine
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Valve.VR;
@@ -8,24 +10,35 @@ using Valve.VR;
 [RequireComponent(typeof(SteamVR_Behaviour_Pose))]
 public class LaserPointer : MonoBehaviour {
 
+    #region Settings
     [Header("Settings")]
+
     public SteamVR_Action_Boolean interactWithUI = SteamVR_Input.GetBooleanAction("InteractUI");
     public float thickness = 0.002f;
-    public Color
-        color,
-        clickColor = Color.green;
+    public Color color;
+    public Color clickColor = Color.green;
 
+    #endregion
+
+    #region References
     [Header("References")]
+
     public Menu menu;
 
-    // Private vars
+    #endregion
+
+    #region Private vars
+
     private List<Transform> enteredTransforms;
     private Transform currentHovered;
     private SteamVR_Behaviour_Pose pose;
     private RaycastHit[] hits;
-    private GameObject
-        holder,
-        pointer;
+    private GameObject holder;
+    private GameObject pointer;
+
+    #endregion
+
+    #region Unity Methods
 
     private void OnEnable() {
         pose = GetComponent<SteamVR_Behaviour_Pose>();
@@ -90,6 +103,8 @@ public class LaserPointer : MonoBehaviour {
             new Vector3(thickness * 5f, thickness * 5f, pointer.transform.localScale.z) :
             new Vector3(thickness, thickness, pointer.transform.localScale.z);
     }
+
+    #endregion
 
     #region Private Methods
 
@@ -200,4 +215,5 @@ public class LaserPointer : MonoBehaviour {
     }
 
     #endregion
+
 }

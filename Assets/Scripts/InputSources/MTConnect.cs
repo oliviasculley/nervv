@@ -1,15 +1,17 @@
-﻿using System.Collections;
+﻿// System
+using System.Collections;
 using System.Collections.Generic;
-
-using UnityEngine;
-using UnityEngine.Networking;
 using System.IO;
 using System.Globalization;
 using System.Xml.Serialization;
 
+// Unity Engine
+using UnityEngine;
+using UnityEngine.Networking;
+
+// MTConnect
 using MTConnectVR;
 using MTConnectVR.XML.MTConnectStreams;
-
 
 /// <summary>
 /// MTConnect XML parsing InputSource. Connects to a specified URL
@@ -18,6 +20,8 @@ using MTConnectVR.XML.MTConnectStreams;
 /// rules to adjust incoming values with adjustments.
 /// </summary>
 public class MTConnect : InputSource {
+
+    #region MTConnect Settings
     [Header("MTConnect Settings")]
 
     [Tooltip("Used to specify adjustments to incoming values for individual axes")]
@@ -32,9 +36,16 @@ public class MTConnect : InputSource {
     ///<summary>Interval in seconds to poll</summary>
     public float pollInterval = 0.1f;
 
-    // Private vars
+    #endregion
+
+    #region Private vars
+
     IEnumerator fetchMTConnect;
     float timeToTrigger = 0.0f;
+
+    #endregion
+
+    #region Unity Methods
 
     private void OnEnable() {
         // Safety checks
@@ -68,11 +79,11 @@ public class MTConnect : InputSource {
         }
     }
 
+    #endregion
+
     #region Private Methods
 
-    /// <summary>
-    /// Sends GET request to MTConnectURL
-    /// </summary>
+    /// <summary>Sends GET request to MTConnectURL</summary>
     /// <returns>Unity Coroutine</returns>
     private IEnumerator FetchMTConnect() {
         WWWForm form = new WWWForm();
@@ -95,6 +106,7 @@ public class MTConnect : InputSource {
         fetchMTConnect = null;
     }
 
+    /// <summary>Parses XML Object</summary>
     private void ParseXML(string input) {
         XmlSerializer serializer = new XmlSerializer(typeof(MTConnectStreams));
         TextReader reader = new StringReader(input);
@@ -212,16 +224,31 @@ public class MTConnect : InputSource {
 
     [System.Serializable]
     public class AxisValueAdjustment {
+
+        /// <summary>Machine to adjust axes for</summary>
         [Tooltip("Machine to adjust axes for")]
         public Machine Machine;
 
+        /// <summary>ID of Axis to map to</summary>
         [Tooltip("ID of Axis to map to")]
         public string ID;
 
-        [Tooltip("Offset used to correct between particular input's worldspace to chosen external worldspace")]
+        /// <summary>
+        /// Offset used to correct between particular input's
+        /// worldspace to chosen external worldspace
+        /// </summary>
+        [Tooltip(
+            "Offset used to correct between particular input's" +
+            "worldspace to chosen external worldspace")]
         public float Offset;
 
-        [Tooltip("Scale factor used to correct between particular input's worldspace to chosen external worldspace")]
+        /// <summary>
+        /// Scale factor used to correct between particular input's
+        /// worldspace to chosen external worldspace
+        /// </summary>
+        [Tooltip(
+            "Scale factor used to correct between particular " +
+            "input's worldspace to chosen external worldspace")]
         public float ScaleFactor;
     }
 

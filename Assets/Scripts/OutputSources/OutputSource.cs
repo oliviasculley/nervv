@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace MTConnectVR {
+    /// <summary>
+    /// This is the base class for outputs. These are dynamically added to OutputManager.
+    /// </summary>
     public abstract class OutputSource : MonoBehaviour, IOutputSource {
-        // This is the base class for outputs. These are dynamically added to OutputManager.
 
+        #region Output Properties
         [Header("Output Properties")]
 
         [Tooltip("Is this output currently enabled?")]
@@ -16,6 +19,10 @@ namespace MTConnectVR {
             set { _outputEnabled = value; }
         }
 
+        #endregion
+
+
+        #region Output Settings
         [Header("Output Settings")]
 
         [SerializeField] protected string _name;
@@ -33,11 +40,17 @@ namespace MTConnectVR {
             set { _exclusiveType = value; }
         }
 
+        #endregion
+
+        #region Unity methods
+
         protected virtual void Start() {
             // Add self to InputManager, disabling self if failure
             Debug.Assert(OutputManager.Instance != null, "Could not get ref to OutputManager!");
             if (OutputEnabled &= OutputManager.Instance.AddOutput(this))
                 Debug.LogError("Could not add self to OutputManager!");
         }
+
+        #endregion
     }
 }

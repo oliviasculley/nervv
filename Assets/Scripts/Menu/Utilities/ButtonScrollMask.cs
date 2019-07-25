@@ -1,17 +1,30 @@
-﻿using System.Collections;
+﻿// System
+using System.Collections;
 using System.Collections.Generic;
+
+// Unity Engine
 using UnityEngine;
 
 [RequireComponent(typeof(RectTransform))]
 public class ButtonScrollMask : MonoBehaviour {
-    
-    [Header("Properties")]
-        public Transform content;
-        [Range(0, 1)]
-        public float minHeight, maxHeight;
 
-    // Private vars
+    #region Properties
+    [Header("Properties")]
+
+    public Transform content;
+
+    [Range(0, 1)]
+    public float minHeight, maxHeight;
+
+    #endregion
+
+    #region Private vars
+
     RectTransform t;
+
+    #endregion
+
+    #region Unity Methods
 
     private void OnEnable() {
         Debug.Assert(content != null, "[ColliderScale] Could not get content parent!");
@@ -28,6 +41,8 @@ public class ButtonScrollMask : MonoBehaviour {
                 float yDelta = (transform.position - obj.position).y;
                 e.Visible = yDelta >= minHeight && yDelta <= maxHeight;
             }
-        }  
+        }
     }
+
+    #endregion
 }

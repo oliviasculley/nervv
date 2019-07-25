@@ -1,37 +1,51 @@
-﻿using System.Collections;
+﻿// System
+using System.Collections;
 using System.Collections.Generic;
 
+// Unity Engine
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Reflection;
 
-using MTConnectVR;
-
 namespace MTConnectVR.Menu {
+    /// <summary>Machine element in machine properties for float</summary>
     public class MachineFloatElement : MachineElement {
+        #region Properties
         [Header("Properties")]
+
         public string fieldName;
         public IMachine currMachine;
 
+        #endregion
+
+        #region Settings
         [Header("Settings")]
+
         [Tooltip("Delta to increment or decrement value by")]
         public float delta = 1f;
         public float minValue, maxValue;
 
+        #endregion
+
+        #region References
         [Header("References")]
+
         public TextMeshProUGUI elementTitle;
+        #endregion
+
+        #region Unity Methods
 
         private new void OnEnable() {
             Debug.Assert(elementTitle != null,
                 "Could not get Float element title TMP_UGUI!");
         }
 
+        #endregion
+
         #region Public Functions
 
-        /// <summary>
-        /// Initialize float element with needed parameters
-        /// </summary>
+        /// <summary>Initialize float element with needed parameters</summary>
         /// <param name="fieldName"></param>
         /// <param name="currMachine"></param>
         public void InitializeElement(string fieldName, IMachine currMachine, float minValue = default, float maxValue = default) {
@@ -45,6 +59,7 @@ namespace MTConnectVR.Menu {
             UpdateText();
         }
 
+        /// <summary>Increments float value</summary>
         public void Increment() {
             Debug.Assert(currMachine != null && !string.IsNullOrEmpty(fieldName));
 
@@ -54,6 +69,7 @@ namespace MTConnectVR.Menu {
             }
         }
 
+        /// <summary>Decrements float value</summary>
         public void Decrement() {
             Debug.Assert(currMachine != null && !string.IsNullOrEmpty(fieldName));
 
@@ -67,9 +83,7 @@ namespace MTConnectVR.Menu {
 
         #region Private Functions
 
-        /// <summary>
-        /// Gets field value with reflection
-        /// </summary>
+        /// <summary>Gets field value with reflection</summary>
         /// <returns>Field value</returns>
         private float? GetFieldValue() {
             System.Reflection.FieldInfo info;
@@ -82,9 +96,7 @@ namespace MTConnectVR.Menu {
             return null;
         }
 
-        /// <summary>
-        /// Sets field value with reflection
-        /// </summary>
+        /// <summary>Sets field value with reflection</summary>
         /// <param name="value">Field value</param>
         private void SetField(float value) {
             FieldInfo info;
@@ -111,9 +123,7 @@ namespace MTConnectVR.Menu {
             }
         }
 
-        /// <summary>
-        /// Update text readout with current value
-        /// </summary>
+        /// <summary>Update text readout with current value</summary>
         private void UpdateText() {
             // Set text with current value
             elementTitle.text = CapitalizeFirstLetter(fieldName.Substring(1)) + ": ";

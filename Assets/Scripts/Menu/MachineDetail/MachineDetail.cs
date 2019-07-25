@@ -10,19 +10,33 @@ using TMPro;
 
 namespace MTConnectVR.Menu {
     public class MachineDetail : MonoBehaviour {
-        [Header("Properties")]
-        public IMachine currMachine;
 
+        #region Header
+        [Header("Properties")]
+
+        public Machine currMachine;
+
+        #endregion
+
+        #region Settings
         [Header("Settings")]
+
         public SteamVR_Action_Boolean activateIK;
+
         [Tooltip("String fields to generate handlers for")]
         public string[] stringFieldNamesToGenerate;
+
         [Tooltip("Float fields to generate handlers for")]
         public string[] floatFieldNamesToGenerate;
+
         [Tooltip("Generates axis elements")]
         public bool generateAxisElements = true;
 
+        #endregion
+
+        #region References
         [Header("References")]
+
         [Tooltip("Title element")]
         public TextMeshProUGUI machineTitle;
         [Tooltip("Parent to spawn machine elements")]
@@ -30,9 +44,19 @@ namespace MTConnectVR.Menu {
         [Tooltip("Sphere on controller to signal IK")]
         public GameObject IKSphere;
 
+        #endregion
+
+        #region Prefabs
         [Header("Prefabs")]
-        public GameObject machineElementStringPrefab;   // Changeable machine element
-        public GameObject machineElementFloatPrefab, machineElementAxisPrefab;
+
+        public GameObject machineElementStringPrefab;
+        public GameObject
+            machineElementFloatPrefab,
+            machineElementAxisPrefab;
+
+        #endregion
+
+        #region Unity Methods
 
         private void OnEnable() {
             // Get references
@@ -59,10 +83,11 @@ namespace MTConnectVR.Menu {
                 currMachine.InverseKinematics(IKSphere.transform.position);
             }
 
-
             // Set sphere visualizer visibility
             IKSphere.SetActive(activateIK.state);
         }
+
+        #endregion
 
         #region Public methods
 

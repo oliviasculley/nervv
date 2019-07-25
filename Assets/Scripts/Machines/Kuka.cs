@@ -1,9 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿// Unity Engine
 using UnityEngine;
 using MTConnectVR;
 
 public class Kuka : Machine {
+
+    #region Unity Methods
 
     private void Awake() {
         // Init arrays
@@ -43,4 +44,7 @@ public class Kuka : Machine {
         // DEBUG: Draw forward kinematics every frame
         ForwardKinematics(Axes.ToArray());
     }
+
+    #endregion
+
 }

@@ -2,19 +2,38 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class OutputManager : MonoBehaviour
-{
-    // OutputManager
-    // This class handles different output sources.
+/// <summary>
+/// This class handles different outputs sources
+/// </summary>
+public class OutputManager : MonoBehaviour {
 
-    // Static reference to self
+    #region Static
+
     public static OutputManager Instance;
 
-    [Header("Properties")]
-    public List<IOutputSource> outputs; // List of output sources in scene
+    #endregion
 
-    // Private vars
-    List<System.Type> knownExclusives;  // Keeps track of exclusive types in outputs
+    #region Properties
+    [Header("Properties")]
+
+    /// <summary>List of output sources in scene</summary>
+    [Tooltip("List of output sources in scene")]
+    public List<IOutputSource> outputs;
+
+    #endregion
+
+
+
+
+    #region Private vars
+
+    /// <summary>Keeps track of exclusive types in outputs</summary>
+    private List<System.Type> knownExclusives;
+
+    #endregion
+
+
+    #region Unity Methods
 
     private void Awake() {
         // Add static reference to self
@@ -27,11 +46,11 @@ public class OutputManager : MonoBehaviour
         outputs = new List<IOutputSource>();
     }
 
+    #endregion
+
     #region Public Methods
 
-    /// <summary>
-    /// Adds an output to list of outputs
-    /// </summary>
+    /// <summary>Adds an output to list of outputs</summary>
     /// <param name="output">Output source to add</param>
     /// <returns>Succesfully added?</returns>
     public bool AddOutput(IOutputSource output) {
@@ -52,9 +71,7 @@ public class OutputManager : MonoBehaviour
         return true;
     }
 
-    /// <summary>
-    /// Removes an output from list of outputs
-    /// </summary>
+    /// <summary>Removes an output from list of outputs</summary>
     /// <param name="output">Output source to remove</param>
     /// <returns>Succesfully removed?</returns>
     public bool RemoveOutput(IOutputSource output) {
@@ -66,9 +83,7 @@ public class OutputManager : MonoBehaviour
         return outputs.Remove(output);
     }
 
-    /// <summary>
-    /// Returns outputs of same type
-    /// </summary>
+    /// <summary>Returns outputs of same type</summary>
     /// <typeparam name="T">Type of output to return</typeparam>
     /// <returns>List<OutputSource> of outputs</returns>
     public List<IOutputSource> GetOutputs<T>() {
@@ -81,9 +96,7 @@ public class OutputManager : MonoBehaviour
         return foundOutputs;
     }
 
-    /// <summary>
-    /// Returns outputs of same type
-    /// </summary>
+    /// <summary>Returns outputs of same type</summary>
     /// <param name="type">String of name of type of output to return</param>
     /// <returns>List<OutputSource> of outputs</returns>
     public List<IOutputSource> GetOutputs(string type) {

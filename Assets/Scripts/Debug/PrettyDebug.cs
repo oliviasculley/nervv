@@ -1,9 +1,13 @@
-﻿using System;
+﻿// System
+using System;
 using System.Collections;
 using System.Collections.Generic;
+
+// Unity Engine
 using UnityEditor;
 using UnityEngine;
 
+#if UNITY_EDITOR
 [InitializeOnLoad]
 public class PrettyDebug : ILogHandler {
 
@@ -50,3 +54,5 @@ public class PrettyDebug : ILogHandler {
 
     #endregion
 }
+
+#endif

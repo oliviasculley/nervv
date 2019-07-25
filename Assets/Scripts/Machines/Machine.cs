@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿// System
+using System.Collections;
 using System.Collections.Generic;
+
+// Unity Engine
 using UnityEngine;
 
 namespace MTConnectVR {
@@ -9,7 +12,9 @@ namespace MTConnectVR {
     /// </summary>
     public abstract class Machine : MonoBehaviour, IMachine, IInterpolation, IInverseKinematics {
 
+        #region Machine Properties
         [Header("Machine Properties")]
+
         public List<Axis> _axes;
         /// <summary>Machine axes of possible movement/rotation</summary>
         /// <see cref="IMachine"/>
@@ -17,6 +22,10 @@ namespace MTConnectVR {
             get { return _axes; }
             set { _axes = value; }
         }
+
+        #endregion
+
+        #region Machine Settings
 
         [Header("Machine Settings")]
 
@@ -56,7 +65,11 @@ namespace MTConnectVR {
             set { _model = value; }
         }
 
+        #endregion
+
+        #region Interpolation Settings
         [Header("Interpolation Settings")]
+
         [Tooltip("Speed to lerp to correct position")]
         [SerializeField] protected float _lerpSpeed = 10f;
         ///<summary>Speed to lerp to correct position</summary>
@@ -75,25 +88,34 @@ namespace MTConnectVR {
             set { _interpolation = value; }
         }
 
-        [Header("IK Settings")]
-        [Tooltip("Learning rate of gradient descent")]
-        ///<summary>Learning rate of gradient descent</summary>
-        public float IKSpeed = 10f;
+        #endregion
 
-        [Tooltip("Axis delta to check IK")]
+        #region IK Settings
+        [Header("IK Settings")]
+
+        ///<summary>Learning rate of gradient descent</summary>
+        [Tooltip("Learning rate of gradient descent")]
+        public float IKSpeed = 10f;
+        
         ///<summary>Axis delta to check IK</summary>
+        [Tooltip("Axis delta to check IK")]
         public float SamplingDistance = 0.01f;
 
-        [Tooltip("Minimum distance delta to apply IK")]
         ///<summary>Minimum distance delta to apply IK</summary>
+        [Tooltip("Minimum distance delta to apply IK")]
         public float IKEpsilon = 0.0001f;
 
-        // Protected Vars
+        #endregion
+
+        #region Protected Vars
+
         protected Transform[] components;
 
-        /// <summary>
-        /// Runs initial safety checks and adds self to MachineManager
-        /// </summary>
+        #endregion
+
+        #region Unity Methods
+
+        /// <summary>Runs initial safety checks and adds self to MachineManager</summary>
         protected virtual void Start() {
             // Safety checks
             for (int i = 0; i < Axes.Count; i++)
@@ -110,6 +132,8 @@ namespace MTConnectVR {
             Debug.Assert(MachineManager.Instance.AddMachine(this),
                 "Could not add self to MachineManager!");
         }
+
+        #endregion
 
         #region Public Methods
 
@@ -163,9 +187,7 @@ namespace MTConnectVR {
 
         #region Private Methods
 
-        /// <summary>
-        /// Returns the gradient for a specific angleID
-        /// </summary>
+        /// <summary>Returns the gradient for a specific angleID</summary>
         /// <param name="target">Vector3 target location in worldspace</param>
         /// <param name="axes">Angles to calculate from</param>
         /// <param name="axisID">Angle to return gradient for</param>
@@ -190,12 +212,11 @@ namespace MTConnectVR {
 
         #region Axis Class
 
-        /// <summary>
-        /// Axis class, controls robot's dimensions of movement.
-        /// </summary>
+        /// <summary>Axis class, controls robot's dimensions of movement.</summary>
         [System.Serializable]
         public class Axis {
 
+            #region Properties
             [Header("Properties")]
 
             [Tooltip("Value of axis in external worldspace")]
@@ -232,6 +253,10 @@ namespace MTConnectVR {
                 set { _torque = value; }
             }
 
+            #endregion
+
+
+            #region Settings
             [Header("Settings")]
 
             [Tooltip("ID of axis, used for matching")]
@@ -301,6 +326,8 @@ namespace MTConnectVR {
                 get { return _axisVector3 * Value; }
                 set { _axisVector3 = value.normalized; }
             }
+
+            #endregion
         }
 
         #endregion

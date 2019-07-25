@@ -1,20 +1,26 @@
-﻿using System.Collections;
+﻿// System
+using System.Collections;
 using System.Collections.Generic;
 
+// Unity Engine
 using UnityEngine;
 using UnityEngine.UI;
 
 [ExecuteAlways]
 [RequireComponent(typeof(BoxCollider))]
 [RequireComponent(typeof(RectTransform))]
-public class ColliderScaleToUIElement : MonoBehaviour
-{
-    // Private vars
+public class ColliderScaleToUIElement : MonoBehaviour {
+
+    #region Private vars
+
     BoxCollider c;
     RectTransform t;
 
-    private void OnEnable()
-    {
+    #endregion
+
+    #region Unity Methods
+
+    private void OnEnable() {
         c = GetComponent<BoxCollider>();
         Debug.Assert(c != null, "[ColliderScale] Could not get box collider!");
 
@@ -22,8 +28,10 @@ public class ColliderScaleToUIElement : MonoBehaviour
         Debug.Assert(t != null, "[ColliderScale] Could not get rectTransform!");
     }
 
-    private void Update()
-    {
+    private void Update() {
         c.size = t.rect.size;
     }
+
+    #endregion
+
 }
