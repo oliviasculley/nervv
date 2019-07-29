@@ -8,14 +8,18 @@ using System.Threading;
 using UnityEngine;
 using RosSharp.RosBridgeClient;
 using RosSharp.RosBridgeClient.Protocols;
-using RosSharp.RosBridgeClient.Messages.Sensor;
+using RosSharp.RosBridgeClient.Services;
 using Newtonsoft.Json;
 using RosSharp.RosBridgeClient.Messages.Standard;
 
 // MTConnectVR
 using MTConnectVR;
 
-public class RosJointPublisher : OutputSource {
+/// <summary>
+/// Implements Doosan's MoveJoint service.
+/// Details can be found at http://wiki.ros.org/doosan-robotics?action=AttachFile&do=get&target=Doosan_Robotics_ROS_Manual_ver0.92_190508A%28EN.%29.pdf
+/// </summary>
+public class DoosanROSJointService : OutputSource {
 
     #region Static
 
@@ -26,9 +30,9 @@ public class RosJointPublisher : OutputSource {
     #region Settings
     [Header("Settings")]
 
-    /// <summary> Name of topic to publish </summary>
-    [Tooltip("Name of topic to publish")]
-    public string Topic = "/vr_joint_states";
+    /// <summary> Name of service to call </summary>
+    [Tooltip("Name of service to call")]
+    public string ServiceName = "/dsrm0609/motion/move_joint";
 
     /// <summary> Machine to set angles from topic </summary>
     [Tooltip("Machine to set angles from topic")]
@@ -54,10 +58,8 @@ public class RosJointPublisher : OutputSource {
 
     #region Private vars
 
-    private Coroutine rosConnect = null;
     private RosSocket rosSocket = null;
-    /// <summary> Used to unsubscribe from topic on close </summary>
-    private string topicID = null;
+    private string serviceID = null;
     float timeToTrigger = 0.0f;
 
     #endregion
@@ -76,9 +78,9 @@ public class RosJointPublisher : OutputSource {
 
     /// <summary> Initializes socket connection when object is enabled </summary>
     private void OnEnable() {
-        if (rosConnect != null)
+        if (rosSocket != null)
             Debug.LogWarning("Socket not null! Overwriting...");
-        rosConnect = null;
+        rosSocket = null;
 
         // Get protocol object
         IProtocol p = null;
@@ -103,24 +105,17 @@ public class RosJointPublisher : OutputSource {
         p.OnClosed += OnDisconnected;
 
         // Start coroutine
-        rosConnect = StartCoroutine(ConnectToRos(p));
+        rosSocket = new RosSocket(p, RosSocket.SerializerEnum.JSON);
     }
 
     /// <summary> Destroys socket connection if object is disabled </summary>
     private void OnDisable() {
-        // Stop rosConnect coroutine if still running
-        if (rosConnect != null)
-            StopCoroutine(rosConnect);
-
-        // Stop Publishing and close
+        // Stop socket and close
         if (rosSocket != null) {
-            if (!string.IsNullOrEmpty(topicID)) {
-                rosSocket.Unadvertise(topicID);
-                topicID = null;
-            }
-
+            serviceID = null;
             rosSocket.Close();
         }
+            
     }
 
     private void Update() {
@@ -136,52 +131,49 @@ public class RosJointPublisher : OutputSource {
 
     #region Private methods
 
-    /// <summary> Connects to ROS given a IProtocol object with settings </summary>
-    /// <param name="p">IProtocol object with appropriate settings</param>
-    /// <returns>Unity Coroutine</returns>
-    private IEnumerator ConnectToRos(IProtocol p) {
-        rosSocket = new RosSocket(p, RosSocket.SerializerEnum.JSON);
-
-        // Wait until socket is active
-        yield return new WaitUntil(() => rosSocket.protocol.IsAlive());
-
-        // Advertise Doosan joint angles topic once socket is active
-        topicID = rosSocket.Advertise<JointState>(Topic);
-    }
-
-    /// <summary> Called when RosSocket receieves messages </summary>
+    /// <summary> Sends message to service to move joints to specified location </summary>
     private void SendJointsMessage() {
         // Safety checks
         if (!OutputEnabled)
             return;
-        if (rosSocket == null) {
-            Debug.LogError("RosSocket is null!");
+        if (!rosSocket.protocol.IsAlive()) {
+            Debug.LogError("RosSocket is not active!");
             return;
         }
-        if (topicID == null) {
-            Debug.LogError("No topicID!");
+        if (!string.IsNullOrEmpty(serviceID)) {
+            Debug.Log("ServiceID not null, not calling again");
             return;
         }
-        
+
         // Create new JointState message
-        JointState message = new JointState {
-            header = new Header(),
-            position = new double[machineToPublish.Axes.Count],
-            name = new string[machineToPublish.Axes.Count],
-            velocity = new double[machineToPublish.Axes.Count],
-            effort = new double[machineToPublish.Axes.Count]
+        MoveJointRequest message = new MoveJointRequest {
+            pos = new float[machineToPublish.Axes.Count],
+            vel = 75,
+            acc = 0,
+            time = 0,
+            radius = 0,
+            mode = 0,
+            blendType = 0,
+            syncType = 0
         };
 
         // Set joint angles
-        for (int i = 0; i < machineToPublish.Axes.Count; i++) {
-            message.name[i] = machineToPublish.Axes[i].Name;
-            message.position[i] = machineToPublish.Axes[i].ExternalValue;
-            message.velocity[i] = 0;
-            message.effort[i] = 0;
-        }
-        
-        rosSocket.Publish(topicID, message);
-        Debug.Log("Test");
+        for (int i = 0; i < machineToPublish.Axes.Count; i++)
+            message.pos[i] = machineToPublish.Axes[i].ExternalValue;
+
+        // Call move joint service
+        Debug.Log(serviceID = rosSocket.CallService<MoveJointRequest, MoveJointResponse>(
+            ServiceName,
+            VerifySuccess,
+            message
+        ));
+    }
+
+    /// <summary> Callback with response from Doosan MoveJoint Service </summary>
+    private void VerifySuccess(MoveJointResponse r) {
+        if (!r.success)
+            Debug.LogWarning("Could not successfully move angles to new joint!");
+        serviceID = null;
     }
 
     /// <summary> Callback when socket is connected </summary>

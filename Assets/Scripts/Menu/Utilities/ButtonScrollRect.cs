@@ -16,7 +16,7 @@ namespace UnityEngine.UI {
         [Header("Button Properties")]
 
         [SerializeField] private float _targetVertNormPos;
-        /// <summary>Target position as normalized value between 0 and 1</summary>
+        /// <summary> Target position as normalized value between 0 and 1 </summary>
         public float targetVertNormPos {
             get { return _targetVertNormPos; }
             set { _targetVertNormPos = Mathf.Clamp(value, 0, 1); }
@@ -27,12 +27,12 @@ namespace UnityEngine.UI {
         #region Button Settings
         [Header("Button Settings")]
 
-        /// <summary>Amount to scroll by</summary>
+        /// <summary> Amount to scroll by </summary>
         [Tooltip("Amount to scroll by")]
         [Range(0, 1)]
         [SerializeField] public float scrollDelta = 0.27f;
 
-        /// <summary>Speed to scroll viewport</summary>
+        /// <summary> Speed to scroll viewport </summary>
         [Tooltip("Speed to scroll viewport")]
         [Range(0, 1)]
         [SerializeField] public float scrollSpeed = 0.3f;
@@ -54,12 +54,12 @@ namespace UnityEngine.UI {
 
         #region Public Methods
 
-        /// <summary>Scrolls down by a set delta</summary>
+        /// <summary> Scrolls down by a set delta </summary>
         public void ScrollDown() {
             targetVertNormPos -= scrollDelta;
         }
 
-        /// <summary>Scrolls up by a set delta</summary>
+        /// <summary> Scrolls up by a set delta </summary>
         public void ScrollUp() {
             targetVertNormPos += scrollDelta;
         }

@@ -12,7 +12,7 @@ public class Doosan : Machine {
 
     #region Unity Methods
 
-    /// <summary>Initializes components array</summary>
+    /// <summary> Initializes components array </summary>
     private void Awake() {
         // Init arrays
         components = new Transform[Axes.Count];

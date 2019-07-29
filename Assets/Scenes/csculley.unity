@@ -776,7 +776,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &803703343
 Transform:
   m_ObjectHideFlags: 0
@@ -959,7 +959,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1115453530
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1525,7 +1525,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1698882309
 Transform:
   m_ObjectHideFlags: 0
@@ -1687,6 +1687,7 @@ Transform:
   m_Children:
   - {fileID: 830491942}
   - {fileID: 803703343}
+  - {fileID: 2107280542}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1977,6 +1978,58 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2088168707}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2107280541
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2107280542}
+  - component: {fileID: 2107280543}
+  m_Layer: 0
+  m_Name: RosJointMoveService - Doosan
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2107280542
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2107280541}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.44780558, y: -0.46727133, z: -0.47228372}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1789768507}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2107280543
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2107280541}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54b39b3b90d01ea4d8bae00a68b94e50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _outputEnabled: 0
+  _name: RosJointMoveService - Doosan
+  _exclusiveType: 0
+  ServiceName: /dsrm0609/motion/move_joint
+  machineToPublish: {fileID: 1992191952}
+  pollInterval: 0.1
+  URL: ws://128.46.131.12:9090
+  Protocol: 1
+  SerializationMode: 0
 --- !u!1001 &417748264673809919
 PrefabInstance:
   m_ObjectHideFlags: 0

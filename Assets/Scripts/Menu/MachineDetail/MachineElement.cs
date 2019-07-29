@@ -8,7 +8,7 @@ public class MachineElement : MonoBehaviour {
 
     #region Static
 
-    /// <summary>Returns string with capitalized first letter</summary>
+    /// <summary> Returns string with capitalized first letter </summary>
     /// <param name="input">string to be capitalized</param>
     /// <returns>capitalized string</returns>
     public static string CapitalizeFirstLetter(string input) {

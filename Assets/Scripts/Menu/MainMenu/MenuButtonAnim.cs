@@ -19,19 +19,19 @@ public class MenuButtonAnim : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     #region Animation Settings
     [Header("Animation Settings")]
 
-    /// <summary>Resting height for sprite</summary>
+    /// <summary> Resting height for sprite </summary>
     [Tooltip("Resting height for sprite")]
     public float unactivatedHeight = 0.05f;
 
-    /// <summary>Height of activated sprite</summary>
+    /// <summary> Height of activated sprite </summary>
     [Tooltip("Height of activated sprite")]
     public float activatedHeight = 0.025f;
 
-    /// <summary>Speed to activate icons</summary>
+    /// <summary> Speed to activate icons </summary>
     [Tooltip("Speed to activate icons")]
     public float activationSpeed = 1f;
 
-    /// <summary>Ratio of background plane to image</summary>
+    /// <summary> Ratio of background plane to image </summary>
     [Tooltip("Ratio of background plane to image")]
     public readonly float planeRatio = 1f;
 
@@ -109,13 +109,13 @@ public class MenuButtonAnim : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     #region Public methods
 
-    /// <summary>Hover on OnPointerEnter</summary>
+    /// <summary> Hover on OnPointerEnter </summary>
     /// <param name="data">Event system data</param>
     public void OnPointerEnter(PointerEventData data) {
         hovered = true;
     }
 
-    /// <summary>Unhover on OnPointerExit</summary>
+    /// <summary> Unhover on OnPointerExit </summary>
     /// <param name="data">Event system data</param>
     public void OnPointerExit(PointerEventData data) {
         hovered = false;

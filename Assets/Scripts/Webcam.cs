@@ -65,7 +65,7 @@ public class Webcam : MonoBehaviour {
 
     #region Webcam Methods
 
-    /// <summary>Unity coroutine for updating a plane with a remote image</summary>
+    /// <summary> Unity coroutine for updating a plane with a remote image </summary>
     private IEnumerator GetRemoteWebcamFeed() {
         WWWForm form = new WWWForm();
         using (UnityWebRequest www = UnityWebRequestTexture.GetTexture(source)) {
@@ -81,7 +81,7 @@ public class Webcam : MonoBehaviour {
         }
     }
 
-    /// <summary>Unity Coroutine for streaming local webcam to plane</summary>
+    /// <summary> Unity Coroutine for streaming local webcam to plane </summary>
     private IEnumerator GetLocalWebcamFeed() {
         yield return Application.RequestUserAuthorization(UserAuthorization.WebCam);
         if (Application.HasUserAuthorization(UserAuthorization.WebCam)) {

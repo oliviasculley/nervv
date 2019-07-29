@@ -25,15 +25,15 @@ public class MTConnect : InputSource {
     [Header("MTConnect Settings")]
 
     [Tooltip("Used to specify adjustments to incoming values for individual axes")]
-    ///<summary>Used to specify adjustments to incoming values for individual axes</summary>
+    ///<summary>Used to specify adjustments to incoming values for individual axes </summary>
     public AxisValueAdjustment[] adjustments;
 
     [Tooltip("Current MTConnect data URL")]
-    ///<summary>Current MTConnect data URL</summary>
+    ///<summary>Current MTConnect data URL </summary>
     public string URL = "";
 
     [Tooltip("Interval in seconds to poll")]
-    ///<summary>Interval in seconds to poll</summary>
+    ///<summary>Interval in seconds to poll </summary>
     public float pollInterval = 0.1f;
 
     #endregion
@@ -83,7 +83,7 @@ public class MTConnect : InputSource {
 
     #region Private Methods
 
-    /// <summary>Sends GET request to MTConnectURL</summary>
+    /// <summary> Sends GET request to MTConnectURL </summary>
     /// <returns>Unity Coroutine</returns>
     private IEnumerator FetchMTConnect() {
         WWWForm form = new WWWForm();
@@ -106,7 +106,7 @@ public class MTConnect : InputSource {
         fetchMTConnect = null;
     }
 
-    /// <summary>Parses XML Object</summary>
+    /// <summary> Parses XML Object </summary>
     private void ParseXML(string input) {
         XmlSerializer serializer = new XmlSerializer(typeof(MTConnectStreams));
         TextReader reader = new StringReader(input);
@@ -225,11 +225,11 @@ public class MTConnect : InputSource {
     [System.Serializable]
     public class AxisValueAdjustment {
 
-        /// <summary>Machine to adjust axes for</summary>
+        /// <summary> Machine to adjust axes for </summary>
         [Tooltip("Machine to adjust axes for")]
         public Machine Machine;
 
-        /// <summary>ID of Axis to map to</summary>
+        /// <summary> ID of Axis to map to </summary>
         [Tooltip("ID of Axis to map to")]
         public string ID;
 

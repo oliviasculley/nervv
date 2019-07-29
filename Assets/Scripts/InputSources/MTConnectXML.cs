@@ -4,7 +4,7 @@ using System.Collections.Generic;
 // XML Parsing
 using System.Xml.Serialization;
 
-/// <summary>Generated C# from XML via Visual Studio.</summary>
+/// <summary> Generated C# from XML via Visual Studio. </summary>
 namespace MTConnectVR.XML.MTConnectStreams {
 
     [XmlRoot(ElementName = "Header", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]

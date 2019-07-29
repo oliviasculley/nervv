@@ -18,7 +18,7 @@ namespace MTConnectVR {
         #region Properties
         [Header("Properties")]
 
-        /// <summary>List of machines in scene</summary>
+        /// <summary> List of machines in scene </summary>
         [Tooltip("List of machines in scene")]
         public List<IMachine> machines;
 
@@ -38,7 +38,7 @@ namespace MTConnectVR {
 
         #region Public Methods
 
-        /// <summary>Adds machine to machines List</summary>
+        /// <summary> Adds machine to machines List </summary>
         /// <param name="machine">Machine to add</param>
         /// <returns>Succesfully added?</returns>
         public bool AddMachine(IMachine machine) {
@@ -51,14 +51,14 @@ namespace MTConnectVR {
             return true;
         }
 
-        /// <summary>Removes machine from machines list</summary>
+        /// <summary> Removes machine from machines list </summary>
         /// <param name="machine">Machine to remove</param>
         /// <returns>Succesfully removed?</returns>
         public bool RemoveMachine(IMachine machine) {
             return machines.Remove(machine);
         }
 
-        /// <summary>Returns machines of same type</summary>
+        /// <summary> Returns machines of same type </summary>
         /// <typeparam name="T">Type of machine to return</typeparam>
         /// <returns>List<Machine> of machines</returns>
         public List<IMachine> GetMachines<T>() {
@@ -71,7 +71,7 @@ namespace MTConnectVR {
             return foundMachines;
         }
 
-        /// <summary>Returns machines of same type</summary>
+        /// <summary> Returns machines of same type </summary>
         /// <param name="type">Type of machine to return</param>
         /// <returns>List<Machine> of machines</returns>
         public List<IMachine> GetMachines(System.Type type) {
