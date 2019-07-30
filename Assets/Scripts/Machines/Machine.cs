@@ -147,12 +147,26 @@ namespace MTConnectVR {
                 return Vector3.zero;
 
             Vector3 prevPoint = components[0].position;
-            Quaternion rotation = Quaternion.identity;
+            Quaternion rotation = transform.rotation;
 
+            Vector3 nextPoint;
             for (int i = 0; i < axes.Length - 1; i++) {
-                rotation *= Quaternion.AngleAxis(Mathf.Repeat(axes[i].Value, 360), Axes[i].AxisVector3);
-                Vector3 nextPoint = prevPoint + (rotation * components[i + 1].localPosition);
-                Debug.DrawRay(prevPoint, rotation * components[i + 1].localPosition, Color.red);
+                if (axes[i].Type == Axis.AxisType.Rotary) {
+                    // Rotary axes
+                    rotation *= Quaternion.AngleAxis(Mathf.Repeat(axes[i].Value, 360), Axes[i].AxisVector3);
+                    Debug.DrawRay(prevPoint, rotation * components[i + 1].localPosition, Color.red);
+                    nextPoint = prevPoint + (rotation * components[i + 1].localPosition);
+                } else if (axes[i].Type == Axis.AxisType.Linear) {
+                    // Linear Axes
+                    Debug.DrawRay(prevPoint, Axes[i].AxisVector3 * Axes[i].Value, Color.red);
+                    Debug.Log(Axes[i].AxisVector3 * Axes[i].Value);
+                    nextPoint = prevPoint + (Axes[i].AxisVector3 * Axes[i].Value);
+                } else {
+                    // Invalid axis type
+                    Debug.LogError("Invalid axis type, cannot perform forward kinematics on this axis!");
+                    nextPoint = prevPoint;
+                }
+                
                 prevPoint = nextPoint;
             }
 
@@ -174,12 +188,14 @@ namespace MTConnectVR {
             for (int i = 0; i < Axes.Count; i++) {
                 delta = ((PartialGradient(target, Axes, i) > 0) ? IKSpeed : -IKSpeed) * Time.deltaTime;
 
-                Axes[i].ExternalValue =
-                    Mathf.Clamp(
-                        Axes[i].ExternalValue - delta,
-                        (-Axes[i].MaxDelta) + IKSpeed,
-                        Axes[i].MaxDelta - IKSpeed
-                    );
+                Axes[i].Value -= delta;
+
+                //Axes[i].ExternalValue =
+                //    Mathf.Clamp(
+                //        Axes[i].ExternalValue - delta,
+                //        (-Axes[i].MaxDelta) + (IKSpeed * Time.deltaTime),
+                //        Axes[i].MaxDelta - (IKSpeed * Time.deltaTime)
+                //    );
             }
         }
 
@@ -201,9 +217,9 @@ namespace MTConnectVR {
             // Gradient : [F(x+Time per frame) - F(axisToCalculate)] / h
 
             float f_x = Vector3.SqrMagnitude(target - ForwardKinematics(axes.ToArray()));
-            axes[axisID].ExternalValue += SamplingDistance;
+            axes[axisID].Value += SamplingDistance;
             float f_x_plus_d = Vector3.SqrMagnitude(target - ForwardKinematics(axes.ToArray()));
-            axes[axisID].ExternalValue -= SamplingDistance;
+            axes[axisID].Value -= SamplingDistance;
 
             return (f_x_plus_d - f_x) / SamplingDistance;
         }
