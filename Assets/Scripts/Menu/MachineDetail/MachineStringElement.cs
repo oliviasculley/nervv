@@ -9,7 +9,7 @@ using Valve.VR;
 using System.Reflection;
 
 namespace MTConnectVR.Menu {
-    /// <summary> Machine element in machine properties for string </summary>
+    /// <summary>Machine element in machine properties for string</summary>
     public class MachineStringElement : MachineElement {
         #region Properties
         [Header("Properties")]
@@ -56,7 +56,7 @@ namespace MTConnectVR.Menu {
 
         #region Public Functions
 
-        /// <summary> Initialize float element with needed parameters </summary>
+        /// <summary>Initialize float element with needed parameters</summary>
         /// <param name="fieldName"></param>
         /// <param name="currMachine"></param>
         public void InitializeElement(string fieldName, IMachine currMachine) {
@@ -72,7 +72,7 @@ namespace MTConnectVR.Menu {
 
         #region Private Functions
 
-        /// <summary> Gets field value with reflection </summary>
+        /// <summary>Gets field value with reflection</summary>
         /// <returns>Field value, can return null!</returns>
         private string GetFieldValue() {
             FieldInfo info;
@@ -85,7 +85,7 @@ namespace MTConnectVR.Menu {
             return null;
         }
 
-        /// <summary> Sets field value with reflection </summary>
+        /// <summary>Sets field value with reflection</summary>
         /// <param name="value">Field value</param>
         private void SetField(string value) {
             FieldInfo info;
@@ -99,7 +99,7 @@ namespace MTConnectVR.Menu {
                 Debug.LogError("Could not set field value: " + fieldName);
         }
 
-        /// <summary> Update text readout with current value </summary>
+        /// <summary>Update text readout with current value</summary>
         private void UpdateText() {
             // Set text with current value
             elementTitle.text = CapitalizeFirstLetter(fieldName.Substring(1)) + ": ";

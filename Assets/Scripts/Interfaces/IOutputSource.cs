@@ -5,13 +5,13 @@ public interface IOutputSource {
 
     #region Required Fields
 
-    /// <summary> Is this input currently enabled? </summary>
+    /// <summary>Is this input currently enabled?</summary>
     bool OutputEnabled { get; set; }
 
-    /// <summary> Is input type exclusive (Only one input of this type allowed?) </summary>
+    /// <summary>Is input type exclusive (Only one input of this type allowed?)</summary>
     bool ExclusiveType { get; set; }
 
-    /// <summary> </summary>
+    /// <summary></summary>
     string Name { get; set; }
 
     #endregion

@@ -12,7 +12,7 @@ public class InputsList : MonoBehaviour {
     #region References
     [Header("References")]
 
-    /// <summary> Parent to spawn machine buttons underneath </summary>
+    /// <summary>Parent to spawn machine buttons underneath</summary>
     [Tooltip("Parent to spawn machine buttons underneath")]
     public Transform scrollViewParent;
     public GameObject inputButtonPrefab;

@@ -10,7 +10,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class OutputSafety : MonoBehaviour {
 
-    /// <summary> Shut down outputs if collider enters the trigger </summary>
+    /// <summary>Shut down outputs if collider enters the trigger</summary>
     public void OnTriggerEnter(Collider other) {
         if (other.gameObject.layer == LayerMask.NameToLayer("Machines")) {
             Debug.LogError(
@@ -21,7 +21,7 @@ public class OutputSafety : MonoBehaviour {
         }
     }
 
-    /// <summary> Ensure that outputs are shut down while machine is in trigger </summary>
+    /// <summary>Ensure that outputs are shut down while machine is in trigger</summary>
     public void OnTriggerStay(Collider other) {
         if (other.gameObject.layer == LayerMask.NameToLayer("Machines"))
             foreach (IOutputSource output in OutputManager.Instance.outputs)

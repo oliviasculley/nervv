@@ -8698,16 +8698,16 @@
             </summary>
         </member>
         <member name="F:Newtonsoft.Json.Linq.MergeArrayHandling.Concat">
-            <summary>Concatenate arrays. </summary>
+            <summary>Concatenate arrays.</summary>
         </member>
         <member name="F:Newtonsoft.Json.Linq.MergeArrayHandling.Union">
-            <summary>Union arrays, skipping items that already exist. </summary>
+            <summary>Union arrays, skipping items that already exist.</summary>
         </member>
         <member name="F:Newtonsoft.Json.Linq.MergeArrayHandling.Replace">
-            <summary>Replace all array items. </summary>
+            <summary>Replace all array items.</summary>
         </member>
         <member name="F:Newtonsoft.Json.Linq.MergeArrayHandling.Merge">
-            <summary>Merge array items together, matched by index. </summary>
+            <summary>Merge array items together, matched by index.</summary>
         </member>
         <member name="T:Newtonsoft.Json.Linq.MergeNullValueHandling">
             <summary>

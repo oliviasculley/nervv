@@ -26,27 +26,27 @@ public class RosJointPublisher : OutputSource {
     #region Settings
     [Header("Settings")]
 
-    /// <summary> Name of topic to publish </summary>
+    /// <summary>Name of topic to publish</summary>
     [Tooltip("Name of topic to publish")]
     public string Topic = "/vr_joint_states";
 
-    /// <summary> Machine to set angles from topic </summary>
+    /// <summary>Machine to set angles from topic</summary>
     [Tooltip("Machine to set angles from topic")]
     public Machine machineToPublish;
 
-    /// <summary> Interval in seconds to poll </summary>
+    /// <summary>Interval in seconds to poll</summary>
     [Tooltip("Interval in seconds to poll")]
     public float pollInterval = 0.25f;
 
-    /// <summary> URL of RosBridgeClient websocket to subscribe from </summary>
+    /// <summary>URL of RosBridgeClient websocket to subscribe from</summary>
     [Tooltip("URL of RosBridgeClient websocket to subscribe from")]
     public string URL = "";
 
-    /// <summary> Protocol to use to connect to RosBridgeClient </summary>
+    /// <summary>Protocol to use to connect to RosBridgeClient</summary>
     [Tooltip("Protocol to use to connect to RosBridgeClient")]
     public ProtocolSelection Protocol = ProtocolSelection.WebSocketNET;
 
-    /// <summary> Serialization mode of RosBridgeClient </summary>
+    /// <summary>Serialization mode of RosBridgeClient</summary>
     [Tooltip("Serialization mode of RosBridgeClient")]
     public RosSocket.SerializerEnum SerializationMode = RosSocket.SerializerEnum.JSON;
 
@@ -56,7 +56,7 @@ public class RosJointPublisher : OutputSource {
 
     private Coroutine rosConnect = null;
     private RosSocket rosSocket = null;
-    /// <summary> Used to unsubscribe from topic on close </summary>
+    /// <summary>Used to unsubscribe from topic on close</summary>
     private string topicID = null;
     float timeToTrigger = 0.0f;
 
@@ -74,7 +74,7 @@ public class RosJointPublisher : OutputSource {
         }
     }
 
-    /// <summary> Initializes socket connection when object is enabled </summary>
+    /// <summary>Initializes socket connection when object is enabled</summary>
     private void OnEnable() {
         if (rosConnect != null)
             Debug.LogWarning("Socket not null! Overwriting...");
@@ -106,7 +106,7 @@ public class RosJointPublisher : OutputSource {
         rosConnect = StartCoroutine(ConnectToRos(p));
     }
 
-    /// <summary> Destroys socket connection if object is disabled </summary>
+    /// <summary>Destroys socket connection if object is disabled</summary>
     private void OnDisable() {
         // Stop rosConnect coroutine if still running
         if (rosConnect != null)
@@ -136,7 +136,7 @@ public class RosJointPublisher : OutputSource {
 
     #region Private methods
 
-    /// <summary> Connects to ROS given a IProtocol object with settings </summary>
+    /// <summary>Connects to ROS given a IProtocol object with settings</summary>
     /// <param name="p">IProtocol object with appropriate settings</param>
     /// <returns>Unity Coroutine</returns>
     private IEnumerator ConnectToRos(IProtocol p) {
@@ -149,7 +149,7 @@ public class RosJointPublisher : OutputSource {
         topicID = rosSocket.Advertise<JointState>(Topic);
     }
 
-    /// <summary> Called when RosSocket receieves messages </summary>
+    /// <summary>Called when RosSocket receieves messages</summary>
     private void SendJointsMessage() {
         // Safety checks
         if (!OutputEnabled)
@@ -184,12 +184,12 @@ public class RosJointPublisher : OutputSource {
         Debug.Log("Test");
     }
 
-    /// <summary> Callback when socket is connected </summary>
+    /// <summary>Callback when socket is connected</summary>
     private void OnConnected(object sender, EventArgs e) {
         Debug.Log("Connected to RosBridge: " + URL);
     }
 
-    /// <summary> Callback when socket is disconnected </summary>
+    /// <summary>Callback when socket is disconnected</summary>
     private void OnDisconnected(object sender, EventArgs e) {
         Debug.Log("Disconnected from RosBridge: " + URL);
     }

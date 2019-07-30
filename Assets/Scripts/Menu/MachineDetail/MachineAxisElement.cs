@@ -32,10 +32,10 @@ namespace MTConnectVR.Menu {
 
         #region Private vars
 
-        /// <summary> Is changing axis? </summary>
+        /// <summary>Is changing axis?</summary>
         private bool changingAxis;
 
-        /// <summary> Which direction (incrementing/decrementing)? </summary>
+        /// <summary>Which direction (incrementing/decrementing)?</summary>
         private bool axisDirection;
 
         #endregion
@@ -64,7 +64,7 @@ namespace MTConnectVR.Menu {
 
         #region Public Functions
 
-        /// <summary> Initialize float element with needed parameters </summary>
+        /// <summary>Initialize float element with needed parameters</summary>
         /// <param name="fieldName"></param>
         /// <param name="currMachine"></param>
         public void InitializeElement(Machine.Axis axis) {
@@ -76,14 +76,14 @@ namespace MTConnectVR.Menu {
             UpdateText();
         }
 
-        /// <summary> Starts increasing or decreasing axis value </summary>
+        /// <summary>Starts increasing or decreasing axis value</summary>
         /// <param name="direction">Direction to start changing axis value</param>
         public void StartChanging(bool direction) {
             changingAxis = true;
             axisDirection = direction;
         }
 
-        /// <summary> Stops modifying axis value </summary>
+        /// <summary>Stops modifying axis value</summary>
         public void StopChanging() {
             changingAxis = false;
         }
@@ -92,7 +92,7 @@ namespace MTConnectVR.Menu {
 
         #region Private Functions
 
-        /// <summary> Update text readout with current value </summary>
+        /// <summary>Update text readout with current value</summary>
         private void UpdateText() {
             Debug.Assert(Axis != null,
                 "Invalid axis!");

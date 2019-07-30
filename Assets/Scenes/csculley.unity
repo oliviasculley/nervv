@@ -2027,7 +2027,7 @@ MonoBehaviour:
   ServiceName: /dsrm0609/motion/move_joint
   machineToPublish: {fileID: 1992191952}
   pollInterval: 0.1
-  URL: ws://128.46.131.12:9090
+  URL: 
   Protocol: 1
   SerializationMode: 0
 --- !u!1001 &417748264673809919

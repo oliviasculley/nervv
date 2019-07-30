@@ -9,7 +9,7 @@ using TMPro;
 using System.Reflection;
 
 namespace MTConnectVR.Menu {
-    /// <summary> Machine element in machine properties for float </summary>
+    /// <summary>Machine element in machine properties for float</summary>
     public class MachineFloatElement : MachineElement {
         #region Properties
         [Header("Properties")]
@@ -45,7 +45,7 @@ namespace MTConnectVR.Menu {
 
         #region Public Functions
 
-        /// <summary> Initialize float element with needed parameters </summary>
+        /// <summary>Initialize float element with needed parameters</summary>
         /// <param name="fieldName"></param>
         /// <param name="currMachine"></param>
         public void InitializeElement(string fieldName, IMachine currMachine, float minValue = default, float maxValue = default) {
@@ -59,7 +59,7 @@ namespace MTConnectVR.Menu {
             UpdateText();
         }
 
-        /// <summary> Increments float value </summary>
+        /// <summary>Increments float value</summary>
         public void Increment() {
             Debug.Assert(currMachine != null && !string.IsNullOrEmpty(fieldName));
 
@@ -69,7 +69,7 @@ namespace MTConnectVR.Menu {
             }
         }
 
-        /// <summary> Decrements float value </summary>
+        /// <summary>Decrements float value</summary>
         public void Decrement() {
             Debug.Assert(currMachine != null && !string.IsNullOrEmpty(fieldName));
 
@@ -83,7 +83,7 @@ namespace MTConnectVR.Menu {
 
         #region Private Functions
 
-        /// <summary> Gets field value with reflection </summary>
+        /// <summary>Gets field value with reflection</summary>
         /// <returns>Field value</returns>
         private float? GetFieldValue() {
             System.Reflection.FieldInfo info;
@@ -96,7 +96,7 @@ namespace MTConnectVR.Menu {
             return null;
         }
 
-        /// <summary> Sets field value with reflection </summary>
+        /// <summary>Sets field value with reflection</summary>
         /// <param name="value">Field value</param>
         private void SetField(float value) {
             FieldInfo info;
@@ -123,7 +123,7 @@ namespace MTConnectVR.Menu {
             }
         }
 
-        /// <summary> Update text readout with current value </summary>
+        /// <summary>Update text readout with current value</summary>
         private void UpdateText() {
             // Set text with current value
             elementTitle.text = CapitalizeFirstLetter(fieldName.Substring(1)) + ": ";

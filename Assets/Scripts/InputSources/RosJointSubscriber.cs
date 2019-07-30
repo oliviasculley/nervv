@@ -52,14 +52,14 @@ public class RosJointSubscriber : InputSource {
 
     private Coroutine rosConnect = null;
     private RosSocket rosSocket = null;
-    /// <summary> Used to unsubscribe from topic on close </summary>
+    /// <summary>Used to unsubscribe from topic on close</summary>
     private string topicID = "";
 
     #endregion
 
     #region Unity Methods
 
-    /// <summary> Initializes input with InputManager </summary>
+    /// <summary>Initializes input with InputManager</summary>
     protected override void Start() {
         base.Start();
         // Safety checks
@@ -74,7 +74,7 @@ public class RosJointSubscriber : InputSource {
             }
     }
 
-    /// <summary> Initialize websocket connection </summary>
+    /// <summary>Initialize websocket connection</summary>
     private void OnEnable() {
         if (rosConnect != null)
             Debug.LogWarning("Socket not null! Overwriting...");
@@ -106,7 +106,7 @@ public class RosJointSubscriber : InputSource {
         rosConnect = StartCoroutine(ConnectToRos(p));
     }
 
-    /// <summary> Disable websocket connection </summary>
+    /// <summary>Disable websocket connection</summary>
     private void OnDisable() {
         // Stop rosConnect coroutine if still running
         if (rosConnect != null)
@@ -124,7 +124,7 @@ public class RosJointSubscriber : InputSource {
 
     #region Private methods
 
-    /// <summary> Connects to ROS given a IProtocol object with settings </summary>
+    /// <summary>Connects to ROS given a IProtocol object with settings</summary>
     /// <param name="p">IProtocol object with appropriate settings</param>
     /// <returns>Unity Coroutine</returns>
     private IEnumerator ConnectToRos(IProtocol p) {
@@ -141,7 +141,7 @@ public class RosJointSubscriber : InputSource {
             );
     }
 
-    /// <summary> Called when RosSocket receieves messages </summary>
+    /// <summary>Called when RosSocket receieves messages</summary>
     /// <param name="message"></param>
     private void ReceiveMessage(JointState message) {
         if (InputEnabled)
@@ -150,12 +150,12 @@ public class RosJointSubscriber : InputSource {
                     (((float)message.position[i] * Mathf.Rad2Deg) + axesToBind[i].Offset) * axesToBind[i].ScaleFactor;
     }
 
-    /// <summary> Callback when websocket is connected </summary>
+    /// <summary>Callback when websocket is connected</summary>
     private void OnConnected(object sender, EventArgs e) {
         Debug.Log("Connected to RosBridge: " + URL);
     }
 
-    /// <summary> Callback when websocket is disconnected </summary>
+    /// <summary>Callback when websocket is disconnected</summary>
     private void OnDisconnected(object sender, EventArgs e) {
         Debug.Log("Disconnected from RosBridge: " + URL);
     }
@@ -167,7 +167,7 @@ public class RosJointSubscriber : InputSource {
     [System.Serializable]
     public class AxisValueAdjustment {
 
-        /// <summary> ID of Axis to map to </summary>
+        /// <summary>ID of Axis to map to</summary>
         [Tooltip("ID of Axis to map to")]
         public string ID;
 

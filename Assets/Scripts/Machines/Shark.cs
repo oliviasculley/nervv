@@ -8,7 +8,7 @@ public class Shark : Machine {
 
     #region Unity Methods
 
-    /// <summary> Initialize components </summary>
+    /// <summary>Initialize components</summary>
     protected void Awake() {
         // Init arrays
         components = new Transform[Axes.Count];

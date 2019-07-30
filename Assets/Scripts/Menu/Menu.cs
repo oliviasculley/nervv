@@ -36,22 +36,22 @@ public class Menu : MonoBehaviour {
     #region Settings
     [Header("Settings")]
 
-    /// <summary> </summary>
+    /// <summary></summary>
     public SteamVR_Action_Boolean callMenu;
 
-    /// <summary> Offset used when smoothing towards camera </summary>
+    /// <summary>Offset used when smoothing towards camera</summary>
     [Tooltip("Offset used when smoothing towards camera")]
     public Vector3 offset;
 
-    /// <summary> Stops smoothing towards target position </summary>
+    /// <summary>Stops smoothing towards target position</summary>
     [Tooltip("Stops smoothing towards target position")]
     public float epsilon = 5f;
 
-    /// <summary> Speed to move towards target position </summary>
+    /// <summary>Speed to move towards target position</summary>
     [Tooltip("Speed to move towards target position")]
     public float smoothTime = 0.05f;
 
-    /// <summary> Angle to pitch menu up </summary>
+    /// <summary>Angle to pitch menu up</summary>
     [Tooltip("Angle to pitch menu up")]
     public float menuPitch = 45;
 
@@ -61,7 +61,7 @@ public class Menu : MonoBehaviour {
     #region References
     [Header("References")]
 
-    /// <summary> Menu elements that mirror menu visibility </summary>
+    /// <summary>Menu elements that mirror menu visibility</summary>
     [Tooltip("Menu elements that mirror menu visibility")]
     public GameObject[] menuElements;
 
@@ -92,7 +92,7 @@ public class Menu : MonoBehaviour {
 
     #region Public methods
 
-    /// <summary> Set menu visible </summary>
+    /// <summary>Set menu visible</summary>
     /// <param name="isVisible">true to enable menu, false to hide menu</param>
     public void SetVisible(bool isVisible) {
         lerping = false;
@@ -131,7 +131,7 @@ public class Menu : MonoBehaviour {
 
     #region Private methods
 
-    /// <summary> Return target menu location to move toward </summary>
+    /// <summary>Return target menu location to move toward</summary>
     /// <returns>Target in world space</returns>
     private Vector3 GetTargetPos() {
         return Camera.main.transform.forward +

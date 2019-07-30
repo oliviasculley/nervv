@@ -10,10 +10,10 @@ namespace MTConnectVR {
 
         #region Required Fields
 
-        ///<summary>Speed to lerp to correct position </summary>
+        /// <summary>Speed to lerp to correct position</summary>
         float LerpSpeed { get; set; }
 
-        ///<summary>Toggles lerping to final position </summary>
+        /// <summary>Toggles lerping to final position</summary>
         bool Interpolation { get; set; }
 
         #endregion

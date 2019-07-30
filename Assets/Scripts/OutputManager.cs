@@ -16,7 +16,7 @@ public class OutputManager : MonoBehaviour {
     #region Properties
     [Header("Properties")]
 
-    /// <summary> List of output sources in scene </summary>
+    /// <summary>List of output sources in scene</summary>
     [Tooltip("List of output sources in scene")]
     public List<IOutputSource> outputs;
 
@@ -27,7 +27,7 @@ public class OutputManager : MonoBehaviour {
 
     #region Private vars
 
-    /// <summary> Keeps track of exclusive types in outputs </summary>
+    /// <summary>Keeps track of exclusive types in outputs</summary>
     private List<System.Type> knownExclusives;
 
     #endregion
@@ -50,7 +50,7 @@ public class OutputManager : MonoBehaviour {
 
     #region Public Methods
 
-    /// <summary> Adds an output to list of outputs </summary>
+    /// <summary>Adds an output to list of outputs</summary>
     /// <param name="output">Output source to add</param>
     /// <returns>Succesfully added?</returns>
     public bool AddOutput(IOutputSource output) {
@@ -71,7 +71,7 @@ public class OutputManager : MonoBehaviour {
         return true;
     }
 
-    /// <summary> Removes an output from list of outputs </summary>
+    /// <summary>Removes an output from list of outputs</summary>
     /// <param name="output">Output source to remove</param>
     /// <returns>Succesfully removed?</returns>
     public bool RemoveOutput(IOutputSource output) {
@@ -83,7 +83,7 @@ public class OutputManager : MonoBehaviour {
         return outputs.Remove(output);
     }
 
-    /// <summary> Returns outputs of same type </summary>
+    /// <summary>Returns outputs of same type</summary>
     /// <typeparam name="T">Type of output to return</typeparam>
     /// <returns>List<OutputSource> of outputs</returns>
     public List<IOutputSource> GetOutputs<T>() {
@@ -96,7 +96,7 @@ public class OutputManager : MonoBehaviour {
         return foundOutputs;
     }
 
-    /// <summary> Returns outputs of same type </summary>
+    /// <summary>Returns outputs of same type</summary>
     /// <param name="type">String of name of type of output to return</param>
     /// <returns>List<OutputSource> of outputs</returns>
     public List<IOutputSource> GetOutputs(string type) {

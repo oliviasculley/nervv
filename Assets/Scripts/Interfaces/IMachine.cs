@@ -14,19 +14,19 @@ namespace MTConnectVR {
 
         #region Required Fields
 
-        /// <summary> List of axes of movement </summary>
+        /// <summary>List of axes of movement</summary>
         List<Machine.Axis> Axes { get; set; }
 
-        /// <summary> Individual ID </summary>
+        /// <summary>Individual ID</summary>
         string Name { get; set; }
 
-        /// <summary> </summary>
+        /// <summary></summary>
         string UUID { get; set; }
 
-        /// <summary> </summary>
+        /// <summary></summary>
         string Manufacturer { get; set; }
 
-        /// <summary> </summary>
+        /// <summary></summary>
         string Model { get; set; }
 
         #endregion
