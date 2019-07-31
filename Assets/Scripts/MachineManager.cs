@@ -16,10 +16,9 @@ namespace MTConnectVR {
         #endregion
 
         #region Properties
-        [Header("Properties")]
 
         /// <summary>List of machines in scene</summary>
-        [Tooltip("List of machines in scene")]
+        [Tooltip("List of machines in scene"), Header("Properties")]
         public List<IMachine> machines;
 
         #endregion

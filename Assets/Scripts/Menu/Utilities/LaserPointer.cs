@@ -11,8 +11,8 @@ using Valve.VR;
 public class LaserPointer : MonoBehaviour {
 
     #region Settings
-    [Header("Settings")]
 
+    [Header("Settings")]
     public SteamVR_Action_Boolean interactWithUI = SteamVR_Input.GetBooleanAction("InteractUI");
     public float thickness = 0.002f;
     public Color color;
@@ -21,8 +21,8 @@ public class LaserPointer : MonoBehaviour {
     #endregion
 
     #region References
-    [Header("References")]
 
+    [Header("References")]
     public Menu menu;
 
     #endregion

@@ -24,10 +24,9 @@ public class RosJointPublisher : OutputSource {
     #endregion
 
     #region Settings
-    [Header("Settings")]
 
     /// <summary>Name of topic to publish</summary>
-    [Tooltip("Name of topic to publish")]
+    [Tooltip("Name of topic to publish"), Header("Settings")]
     public string Topic = "/vr_joint_states";
 
     /// <summary>Machine to set angles from topic</summary>

@@ -8,8 +8,8 @@ using UnityEngine.Networking;
 public class Webcam : MonoBehaviour {
 
     #region Settings
-    [Header("Settings")]
 
+    [Header("Settings")]
     //public readonly string source = "http://192.168.1.26:8082/";
     public readonly string source = "http://192.168.1.26:8081/";
     public string localSource;
@@ -18,8 +18,8 @@ public class Webcam : MonoBehaviour {
     #endregion
 
     #region References
-    [Header("References")]
 
+    [Header("References")]
     public Renderer planeRenderer;
 
     #endregion

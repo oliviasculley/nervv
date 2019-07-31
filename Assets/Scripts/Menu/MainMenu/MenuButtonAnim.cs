@@ -10,17 +10,17 @@ using UnityEngine.EventSystems;
 public class MenuButtonAnim : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
 
     #region Properties
-    [Header("Properties")]
 
+    [Header("Properties")]
     public bool hovered;
 
     #endregion
 
     #region Animation Settings
-    [Header("Animation Settings")]
 
     /// <summary>Resting height for sprite</summary>
-    [Tooltip("Resting height for sprite")]
+    [Tooltip("Resting height for sprite"),
+    Header("Animation Settings")]
     public float unactivatedHeight = 0.05f;
 
     /// <summary>Height of activated sprite</summary>
@@ -38,9 +38,9 @@ public class MenuButtonAnim : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     #endregion
 
     #region References
-    [Header("References")]
 
-    [Tooltip("Menu that menuButton is attached to")]
+    [Tooltip("Menu that menuButton is attached to"),
+    Header("References")]
     public Menu menu;
     public GameObject buttonBackground, buttonIcon;
 

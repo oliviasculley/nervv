@@ -9,23 +9,23 @@ namespace MTConnectVR.Menu {
     public class MachineAxisElement : MachineElement {
 
         #region Properties
-        [Header("Properties")]
 
+        [Header("Properties")]
         public Machine.Axis Axis;
 
         #endregion
 
         #region Settings
-        [Header("Settings")]
 
+        [Header("Settings")]
         public float AxisSpeed = 100f;
 
         #endregion
 
 
         #region References
-        [Header("References")]
 
+        [Header("References")]
         public TextMeshProUGUI ElementTitle;
 
         #endregion

@@ -21,9 +21,8 @@ public class RosJointSubscriber : InputSource {
     #endregion
 
     #region Input Settings
-    [Header("Input Settings")]
 
-    [Tooltip("Topic to subscribe from")]
+    [Tooltip("Topic to subscribe from"), Header("Input Settings")]
     public string Topic = "/joint_states";
 
     [Tooltip("Axes to bind")]
@@ -32,9 +31,8 @@ public class RosJointSubscriber : InputSource {
     #endregion
 
     #region Settings
-    [Header("Settings")]
 
-    [Tooltip("Machine to set angles from /joint_states")]
+    [Tooltip("Machine to set angles from /joint_states"), Header("Settings")]
     public Machine machineToSet;
 
     [Tooltip("URL of RosBridgeClient websocket to subscribe from")]

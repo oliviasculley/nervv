@@ -13,13 +13,14 @@ namespace MTConnectVR {
     public abstract class InputSource : MonoBehaviour, IInputSource {
 
         #region Input Properties
-        [Header("Input Properties")]
 
-        [Tooltip(
+        [SerializeField,
+        Tooltip(
             "If the input source is actively publishing to machines " +
             "or not. Note that the input source may still be inactive " +
-            "even when this is false, just not actively publishing.")]
-        [SerializeField] protected bool _inputEnabled = true;
+            "even when this is false, just not actively publishing."),
+        Header("Input Properties")]
+        protected bool _inputEnabled = true;
         /// <summary>
         /// If the input source is actively publishing to machines
         /// or not. Note that the input source may still be inactive
@@ -33,18 +34,18 @@ namespace MTConnectVR {
         #endregion
 
         #region Input Settings
-        [Header("Input Settings")]
 
-        [SerializeField] protected string _name;
+        [SerializeField, Header("Input Settings")] protected string _name;
         public virtual string Name {
             get { return _name; }
             set { _name = value; }
         }
-        [Tooltip(
+        [SerializeField,
+        Tooltip(
             "Are multiple instantiations of this script allowed? " +
             "InputManager will reject multiple types of this script " +
             "if ExclusiveType is true when added to InputManager.")]
-        [SerializeField] private bool _exclusiveType;
+        private bool _exclusiveType;
         /// <summary>
         /// Are multiple instantiations of this script allowed?
         /// InputManager will reject multiple types of this script

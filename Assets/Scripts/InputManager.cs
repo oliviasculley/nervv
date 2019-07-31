@@ -17,10 +17,9 @@ public class InputManager : MonoBehaviour {
     #endregion
 
     #region Properties
-    [Header("Properties")]
 
-    [Tooltip("List of input sources in scene")]
-    [SerializeField] private List<IInputSource> _inputs;
+    [SerializeField, Tooltip("List of input sources in scene"), Header("Properties")]
+    private List<IInputSource> _inputs;
     /// <summary>List of input sources in scene</summary>
     public List<IInputSource> Inputs {
         get { return _inputs; }

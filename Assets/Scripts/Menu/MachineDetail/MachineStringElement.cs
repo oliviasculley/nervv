@@ -12,24 +12,24 @@ namespace MTConnectVR.Menu {
     /// <summary>Machine element in machine properties for string</summary>
     public class MachineStringElement : MachineElement {
         #region Properties
-        [Header("Properties")]
 
+        [Header("Properties")]
         public string fieldName;
+
         public IMachine currMachine;
 
         #endregion
 
         #region Settings
-        [Header("Settings")]
-
-        [Tooltip("Use SteamVR minimal keyboard mode")]
+        
+        [Tooltip("Use SteamVR minimal keyboard mode"), Header("Settings")]
         public bool useKeyboardMinimalMode = true;
 
         #endregion
 
         #region References
-        [Header("References")]
 
+        [Header("References")]
         public TextMeshProUGUI elementTitle;
 
         #endregion

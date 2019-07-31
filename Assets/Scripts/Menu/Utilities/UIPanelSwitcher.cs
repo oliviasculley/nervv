@@ -8,10 +8,9 @@ using UnityEngine;
 public class UIPanelSwitcher : MonoBehaviour {
 
     #region Settings
-    [Header("Settings")]
 
     /// <summary>Panel to first be set initially</summary>
-    [Tooltip("Panel to first be set initially")]
+    [Tooltip("Panel to first be set initially"), Header("Settings")]
     public GameObject initialPanel;
 
     /// <summary>If true, set all children as inactive on enable</summary>

@@ -28,10 +28,9 @@ public class DoosanROSJointService : OutputSource {
     #endregion
 
     #region Settings
-    [Header("Settings")]
 
     /// <summary>Name of service to call</summary>
-    [Tooltip("Name of service to call")]
+    [Tooltip("Name of service to call"), Header("Settings")]
     public string ServiceName = "/dsrm0609/motion/move_joint";
 
     /// <summary>Machine to set angles from topic</summary>

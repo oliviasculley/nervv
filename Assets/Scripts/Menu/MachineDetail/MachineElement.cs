@@ -27,6 +27,7 @@ public class MachineElement : MonoBehaviour {
     #endregion
 
     #region Element Properties
+
     [Header("Element Properties")]
     public bool _visible;
     public bool Visible {

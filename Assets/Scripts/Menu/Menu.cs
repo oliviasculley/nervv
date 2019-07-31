@@ -34,9 +34,9 @@ public class Menu : MonoBehaviour {
     #endregion
 
     #region Settings
-    [Header("Settings")]
 
     /// <summary></summary>
+    [Header("Settings")]
     public SteamVR_Action_Boolean callMenu;
 
     /// <summary>Offset used when smoothing towards camera</summary>
@@ -59,10 +59,9 @@ public class Menu : MonoBehaviour {
 
 
     #region References
-    [Header("References")]
 
     /// <summary>Menu elements that mirror menu visibility</summary>
-    [Tooltip("Menu elements that mirror menu visibility")]
+    [Tooltip("Menu elements that mirror menu visibility"), Header("References")]
     public GameObject[] menuElements;
 
     #endregion

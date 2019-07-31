@@ -12,15 +12,15 @@ namespace MTConnectVR.Menu {
     public class MachineDetail : MonoBehaviour {
 
         #region Header
-        [Header("Properties")]
 
+        [Header("Properties")]
         public Machine currMachine;
 
         #endregion
 
         #region Settings
-        [Header("Settings")]
 
+        [Header("Settings")]
         public SteamVR_Action_Boolean activateIK;
 
         [Tooltip("String fields to generate handlers for")]
@@ -35,24 +35,26 @@ namespace MTConnectVR.Menu {
         #endregion
 
         #region References
-        [Header("References")]
 
-        [Tooltip("Title element")]
+        [Tooltip("Title element"), Header("References")]
         public TextMeshProUGUI machineTitle;
+
         [Tooltip("Parent to spawn machine elements")]
         public Transform machineElementParent;
+
         [Tooltip("Sphere on controller to signal IK")]
         public GameObject IKSphere;
 
         #endregion
 
         #region Prefabs
-        [Header("Prefabs")]
 
+        [Header("Prefabs")]
         public GameObject machineElementStringPrefab;
-        public GameObject
-            machineElementFloatPrefab,
-            machineElementAxisPrefab;
+
+        public GameObject machineElementFloatPrefab;
+
+        public GameObject machineElementAxisPrefab;
 
         #endregion
 

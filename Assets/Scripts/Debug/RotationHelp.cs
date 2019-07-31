@@ -8,8 +8,8 @@ using UnityEngine;
 public class RotationHelp : MonoBehaviour {
 
     #region Properties
-    [Header("Properties")]
 
+    [Header("Properties")]
     public Vector3 offset;
 
     #endregion

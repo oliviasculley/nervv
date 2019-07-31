@@ -13,9 +13,8 @@ namespace UnityEngine.UI {
     public class ButtonScrollRect : ScrollRect {
 
         #region Button Properties
-        [Header("Button Properties")]
-
-        [SerializeField] private float _targetVertNormPos;
+        [SerializeField, Header("Button Properties")]
+        private float _targetVertNormPos;
         /// <summary>Target position as normalized value between 0 and 1</summary>
         public float targetVertNormPos {
             get { return _targetVertNormPos; }
@@ -25,17 +24,16 @@ namespace UnityEngine.UI {
         #endregion
 
         #region Button Settings
-        [Header("Button Settings")]
 
         /// <summary>Amount to scroll by</summary>
-        [Tooltip("Amount to scroll by")]
-        [Range(0, 1)]
-        [SerializeField] public float scrollDelta = 0.27f;
+        [SerializeField,
+        Range(0, 1),
+        Tooltip("Amount to scroll by"), Header("Button Settings")]
+        public float scrollDelta = 0.27f;
 
         /// <summary>Speed to scroll viewport</summary>
-        [Tooltip("Speed to scroll viewport")]
-        [Range(0, 1)]
-        [SerializeField] public float scrollSpeed = 0.3f;
+        [SerializeField, Range(0, 1), Tooltip("Speed to scroll viewport")]
+        public float scrollSpeed = 0.3f;
 
         #endregion
 

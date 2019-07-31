@@ -14,16 +14,12 @@ public class OutputManager : MonoBehaviour {
     #endregion
 
     #region Properties
-    [Header("Properties")]
 
     /// <summary>List of output sources in scene</summary>
-    [Tooltip("List of output sources in scene")]
+    [Tooltip("List of output sources in scene"), Header("Properties")]
     public List<IOutputSource> outputs;
 
     #endregion
-
-
-
 
     #region Private vars
 
@@ -31,7 +27,6 @@ public class OutputManager : MonoBehaviour {
     private List<System.Type> knownExclusives;
 
     #endregion
-
 
     #region Unity Methods
 

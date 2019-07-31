@@ -13,8 +13,8 @@ namespace MTConnectVR {
     public abstract class Machine : MonoBehaviour, IMachine, IInterpolation, IInverseKinematics {
 
         #region Machine Properties
-        [Header("Machine Properties")]
 
+        [Header("Machine Properties")]
         public List<Axis> _axes;
         /// <summary>Machine axes of possible movement/rotation</summary>
         /// <see cref="IMachine"/>
@@ -27,10 +27,10 @@ namespace MTConnectVR {
 
         #region Machine Settings
 
-        [Header("Machine Settings")]
-
-        [Tooltip("Name of Machine")]
-        [SerializeField] protected string _name;
+        [SerializeField,
+        Tooltip("Name of Machine"),
+        Header("Machine Settings")]
+        protected string _name;
         /// <summary>Name of Machine</summary>
         /// <see cref="IMachine"/>
         public virtual string Name {
@@ -38,8 +38,9 @@ namespace MTConnectVR {
             set { _name = value; }
         }
 
-        [Tooltip("Individual ID, used for individual machine identification and matching")]
-        [SerializeField] protected string _uuid;
+        [SerializeField,
+        Tooltip("Individual ID, used for individual machine identification and matching")]
+        protected string _uuid;
         /// <summary>Individual ID, used for individual machine identification and matching</summary>
         /// <see cref="IMachine"/>
         public virtual string UUID {
@@ -47,8 +48,8 @@ namespace MTConnectVR {
             set { _uuid = value; }
         }
 
-        [Tooltip("Name of machine manufacturer")]
-        [SerializeField] protected string _manufacturer;
+        [SerializeField, Tooltip("Name of machine manufacturer")]
+        protected string _manufacturer;
         /// <summary>Name of machine manufacturer</summary>
         /// <see cref="IMachine"/>
         public virtual string Manufacturer {
@@ -56,8 +57,8 @@ namespace MTConnectVR {
             set { _manufacturer = value; }
         }
 
-        [Tooltip("Model of machine")]
-        [SerializeField] protected string _model;
+        [SerializeField, Tooltip("Model of machine")]
+        protected string _model;
         /// <summary>Model of machine</summary>
         /// <see cref="IMachine"/>
         public virtual string Model {
@@ -68,10 +69,11 @@ namespace MTConnectVR {
         #endregion
 
         #region Interpolation Settings
-        [Header("Interpolation Settings")]
 
-        [Tooltip("Speed to lerp to correct position")]
-        [SerializeField] protected float _lerpSpeed = 10f;
+        [SerializeField,
+        Tooltip("Speed to lerp to correct position"),
+        Header("Interpolation Settings")]
+        protected float _lerpSpeed = 10f;
         /// <summary>Speed to lerp to correct position</summary>
         ///<seealso cref="IInterpolation"/>
         public float LerpSpeed {
@@ -79,8 +81,9 @@ namespace MTConnectVR {
             set { _lerpSpeed = value; }
         }
 
-        [Tooltip("Toggles lerping to final position")]
-        [SerializeField] protected bool _interpolation = true;
+        [SerializeField,
+        Tooltip("Toggles lerping to final position")]
+        protected bool _interpolation = true;
         /// <summary>Toggles lerping to final position</summary>
         ///<seealso cref="IInterpolation"/>
         public bool Interpolation {
@@ -91,10 +94,9 @@ namespace MTConnectVR {
         #endregion
 
         #region IK Settings
-        [Header("IK Settings")]
 
         /// <summary>Learning rate of gradient descent</summary>
-        [Tooltip("Learning rate of gradient descent")]
+        [Tooltip("Learning rate of gradient descent"), Header("IK Settings")]
         public float IKSpeed = 10f;
         
         /// <summary>Axis delta to check IK</summary>
@@ -115,7 +117,10 @@ namespace MTConnectVR {
 
         #region Unity Methods
 
-        /// <summary>Runs initial safety checks and adds self to MachineManager</summary>
+        /// <summary>
+        /// Runs initial safety checks and
+        /// adds self to MachineManager
+        /// </summary>
         protected virtual void Start() {
             // Safety checks
             for (int i = 0; i < Axes.Count; i++)
@@ -233,10 +238,10 @@ namespace MTConnectVR {
         public class Axis {
 
             #region Properties
-            [Header("Properties")]
 
-            [Tooltip("Value of axis in external worldspace")]
-            [SerializeField] protected float _externalValue;
+            [SerializeField,
+            Tooltip("Value of axis in external worldspace"),
+            Header("Properties")]protected float _externalValue;
             public virtual float ExternalValue {
                 get { return _externalValue; }
                 set { _externalValue = value; }
@@ -268,67 +273,85 @@ namespace MTConnectVR {
 
 
             #region Settings
-            [Header("Settings")]
 
-            [Tooltip("ID of axis, used for matching")]
-            [SerializeField] protected string _id;
+            [SerializeField,
+            Tooltip("ID of axis, used for matching"),
+            Header("Settings")]
+            protected string _id;
             /// <summary>ID of axis, used for matching</summary>
             public virtual string ID {
                 get { return _id; }
                 set { _id = value; }
             }
 
-            [Tooltip("Name of axis")]
-            [SerializeField] protected string _name;
+            [SerializeField, Tooltip("Name of axis")]
+            protected string _name;
             /// <summary>Name of axis. Should only be used for informative purposes.</summary>
             public virtual string Name {
                 get { return _name; }
                 set { _name = value; }
             }
 
-            [Tooltip("Short description of axis")]
-            [SerializeField] protected string _desc;
+            [SerializeField, Tooltip("Short description of axis")]
+            protected string _desc;
             /// <summary>Short description of axis</summary>
             public virtual string Description {
                 get { return _desc; }
                 set { _desc = value; }
             }
 
-            [Tooltip("Maximum allowed deviation. External angles will be moduloed by this value.")]
-            [SerializeField] protected float _maxDelta;
-            /// <summary>Maximum allowed deviation. External angles will be moduloed by this value.</summary>
+            [SerializeField,
+            Tooltip("Maximum allowed deviation. External angles" +
+                " will be moduloed by this value.")]
+            protected float _maxDelta;
+            /// <summary>
+            /// Maximum allowed deviation. External angles
+            /// will be moduloed by this value.
+            /// </summary>
             public virtual float MaxDelta {
                 get { return _maxDelta; }
                 set { _maxDelta = value; }
             }
 
-            [Tooltip("Offset used to correct from an external worldspace to Unity's worldspace")]
-            [SerializeField] protected float _offset;
-            /// <summary>Offset used to correct from an external worldspace to Unity's worldspace</summary>
+            [SerializeField,
+            Tooltip("Offset used to correct from an external" +
+                " worldspace to Unity's worldspace")]
+            protected float _offset;
+            /// <summary>
+            /// Offset used to correct from an external
+            /// worldspace to Unity's worldspace
+            /// </summary>
             public virtual float Offset {
                 get { return _offset; }
                 set { _offset = value; }
             }
 
-            [Tooltip("Scale used to correct from an external worldspace to Unity's worldspace")]
-            [SerializeField] protected float _scaleFactor = 1f;
-            /// <summary>Scale used to correct from an external worldspace to Unity's worldspace</summary>
+            [SerializeField,
+            Tooltip("Scale used to correct from an external" +
+                " worldspace to Unity's worldspace")]
+            protected float _scaleFactor = 1f;
+            /// <summary>
+            /// Scale used to correct from an external
+            /// worldspace to Unity's worldspace
+            /// </summary>
             public virtual float ScaleFactor {
                 get { return _scaleFactor; }
                 set { _scaleFactor = value; }
             }
 
             public enum AxisType { Rotary, Linear, None }
-            [Tooltip("Type of axis")]
-            [SerializeField] protected AxisType _type;
+            [SerializeField, Tooltip("Type of axis")]
+            protected AxisType _type;
             /// <summary>Type of axis</summary>
             public virtual AxisType Type {
                 get { return _type; }
                 set { _type = value; }
             }
 
-            [Tooltip("Vector3 Location/Rotation in Unity worldspace. Scales with Value")]
-            [SerializeField] protected Vector3 _axisVector3;
+            [SerializeField,
+            Tooltip("Vector3 Location/Rotation in Unity worldspace." +
+                " Scales with Value")]
+            protected Vector3 _axisVector3;
             /// <summary>
             /// Vector3 Location/Rotation in Unity worldspace. Scales with Value.
             /// Use this to set position/rotation of objects from the axis.

@@ -6,8 +6,8 @@ using UnityEngine;
 /// Attach this script to any trigger colliders to automatically disable
 /// all outputs if a machine collider enters the trigger
 /// </summary>
-[RequireComponent(typeof(Collider))]
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Collider)),
+RequireComponent(typeof(Rigidbody))]
 public class OutputSafety : MonoBehaviour {
 
     /// <summary>Shut down outputs if collider enters the trigger</summary>

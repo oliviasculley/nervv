@@ -11,8 +11,8 @@ using MTConnectVR;
 public class OpenHapticsConnect : InputSource {
 
     #region References
-    [Header("References")]
 
+    [Header("References")]
     public HapticPlugin HapticDevice = null;
 
     #endregion

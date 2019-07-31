@@ -9,12 +9,15 @@ using UnityEngine;
 public class ButtonScrollMask : MonoBehaviour {
 
     #region Properties
-    [Header("Properties")]
 
+    [Header("Properties")]
     public Transform content;
 
     [Range(0, 1)]
-    public float minHeight, maxHeight;
+    public float minHeight;
+
+    [Range(0, 1)]
+    public float maxHeight;
 
     #endregion
 

@@ -20,18 +20,18 @@ namespace MTConnectVR.Menu {
         #endregion
 
         #region Settings
-        [Header("Settings")]
 
-        [Tooltip("Delta to increment or decrement value by")]
+        [Tooltip("Delta to increment or decrement value by"), Header("Settings")]
         public float delta = 1f;
         public float minValue, maxValue;
 
         #endregion
 
         #region References
-        [Header("References")]
 
+        [Header("References")]
         public TextMeshProUGUI elementTitle;
+
         #endregion
 
         #region Unity Methods

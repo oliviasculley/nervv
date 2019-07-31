@@ -7,10 +7,9 @@ namespace MTConnectVR.Menu {
     public class MachinesList : MonoBehaviour {
 
         #region References
-        [Header("References")]
 
         /// <summary>Parent to spawn machine buttons underneath</summary>
-        [Tooltip("Parent to spawn machine buttons underneath")]
+        [Tooltip("Parent to spawn machine buttons underneath"), Header("References")]
         public Transform scrollViewParent;
 
         public GameObject machineButtonPrefab;

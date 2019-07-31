@@ -22,9 +22,9 @@ using MTConnectVR.XML.MTConnectStreams;
 public class MTConnect : InputSource {
 
     #region MTConnect Settings
-    [Header("MTConnect Settings")]
 
-    [Tooltip("Used to specify adjustments to incoming values for individual axes")]
+    [Tooltip("Used to specify adjustments to incoming values for individual axes"),
+    Header("MTConnect Settings")]
     /// <summary>Used to specify adjustments to incoming values for individual axes</summary>
     public AxisValueAdjustment[] adjustments;
 
