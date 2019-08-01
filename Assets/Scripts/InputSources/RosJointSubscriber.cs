@@ -13,25 +13,19 @@ using RosSharp.RosBridgeClient.Messages.Standard;
 using MTConnectVR;
 
 public class RosJointSubscriber : InputSource {
-
     #region Static
-
     public enum ProtocolSelection { WebSocketSharp, WebSocketNET };
-
     #endregion
 
     #region Input Settings
-
     [Tooltip("Topic to subscribe from"), Header("Input Settings")]
     public string Topic = "/joint_states";
 
     [Tooltip("Axes to bind")]
     public AxisValueAdjustment[] axesToBind;
-
     #endregion
 
     #region Settings
-
     [Tooltip("Machine to set angles from /joint_states"), Header("Settings")]
     public Machine machineToSet;
 
@@ -43,20 +37,16 @@ public class RosJointSubscriber : InputSource {
 
     [Tooltip("Serialization mode of RosBridgeClient")]
     public RosSocket.SerializerEnum SerializationMode = RosSocket.SerializerEnum.JSON;
-
     #endregion
 
-    #region Private vars
-
-    private Coroutine rosConnect = null;
-    private RosSocket rosSocket = null;
+    #region Vars
+    Coroutine rosConnect = null;
+    RosSocket rosSocket = null;
     /// <summary>Used to unsubscribe from topic on close</summary>
-    private string topicID = "";
-
+    string topicID = "";
     #endregion
 
     #region Unity Methods
-
     /// <summary>Initializes input with InputManager</summary>
     protected override void Start() {
         base.Start();
@@ -73,7 +63,7 @@ public class RosJointSubscriber : InputSource {
     }
 
     /// <summary>Initialize websocket connection</summary>
-    private void OnEnable() {
+    void OnEnable() {
         if (rosConnect != null)
             Debug.LogWarning("Socket not null! Overwriting...");
         rosConnect = null;
@@ -105,7 +95,7 @@ public class RosJointSubscriber : InputSource {
     }
 
     /// <summary>Disable websocket connection</summary>
-    private void OnDisable() {
+    void OnDisable() {
         // Stop rosConnect coroutine if still running
         if (rosConnect != null)
             StopCoroutine(rosConnect);
@@ -117,15 +107,13 @@ public class RosJointSubscriber : InputSource {
             rosSocket.Close();
         }
     }
-
     #endregion
 
-    #region Private methods
-
+    #region Methods
     /// <summary>Connects to ROS given a IProtocol object with settings</summary>
     /// <param name="p">IProtocol object with appropriate settings</param>
     /// <returns>Unity Coroutine</returns>
-    private IEnumerator ConnectToRos(IProtocol p) {
+    IEnumerator ConnectToRos(IProtocol p) {
         rosSocket = new RosSocket(p, RosSocket.SerializerEnum.JSON);
 
         // Wait until socket is active
@@ -141,7 +129,7 @@ public class RosJointSubscriber : InputSource {
 
     /// <summary>Called when RosSocket receieves messages</summary>
     /// <param name="message"></param>
-    private void ReceiveMessage(JointState message) {
+    void ReceiveMessage(JointState message) {
         if (InputEnabled)
             for (int i = 0; i < message.name.Length && i < axesToBind.Length; i++)
                 machineToSet.Axes.Find(x => x.ID == axesToBind[i].ID).ExternalValue =
@@ -149,22 +137,19 @@ public class RosJointSubscriber : InputSource {
     }
 
     /// <summary>Callback when websocket is connected</summary>
-    private void OnConnected(object sender, EventArgs e) {
+    void OnConnected(object sender, EventArgs e) {
         Debug.Log("Connected to RosBridge: " + URL);
     }
 
     /// <summary>Callback when websocket is disconnected</summary>
-    private void OnDisconnected(object sender, EventArgs e) {
+    void OnDisconnected(object sender, EventArgs e) {
         Debug.Log("Disconnected from RosBridge: " + URL);
     }
-
     #endregion
 
     #region AxisValueAdjustment Convenience Class
-
     [System.Serializable]
     public class AxisValueAdjustment {
-
         /// <summary>ID of Axis to map to</summary>
         [Tooltip("ID of Axis to map to")]
         public string ID;
@@ -173,16 +158,17 @@ public class RosJointSubscriber : InputSource {
         /// Offset used to correct between particular input's
         /// worldspace to chosen external worldspac
         /// </summary>
-        [Tooltip("Offset used to correct between particular input's worldspace to chosen external worldspace")]
+        [Tooltip("Offset used to correct between particular " +
+            "input's worldspace to chosen external worldspace")]
         public float Offset;
 
         /// <summary>
         /// Scale factor used to correct between particular input's
         /// worldspace to chosen external worldspace
         /// </summary>
-        [Tooltip("Scale factor used to correct between particular input's worldspace to chosen external worldspace")]
+        [Tooltip("Scale factor used to correct between particular " +
+            "input's worldspace to chosen external worldspace")]
         public float ScaleFactor;
     }
-
     #endregion
 }

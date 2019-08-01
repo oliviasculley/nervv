@@ -11,20 +11,17 @@ namespace UnityEngine.UI {
     /// Scrollrect mainly driven by button scrolls
     /// </summary>
     public class ButtonScrollRect : ScrollRect {
-
         #region Button Properties
         [SerializeField, Header("Button Properties")]
-        private float _targetVertNormPos;
+        float _targetVertNormPos;
         /// <summary>Target position as normalized value between 0 and 1</summary>
         public float targetVertNormPos {
             get { return _targetVertNormPos; }
             set { _targetVertNormPos = Mathf.Clamp(value, 0, 1); }
         }
-
         #endregion
 
         #region Button Settings
-
         /// <summary>Amount to scroll by</summary>
         [SerializeField,
         Range(0, 1),
@@ -34,24 +31,22 @@ namespace UnityEngine.UI {
         /// <summary>Speed to scroll viewport</summary>
         [SerializeField, Range(0, 1), Tooltip("Speed to scroll viewport")]
         public float scrollSpeed = 0.3f;
-
         #endregion
 
         #region Unity Methods
-
-        private new void OnEnable() {
+        /// <summary>Set initial state</summary>
+        new void OnEnable() {
             targetVertNormPos = 1;
         }
 
-        private void Update() {
-            // Continually lerp towards target position
-            verticalNormalizedPosition = Mathf.Lerp(verticalNormalizedPosition, targetVertNormPos, scrollSpeed);
+        /// <summary>Continually lerp towards target position</summary>
+        void Update() {
+            verticalNormalizedPosition =
+                Mathf.Lerp(verticalNormalizedPosition, targetVertNormPos, scrollSpeed);
         }
-
         #endregion
 
         #region Public Methods
-
         /// <summary>Scrolls down by a set delta</summary>
         public void ScrollDown() {
             targetVertNormPos -= scrollDelta;
@@ -61,8 +56,6 @@ namespace UnityEngine.UI {
         public void ScrollUp() {
             targetVertNormPos += scrollDelta;
         }
-
         #endregion
-
     }
 }

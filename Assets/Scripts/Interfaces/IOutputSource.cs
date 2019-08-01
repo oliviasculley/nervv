@@ -2,9 +2,7 @@
 /// Interface that must be fulfilled to be considered as an output source
 /// </summary>
 public interface IOutputSource {
-
     #region Required Fields
-
     /// <summary>Is this input currently enabled?</summary>
     bool OutputEnabled { get; set; }
 
@@ -13,6 +11,5 @@ public interface IOutputSource {
 
     /// <summary></summary>
     string Name { get; set; }
-
     #endregion
 }

@@ -4,39 +4,34 @@ using UnityEngine;
 
 /// <summary>
 /// This class handles adding and removing machines from the scene.
-/// It also handles sending data to the machines
+/// It also handles sending data to the machines. Static reference
+/// to self is set in Awake(), so any calls to Instance must happen
+/// in Start() or later.
 /// </summary>
 namespace MTConnectVR {
     public class MachineManager : MonoBehaviour {
-
         #region Static
-
         public static MachineManager Instance;
-
         #endregion
 
         #region Properties
-
         /// <summary>List of machines in scene</summary>
         [Tooltip("List of machines in scene"), Header("Properties")]
         public List<IMachine> machines;
-
         #endregion
 
         #region Unity Methods
-
-        public void Awake() {
+        /// <summary>Initialize self and set static ref to self</summary>
+        void Awake() {
             machines = new List<IMachine>();
 
             if (Instance != null)
                 Debug.LogWarning("[MachineManager] Static ref to self was not null!\nOverriding...");
             Instance = this;
         }
-
         #endregion
 
         #region Public Methods
-
         /// <summary>Adds machine to machines List</summary>
         /// <param name="machine">Machine to add</param>
         /// <returns>Succesfully added?</returns>
@@ -82,7 +77,6 @@ namespace MTConnectVR {
 
             return foundMachines;
         }
-
         #endregion
     }
 }

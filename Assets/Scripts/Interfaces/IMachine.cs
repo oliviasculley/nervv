@@ -11,9 +11,7 @@ namespace MTConnectVR {
     /// be considered as a machine.
     /// </summary>
     public interface IMachine {
-
         #region Required Fields
-
         /// <summary>List of axes of movement</summary>
         List<Machine.Axis> Axes { get; set; }
 
@@ -28,17 +26,14 @@ namespace MTConnectVR {
 
         /// <summary></summary>
         string Model { get; set; }
-
         #endregion
 
         #region Required methods
-
         /// <summary>
         /// Activate a small delta of inverse kinematics for the target position.
         /// </summary>
         /// <param name="targetPosition">Vector3 of target position in world space</param>
         void InverseKinematics(Vector3 targetPosition);
-
         #endregion
     }
 }

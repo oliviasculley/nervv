@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿// System
+using System.Collections;
 using System.Collections.Generic;
+
+// Unity Engine
 using UnityEngine;
 
 /// <summary>
@@ -9,7 +12,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider)),
 RequireComponent(typeof(Rigidbody))]
 public class OutputSafety : MonoBehaviour {
-
+    #region Unity Methods
     /// <summary>Shut down outputs if collider enters the trigger</summary>
     public void OnTriggerEnter(Collider other) {
         if (other.gameObject.layer == LayerMask.NameToLayer("Machines")) {
@@ -27,4 +30,5 @@ public class OutputSafety : MonoBehaviour {
             foreach (IOutputSource output in OutputManager.Instance.outputs)
                 output.OutputEnabled = false;
     }
+    #endregion
 }

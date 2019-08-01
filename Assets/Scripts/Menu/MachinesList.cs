@@ -4,54 +4,46 @@ using UnityEngine.UI;
 using TMPro;
 
 namespace MTConnectVR.Menu {
+    /// <summary>Displays a list of machines in the menu</summary>
     public class MachinesList : MonoBehaviour {
-
         #region References
-
         /// <summary>Parent to spawn machine buttons underneath</summary>
         [Tooltip("Parent to spawn machine buttons underneath"), Header("References")]
         public Transform scrollViewParent;
-
         public GameObject machineButtonPrefab;
-
         public MachineDetail detailPanel;
-
         public UIPanelSwitcher switcher;
-
         #endregion
 
         #region Unity Methods
-
-        private void OnEnable() {
+        /// <summary>Check references and generate buttons</summary>
+        void OnEnable() {
             Debug.Assert(detailPanel != null,
-                "[Menu: MachinesList] Could not get ref to machine detail panel!");
+                "Could not get ref to machine detail panel!");
             Debug.Assert(machineButtonPrefab != null,
-                "[Menu: MachinesList] Could not get ref to machine button prefab!");
+                "Could not get ref to machine button prefab!");
             Debug.Assert(switcher != null,
-                "[Menu: MachinesList] Could not get ref to switcher!");
-        }
-
-        private void Start() {
+                "Could not get ref to switcher!");
             Debug.Assert(MachineManager.Instance != null,
                 "[Menu: MachinesList] Could not get ref to MachineManager!");
 
             GenerateMachineButtons();
         }
-
         #endregion
 
         #region Public Methods
-
+        /// <summary>
+        /// UI Wrapper to select a machine to inspect
+        /// </summary>
+        /// <param name="m">Machine to inspect</param>
         public void MachineClick(Machine m) {
             detailPanel.DisplayMachine(m);
             switcher.ChangeMenu(detailPanel.gameObject);
         }
-
         #endregion
 
-        #region Private Methods
-
-        private void GenerateMachineButtons() {
+        #region Methods
+        void GenerateMachineButtons() {
             // Delete old objects
             foreach (Transform t in scrollViewParent.transform)
                 Destroy(t.gameObject);
@@ -67,7 +59,6 @@ namespace MTConnectVR.Menu {
                 g.GetComponent<Button>().onClick.AddListener(delegate { MachineClick(buttonM); });
             }
         }
-
         #endregion
     }
 }

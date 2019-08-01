@@ -1,4 +1,4 @@
-﻿//System
+﻿// System
 using System.Collections;
 using System.Collections.Generic;
 
@@ -9,11 +9,9 @@ using UnityEngine;
 using MTConnectVR;
 
 public class Doosan : Machine {
-
     #region Unity Methods
-
     /// <summary>Initializes components array</summary>
-    private void Awake() {
+    void Awake() {
         // Init arrays
         components = new Transform[Axes.Count];
 
@@ -27,7 +25,7 @@ public class Doosan : Machine {
                 }
     }
 
-    private void Update() {
+    void Update() {
         if (Interpolation) {
             // Continually lerp towards final position
             for (int i = 0; i < Axes.Count; i++)
@@ -45,7 +43,5 @@ public class Doosan : Machine {
         // DEBUG: Draw forward kinematics every frame
         ForwardKinematics(Axes.ToArray());
     }
-
     #endregion
-
 }

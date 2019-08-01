@@ -1,15 +1,17 @@
-﻿using System.Collections;
+﻿// System
+using System.Collections;
 using System.Collections.Generic;
+
+// Unity Engine
 using UnityEngine;
 
+// MTConnectVR
 using MTConnectVR;
 
 public class Shark : Machine {
-
     #region Unity Methods
-
     /// <summary>Initialize components</summary>
-    protected void Awake() {
+    void Awake() {
         // Init arrays
         components = new Transform[Axes.Count];
 
@@ -23,7 +25,8 @@ public class Shark : Machine {
                 }
     }
 
-    private void Update() {
+    /// <summary>Set component positions based on axes</summary>
+    void Update() {
         if (Interpolation) {
             // Continually lerp towards final position
             float clampedLerp = Mathf.Clamp(LerpSpeed * Time.deltaTime, 0, 1);
@@ -42,6 +45,5 @@ public class Shark : Machine {
         // DEBUG: Draw Position
         ForwardKinematics(Axes.ToArray());
     }
-
     #endregion
 }

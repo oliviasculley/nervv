@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Threading;
 
 // Unity
+using Newtonsoft.Json;
 using UnityEngine;
 using RosSharp.RosBridgeClient;
 using RosSharp.RosBridgeClient.Protocols;
 using RosSharp.RosBridgeClient.Services;
-using Newtonsoft.Json;
 using RosSharp.RosBridgeClient.Messages.Standard;
 
 // MTConnectVR
@@ -20,15 +20,11 @@ using MTConnectVR;
 /// Details can be found at http://wiki.ros.org/doosan-robotics?action=AttachFile&do=get&target=Doosan_Robotics_ROS_Manual_ver0.92_190508A%28EN.%29.pdf
 ///</summary>
 public class DoosanROSJointService : OutputSource {
-
     #region Static
-
     public enum ProtocolSelection { WebSocketSharp, WebSocketNET };
-
     #endregion
 
     #region Settings
-
     /// <summary>Name of service to call</summary>
     [Tooltip("Name of service to call"), Header("Settings")]
     public string ServiceName = "/dsrm0609/motion/move_joint";
@@ -52,19 +48,16 @@ public class DoosanROSJointService : OutputSource {
     /// <summary>Serialization mode of RosBridgeClient</summary>
     [Tooltip("Serialization mode of RosBridgeClient")]
     public RosSocket.SerializerEnum SerializationMode = RosSocket.SerializerEnum.JSON;
-
     #endregion
 
-    #region Private vars
-
-    private RosSocket rosSocket = null;
-    private string serviceID = null;
+    #region Vars
+    RosSocket rosSocket = null;
+    string serviceID = null;
     float timeToTrigger = 0.0f;
-
     #endregion
 
     #region Unity methods
-
+    /// <summary>Safety checks and initialization</summary>
     protected override void Start() {
         base.Start();
 
@@ -76,7 +69,7 @@ public class DoosanROSJointService : OutputSource {
     }
 
     /// <summary>Initializes socket connection when object is enabled</summary>
-    private void OnEnable() {
+    void OnEnable() {
         if (rosSocket != null)
             Debug.LogWarning("Socket not null! Overwriting...");
         rosSocket = null;
@@ -96,7 +89,6 @@ public class DoosanROSJointService : OutputSource {
                 Debug.LogError("Could not get find matching protocol for RosSocket!");
                 return;
         }
-
         Debug.Assert(p != null, "Could not initialize protocol!");
 
         // OnConnected and OnClosed event handlers
@@ -108,30 +100,27 @@ public class DoosanROSJointService : OutputSource {
     }
 
     /// <summary>Destroys socket connection if object is disabled</summary>
-    private void OnDisable() {
+    void OnDisable() {
         // Stop socket and close
         if (rosSocket != null) {
             serviceID = null;
             rosSocket.Close();
         }
-            
     }
 
-    private void Update() {
-        // Check if time to trigger
+    /// <summary>Check if need to publish message</summary>
+    void Update() {
         if (OutputEnabled && UnityEngine.Time.time > timeToTrigger) {
             // Set new time to trigger
             timeToTrigger = UnityEngine.Time.time + pollInterval;
             SendJointsMessage();
         }
     }
-
     #endregion
 
-    #region Private methods
-
+    #region Methods
     /// <summary>Sends message to service to move joints to specified location</summary>
-    private void SendJointsMessage() {
+    void SendJointsMessage() {
         // Safety checks
         if (!OutputEnabled)
             return;
@@ -169,21 +158,20 @@ public class DoosanROSJointService : OutputSource {
     }
 
     /// <summary>Callback with response from Doosan MoveJoint Service</summary>
-    private void VerifySuccess(MoveJointResponse r) {
+    void VerifySuccess(MoveJointResponse r) {
         if (!r.success)
             Debug.LogWarning("Could not successfully move angles to new joint!");
         serviceID = null;
     }
 
     /// <summary>Callback when socket is connected</summary>
-    private void OnConnected(object sender, EventArgs e) {
+    void OnConnected(object sender, EventArgs e) {
         Debug.Log("Connected to RosBridge: " + URL);
     }
 
     /// <summary>Callback when socket is disconnected</summary>
-    private void OnDisconnected(object sender, EventArgs e) {
+    void OnDisconnected(object sender, EventArgs e) {
         Debug.Log("Disconnected from RosBridge: " + URL);
     }
-
     #endregion
 }

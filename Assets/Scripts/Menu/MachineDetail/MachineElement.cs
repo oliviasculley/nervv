@@ -1,13 +1,14 @@
-﻿using System.Collections;
+﻿// System
+using System.Collections;
 using System.Collections.Generic;
+
+// Unity Engine
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public class MachineElement : MonoBehaviour {
-
     #region Static
-
     /// <summary>Returns string with capitalized first letter</summary>
     /// <param name="input">string to be capitalized</param>
     /// <returns>capitalized string</returns>
@@ -23,11 +24,9 @@ public class MachineElement : MonoBehaviour {
         // Else return capitalized first char with rest of string
         return input.Substring(0, 1).ToUpper() + input.Substring(1).ToLower();
     }
-
     #endregion
 
     #region Element Properties
-
     [Header("Element Properties")]
     public bool _visible;
     public bool Visible {
@@ -49,22 +48,18 @@ public class MachineElement : MonoBehaviour {
                 t.enabled = _visible;
         }
     }
-
     #endregion
 
-    #region Private vars
-
+    #region Vars
     Button[] buttons;
     BoxCollider[] colliders;
     EventTrigger[] triggers;
-
     #endregion
 
     #region Unity Methods
-
+    /// <summary>Set element as visible on load</summary>
     public void OnEnable() {
         Visible = true;
     }
-
     #endregion
 }

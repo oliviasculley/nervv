@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿// System
+using System.Collections;
 using System.Collections.Generic;
 
 // Unity
@@ -6,50 +7,44 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public class Webcam : MonoBehaviour {
-
     #region Settings
-
     [Header("Settings")]
     //public readonly string source = "http://192.168.1.26:8082/";
     public readonly string source = "http://192.168.1.26:8081/";
     public string localSource;
     public float pollInterval;
-
     #endregion
 
     #region References
-
     [Header("References")]
     public Renderer planeRenderer;
-
     #endregion
 
-    #region Private vars
-
-    private WebCamTexture w;
-    private float timeToTrigger = 0.0f;
-
+    #region Vars
+    WebCamTexture w;
+    float timeToTrigger = 0.0f;
     #endregion
 
     #region Unity Methods
-
-    private void Awake() {
-        Debug.Assert(planeRenderer != null, "[Webcam] Could not get reference to renderer!");
+    /// <summary>Safety checks</summary>
+    void Awake() {
+        Debug.Assert(planeRenderer != null, "Could not get reference to renderer!");
         Debug.Assert(!string.IsNullOrEmpty(source), "Webcam URL is null or empty!");
         if (pollInterval == 0)
             Debug.LogWarning("Poll interval set to 0, will send GET request every frame!");
     }
 
-    private void Start() {
+    /// <summary>Get local webcam feed</summary>
+    void Start() {
         w = new WebCamTexture(localSource);
         StartCoroutine(GetLocalWebcamFeed());
     }
 
-    private void Update() {
+    /// <summary>Orient webcam plane and get remote feeds</summary>
+    void Update() {
         // Look at main camera
         transform.LookAt(Camera.main.transform.position);
 
-        
         // Check if time to trigger
         //if (Time.time > timeToTrigger)
         //{
@@ -60,13 +55,11 @@ public class Webcam : MonoBehaviour {
         //    StartCoroutine(GetRemoteWebcamFeed());
         //}
     }
-
     #endregion
 
     #region Webcam Methods
-
     /// <summary>Unity coroutine for updating a plane with a remote image</summary>
-    private IEnumerator GetRemoteWebcamFeed() {
+    IEnumerator GetRemoteWebcamFeed() {
         WWWForm form = new WWWForm();
         using (UnityWebRequest www = UnityWebRequestTexture.GetTexture(source)) {
             yield return www.SendWebRequest();
@@ -82,7 +75,7 @@ public class Webcam : MonoBehaviour {
     }
 
     /// <summary>Unity Coroutine for streaming local webcam to plane</summary>
-    private IEnumerator GetLocalWebcamFeed() {
+    IEnumerator GetLocalWebcamFeed() {
         yield return Application.RequestUserAuthorization(UserAuthorization.WebCam);
         if (Application.HasUserAuthorization(UserAuthorization.WebCam)) {
             planeRenderer.material.mainTexture = w;
@@ -91,6 +84,5 @@ public class Webcam : MonoBehaviour {
             Debug.LogWarning("[Webcam] Webcam authorization denied!");
         }
     }
-
     #endregion
 }

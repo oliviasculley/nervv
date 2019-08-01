@@ -1,50 +1,44 @@
 ﻿// System
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 
 // Unity Engine
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Reflection;
 
 namespace MTConnectVR.Menu {
     /// <summary>Machine element in machine properties for float</summary>
     public class MachineFloatElement : MachineElement {
         #region Properties
         [Header("Properties")]
-
         public string fieldName;
         public IMachine currMachine;
-
         #endregion
 
         #region Settings
-
+        /// <summary>Delta to increment or decrement value by</summary>
         [Tooltip("Delta to increment or decrement value by"), Header("Settings")]
         public float delta = 1f;
-        public float minValue, maxValue;
-
+        public float minValue;
+        public float maxValue;
         #endregion
 
         #region References
-
         [Header("References")]
         public TextMeshProUGUI elementTitle;
-
         #endregion
 
         #region Unity Methods
-
-        private new void OnEnable() {
+        /// <summary>Check references</summary>
+        new void OnEnable() {
             Debug.Assert(elementTitle != null,
                 "Could not get Float element title TMP_UGUI!");
         }
-
         #endregion
 
         #region Public Functions
-
         /// <summary>Initialize float element with needed parameters</summary>
         /// <param name="fieldName"></param>
         /// <param name="currMachine"></param>
@@ -78,15 +72,13 @@ namespace MTConnectVR.Menu {
                 UpdateText();
             }
         }
-
         #endregion
 
-        #region Private Functions
-
+        #region Methods
         /// <summary>Gets field value with reflection</summary>
         /// <returns>Field value</returns>
-        private float? GetFieldValue() {
-            System.Reflection.FieldInfo info;
+        float? GetFieldValue() {
+            FieldInfo info;
             if ((info = typeof(Machine).GetField(
                     fieldName,
                     BindingFlags.NonPublic | BindingFlags.Instance
@@ -98,7 +90,7 @@ namespace MTConnectVR.Menu {
 
         /// <summary>Sets field value with reflection</summary>
         /// <param name="value">Field value</param>
-        private void SetField(float value) {
+        void SetField(float value) {
             FieldInfo info;
             if (currMachine != null &&
                 (info = typeof(Machine).GetField(
@@ -124,13 +116,12 @@ namespace MTConnectVR.Menu {
         }
 
         /// <summary>Update text readout with current value</summary>
-        private void UpdateText() {
+        void UpdateText() {
             // Set text with current value
             elementTitle.text = CapitalizeFirstLetter(fieldName.Substring(1)) + ": ";
             if (GetFieldValue() != null)
                 elementTitle.text += GetFieldValue().ToString();
         }
-
         #endregion
     }
 }

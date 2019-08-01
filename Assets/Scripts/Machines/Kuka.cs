@@ -1,32 +1,30 @@
-﻿// Unity Engine
+﻿// System
+using System.Collections;
+using System.Collections.Generic;
+
+// Unity Engine
 using UnityEngine;
+
+// MTConnectVR
 using MTConnectVR;
 
 public class Kuka : Machine {
-
     #region Unity Methods
-
-    private void Awake() {
-        // Init arrays
+    /// <summary>Dynamically get components</summary>
+    void Awake() {
         components = new Transform[Axes.Count];
 
-        // Recursively populate components with Transform references
         Transform t = transform;
         for (int i = 0; i < Axes.Count; i++)                    // For each component
             for (int j = 0; j < t.childCount; j++)              // Go through current transform
                 if (t.GetChild(j).name == ("A" + (i + 1))) {    // If name matches
-                    components[i] = (t = t.GetChild(j));        // Set new child and components
+                    components[i] = t = t.GetChild(j);          // Set new child and components
                     break;
                 }
     }
 
-    protected override void Start() {
-        base.Start();
-        if (LerpSpeed == 0)
-            Debug.LogWarning("LerpSpeed is 0, will never move!");
-    }
-
-    private void Update() {
+    /// <summary>Update machine position every frame with/without interpolation</summary>
+    void Update() {
         if (Interpolation) {
             // Continually lerp towards final position
             for (int i = 0; i < Axes.Count; i++)
@@ -44,7 +42,5 @@ public class Kuka : Machine {
         // DEBUG: Draw forward kinematics every frame
         ForwardKinematics(Axes.ToArray());
     }
-
     #endregion
-
 }

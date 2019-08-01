@@ -10,17 +10,14 @@ using UnityEngine.UI;
 RequireComponent(typeof(BoxCollider)),
 RequireComponent(typeof(RectTransform))]
 public class ColliderScaleToUIElement : MonoBehaviour {
-
-    #region Private vars
-
+    #region Vars
     BoxCollider c;
     RectTransform t;
-
     #endregion
 
     #region Unity Methods
-
-    private void OnEnable() {
+    /// <summary>Get dynamic references</summary>
+    void OnEnable() {
         c = GetComponent<BoxCollider>();
         Debug.Assert(c != null, "[ColliderScale] Could not get box collider!");
 
@@ -28,10 +25,9 @@ public class ColliderScaleToUIElement : MonoBehaviour {
         Debug.Assert(t != null, "[ColliderScale] Could not get rectTransform!");
     }
 
-    private void Update() {
+    /// <summary>Set collider size to rectTransform</summary>
+    void Update() {
         c.size = t.rect.size;
     }
-
     #endregion
-
 }

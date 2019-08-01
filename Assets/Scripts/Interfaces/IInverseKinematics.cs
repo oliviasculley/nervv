@@ -7,9 +7,7 @@ namespace MTConnectVR {
     /// be considered as a machine.
     /// </summary>
     public interface IInverseKinematics {
-
         #region Required methods
-
         /// <summary>
         /// Activate a small delta of inverse kinematics for the target position.
         /// </summary>
@@ -22,7 +20,6 @@ namespace MTConnectVR {
         /// <param name="anglesToCalculate">Array of floats with angles to calculate</param>
         /// <returns>Vector3 of final position in world space</returns>
         Vector3 ForwardKinematics(Machine.Axis[] anglesToCalculate);
-
         #endregion
     }
 }

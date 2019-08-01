@@ -1,50 +1,46 @@
-﻿using System.Collections;
+﻿// System
+using System.Collections;
 using System.Collections.Generic;
+
+// Unity Engine
 using UnityEngine;
 
 /// <summary>
-/// This class handles different outputs sources
+/// This class handles different outputs sources. Static reference
+/// to self is set in Awake(), so any calls to Instance must happen
+/// in Start() or later.
 /// </summary>
 public class OutputManager : MonoBehaviour {
-
     #region Static
-
     public static OutputManager Instance;
-
     #endregion
 
     #region Properties
-
     /// <summary>List of output sources in scene</summary>
     [Tooltip("List of output sources in scene"), Header("Properties")]
     public List<IOutputSource> outputs;
-
     #endregion
 
-    #region Private vars
-
+    #region Vars
     /// <summary>Keeps track of exclusive types in outputs</summary>
-    private List<System.Type> knownExclusives;
-
+    List<System.Type> knownExclusives;
     #endregion
 
     #region Unity Methods
+    /// <summary>Set static ref to self and initialize vars</summary>
+    void Awake() {
+        // Initialize vars
+        knownExclusives = new List<System.Type>();
+        outputs = new List<IOutputSource>();
 
-    private void Awake() {
         // Add static reference to self
         if (Instance != null)
             Debug.LogWarning("[OutputManager] Static ref to self was not null!\nOverriding...");
         Instance = this;
-
-        // Initialize vars
-        knownExclusives = new List<System.Type>();
-        outputs = new List<IOutputSource>();
     }
-
     #endregion
 
     #region Public Methods
-
     /// <summary>Adds an output to list of outputs</summary>
     /// <param name="output">Output source to add</param>
     /// <returns>Succesfully added?</returns>
@@ -103,6 +99,5 @@ public class OutputManager : MonoBehaviour {
 
         return foundOutputs;
     }
-
     #endregion
 }

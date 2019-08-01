@@ -1,66 +1,61 @@
-﻿using System.Collections;
+﻿// System
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
+// Unity Engine
 using UnityEngine;
 using UnityEngine.UI;
 using Valve.VR;
-
 using TMPro;
 
 namespace MTConnectVR.Menu {
     public class MachineDetail : MonoBehaviour {
-
-        #region Header
-
+        #region Properties
         [Header("Properties")]
         public Machine currMachine;
-
         #endregion
 
         #region Settings
-
         [Header("Settings")]
         public SteamVR_Action_Boolean activateIK;
 
+        /// <summary>String fields to generate handlers for</summary>
         [Tooltip("String fields to generate handlers for")]
         public string[] stringFieldNamesToGenerate;
 
+        /// <summary>Float fields to generate handlers for</summary>
         [Tooltip("Float fields to generate handlers for")]
         public string[] floatFieldNamesToGenerate;
 
+        /// <summary>Generates axis elements</summary>
         [Tooltip("Generates axis elements")]
         public bool generateAxisElements = true;
-
         #endregion
 
         #region References
-
-        [Tooltip("Title element"), Header("References")]
+        [Header("References")]
         public TextMeshProUGUI machineTitle;
 
+        /// <summary>Parent to spawn machine elements</summary>
         [Tooltip("Parent to spawn machine elements")]
         public Transform machineElementParent;
 
+        /// <summary>Sphere on controller to signal IK</summary>
         [Tooltip("Sphere on controller to signal IK")]
         public GameObject IKSphere;
-
         #endregion
 
         #region Prefabs
-
         [Header("Prefabs")]
         public GameObject machineElementStringPrefab;
-
         public GameObject machineElementFloatPrefab;
-
         public GameObject machineElementAxisPrefab;
-
         #endregion
 
         #region Unity Methods
-
-        private void OnEnable() {
+        /// <summary>Check references and safety checks</summary>
+        void OnEnable() {
             // Get references
             Debug.Assert(machineTitle != null,
                 "[Menu: Machine Detail] Could not get ref to machine title!");
@@ -79,7 +74,8 @@ namespace MTConnectVR.Menu {
                     "[Menu: Machine Detail] Invalid string field name!");
         }
 
-        private void Update() {
+        /// <summary>Check and perform IK on current machine</summary>
+        void Update() {
             // If activated, perform IK on current menu machine
             if (activateIK.state && currMachine != null) {
                 currMachine.InverseKinematics(IKSphere.transform.position);
@@ -88,11 +84,9 @@ namespace MTConnectVR.Menu {
             // Set sphere visualizer visibility
             IKSphere.SetActive(activateIK.state);
         }
-
         #endregion
 
         #region Public methods
-
         public void DisplayMachine(Machine m) {
             // Safety checks
             if ((currMachine = m) != null && currMachine.GetType() == typeof(Machine)) {
@@ -117,16 +111,14 @@ namespace MTConnectVR.Menu {
                 foreach (Machine.Axis a in currMachine.Axes)
                     GenerateAxisElement(a);
         }
-
         #endregion
 
         #region Element Generators
-
         /// <summary>
         /// Generates handler that allows for modification of the corresponding axis field
         /// </summary>
         /// <param name="axisName">axis to create handler for</param>
-        private void GenerateAxisElement(Machine.Axis a) {
+        void GenerateAxisElement(Machine.Axis a) {
             GameObject g = Instantiate(machineElementAxisPrefab, machineElementParent);
             g.transform.SetAsLastSibling();
 
@@ -140,7 +132,7 @@ namespace MTConnectVR.Menu {
         /// Generates handler that allows for modification of the corresponding float field
         /// </summary>
         /// <param name="fieldName">Name of field to modify</param>
-        private void GenerateFloatElement(string fieldName) {
+        void GenerateFloatElement(string fieldName) {
             GameObject g = Instantiate(machineElementFloatPrefab, machineElementParent);
             g.transform.SetAsLastSibling();
 
@@ -154,7 +146,7 @@ namespace MTConnectVR.Menu {
         /// Generates handler that allows for modification of the corresponding string field 
         /// </summary>
         /// <param name="fieldName">Name of field to modify</param>
-        private void GenerateStringElement(string fieldName) {
+        void GenerateStringElement(string fieldName) {
             GameObject g = Instantiate(machineElementStringPrefab, machineElementParent);
             g.transform.SetAsLastSibling();
 
@@ -163,7 +155,6 @@ namespace MTConnectVR.Menu {
 
             e.InitializeElement(fieldName, currMachine);
         }
-
         #endregion
     }
 }

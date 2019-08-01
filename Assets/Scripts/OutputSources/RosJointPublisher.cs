@@ -1,30 +1,23 @@
 ﻿// System
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
 
 // Unity
 using UnityEngine;
 using RosSharp.RosBridgeClient;
 using RosSharp.RosBridgeClient.Protocols;
 using RosSharp.RosBridgeClient.Messages.Sensor;
-using Newtonsoft.Json;
 using RosSharp.RosBridgeClient.Messages.Standard;
 
 // MTConnectVR
 using MTConnectVR;
 
 public class RosJointPublisher : OutputSource {
-
     #region Static
-
     public enum ProtocolSelection { WebSocketSharp, WebSocketNET };
-
     #endregion
 
     #region Settings
-
     /// <summary>Name of topic to publish</summary>
     [Tooltip("Name of topic to publish"), Header("Settings")]
     public string Topic = "/vr_joint_states";
@@ -48,21 +41,18 @@ public class RosJointPublisher : OutputSource {
     /// <summary>Serialization mode of RosBridgeClient</summary>
     [Tooltip("Serialization mode of RosBridgeClient")]
     public RosSocket.SerializerEnum SerializationMode = RosSocket.SerializerEnum.JSON;
-
     #endregion
 
-    #region Private vars
-
-    private Coroutine rosConnect = null;
-    private RosSocket rosSocket = null;
+    #region Vars
+    Coroutine rosConnect = null;
+    RosSocket rosSocket = null;
     /// <summary>Used to unsubscribe from topic on close</summary>
-    private string topicID = null;
+    string topicID = null;
     float timeToTrigger = 0.0f;
-
     #endregion
 
     #region Unity methods
-
+    /// <summary>Safety checks</summary>
     protected override void Start() {
         base.Start();
 
@@ -74,7 +64,7 @@ public class RosJointPublisher : OutputSource {
     }
 
     /// <summary>Initializes socket connection when object is enabled</summary>
-    private void OnEnable() {
+    void OnEnable() {
         if (rosConnect != null)
             Debug.LogWarning("Socket not null! Overwriting...");
         rosConnect = null;
@@ -106,7 +96,7 @@ public class RosJointPublisher : OutputSource {
     }
 
     /// <summary>Destroys socket connection if object is disabled</summary>
-    private void OnDisable() {
+    void OnDisable() {
         // Stop rosConnect coroutine if still running
         if (rosConnect != null)
             StopCoroutine(rosConnect);
@@ -122,23 +112,21 @@ public class RosJointPublisher : OutputSource {
         }
     }
 
-    private void Update() {
-        // Check if time to trigger
+    /// <summary>Checks for time to trigger</summary>
+    void Update() {
         if (OutputEnabled && UnityEngine.Time.time > timeToTrigger) {
             // Set new time to trigger
             timeToTrigger = UnityEngine.Time.time + pollInterval;
             SendJointsMessage();
         }
     }
-
     #endregion
 
-    #region Private methods
-
+    #region Methods
     /// <summary>Connects to ROS given a IProtocol object with settings</summary>
     /// <param name="p">IProtocol object with appropriate settings</param>
     /// <returns>Unity Coroutine</returns>
-    private IEnumerator ConnectToRos(IProtocol p) {
+    IEnumerator ConnectToRos(IProtocol p) {
         rosSocket = new RosSocket(p, RosSocket.SerializerEnum.JSON);
 
         // Wait until socket is active
@@ -149,7 +137,7 @@ public class RosJointPublisher : OutputSource {
     }
 
     /// <summary>Called when RosSocket receieves messages</summary>
-    private void SendJointsMessage() {
+    void SendJointsMessage() {
         // Safety checks
         if (!OutputEnabled)
             return;
@@ -184,14 +172,13 @@ public class RosJointPublisher : OutputSource {
     }
 
     /// <summary>Callback when socket is connected</summary>
-    private void OnConnected(object sender, EventArgs e) {
+    void OnConnected(object sender, EventArgs e) {
         Debug.Log("Connected to RosBridge: " + URL);
     }
 
     /// <summary>Callback when socket is disconnected</summary>
-    private void OnDisconnected(object sender, EventArgs e) {
+    void OnDisconnected(object sender, EventArgs e) {
         Debug.Log("Disconnected from RosBridge: " + URL);
     }
-
     #endregion
 }

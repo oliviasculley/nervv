@@ -11,9 +11,7 @@ namespace MTConnectVR {
     /// added to MachineManager when they are initialized.
     /// </summary>
     public abstract class Machine : MonoBehaviour, IMachine, IInterpolation, IInverseKinematics {
-
         #region Machine Properties
-
         [Header("Machine Properties")]
         public List<Axis> _axes;
         /// <summary>Machine axes of possible movement/rotation</summary>
@@ -22,11 +20,9 @@ namespace MTConnectVR {
             get { return _axes; }
             set { _axes = value; }
         }
-
         #endregion
 
         #region Machine Settings
-
         [SerializeField,
         Tooltip("Name of Machine"),
         Header("Machine Settings")]
@@ -65,11 +61,9 @@ namespace MTConnectVR {
             get { return _model; }
             set { _model = value; }
         }
-
         #endregion
 
         #region Interpolation Settings
-
         [SerializeField,
         Tooltip("Speed to lerp to correct position"),
         Header("Interpolation Settings")]
@@ -90,11 +84,9 @@ namespace MTConnectVR {
             get { return _interpolation; }
             set { _interpolation = value; }
         }
-
         #endregion
 
         #region IK Settings
-
         /// <summary>Learning rate of gradient descent</summary>
         [Tooltip("Learning rate of gradient descent"), Header("IK Settings")]
         public float IKSpeed = 10f;
@@ -106,17 +98,13 @@ namespace MTConnectVR {
         /// <summary>Minimum distance delta to apply IK</summary>
         [Tooltip("Minimum distance delta to apply IK")]
         public float IKEpsilon = 0.0001f;
-
         #endregion
 
         #region Protected Vars
-
         protected Transform[] components;
-
         #endregion
 
         #region Unity Methods
-
         /// <summary>
         /// Runs initial safety checks and
         /// adds self to MachineManager
@@ -137,11 +125,9 @@ namespace MTConnectVR {
             Debug.Assert(MachineManager.Instance.AddMachine(this),
                 "Could not add self to MachineManager!");
         }
-
         #endregion
 
         #region Public Methods
-
         /// <summary>
         /// Returns the final location of the robotic arm using forward kinematics
         /// </summary>
@@ -171,10 +157,8 @@ namespace MTConnectVR {
                     Debug.LogError("Invalid axis type, cannot perform forward kinematics on this axis!");
                     nextPoint = prevPoint;
                 }
-                
                 prevPoint = nextPoint;
             }
-
             return prevPoint;
         }
 
@@ -203,18 +187,16 @@ namespace MTConnectVR {
                 //    );
             }
         }
-
         #endregion
 
-        #region Private Methods
-
+        #region Methods
         /// <summary>Returns the gradient for a specific angleID</summary>
         /// <param name="target">Vector3 target location in worldspace</param>
         /// <param name="axes">Angles to calculate from</param>
         /// <param name="axisID">Angle to return gradient for</param>
         /// <returns>Partial gradient as float</returns>
         /// <see cref="IInverseKinematics"/>
-        private float PartialGradient(Vector3 target, List<Axis> axes, int axisID) {
+        float PartialGradient(Vector3 target, List<Axis> axes, int axisID) {
             // Safety checks
             Debug.Assert(axisID >= 0 && axisID < axes.Count,
                 "Invalid axisID: " + axisID);
@@ -228,17 +210,14 @@ namespace MTConnectVR {
 
             return (f_x_plus_d - f_x) / SamplingDistance;
         }
-
         #endregion
 
         #region Axis Class
-
         /// <summary>Axis class, controls robot's dimensions of movement.</summary>
         [System.Serializable]
         public class Axis {
 
             #region Properties
-
             [SerializeField,
             Tooltip("Value of axis in external worldspace"),
             Header("Properties")]protected float _externalValue;
@@ -262,18 +241,17 @@ namespace MTConnectVR {
                 set { _externalValue += (Value - value) / ScaleFactor; }
             }
 
-            [SerializeField] protected float _torque;
+            [SerializeField,
+            Tooltip("Value of axis in Unity worldspace")]
+            protected float _torque;
             /// <summary></summary>
             public virtual float Torque {
                 get { return _torque; }
                 set { _torque = value; }
             }
-
             #endregion
 
-
             #region Settings
-
             [SerializeField,
             Tooltip("ID of axis, used for matching"),
             Header("Settings")]
@@ -360,10 +338,8 @@ namespace MTConnectVR {
                 get { return _axisVector3 * Value; }
                 set { _axisVector3 = value.normalized; }
             }
-
             #endregion
         }
-
         #endregion
     }
 }

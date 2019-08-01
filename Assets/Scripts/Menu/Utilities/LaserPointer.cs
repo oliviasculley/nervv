@@ -9,38 +9,32 @@ using Valve.VR;
 
 [RequireComponent(typeof(SteamVR_Behaviour_Pose))]
 public class LaserPointer : MonoBehaviour {
-
     #region Settings
-
     [Header("Settings")]
-    public SteamVR_Action_Boolean interactWithUI = SteamVR_Input.GetBooleanAction("InteractUI");
+    public SteamVR_Action_Boolean interactWithUI =
+        SteamVR_Input.GetBooleanAction("InteractUI");
     public float thickness = 0.002f;
     public Color color;
     public Color clickColor = Color.green;
-
     #endregion
 
     #region References
-
     [Header("References")]
     public Menu menu;
-
     #endregion
 
-    #region Private vars
-
-    private List<Transform> enteredTransforms;
-    private Transform currentHovered;
-    private SteamVR_Behaviour_Pose pose;
-    private RaycastHit[] hits;
-    private GameObject holder;
-    private GameObject pointer;
-
+    #region Vars
+    List<Transform> enteredTransforms;
+    Transform currentHovered;
+    SteamVR_Behaviour_Pose pose;
+    RaycastHit[] hits;
+    GameObject holder;
+    GameObject pointer;
     #endregion
 
     #region Unity Methods
-
-    private void OnEnable() {
+    /// <summary>Safety checks and initial state</summary>
+    void OnEnable() {
         pose = GetComponent<SteamVR_Behaviour_Pose>();
         Debug.Assert(pose != null,
             "No SteamVR_Behaviour_Pose component found on this object");
@@ -71,16 +65,18 @@ public class LaserPointer : MonoBehaviour {
         pointer.GetComponent<MeshRenderer>().material = m;
     }
 
-    private void OnDisable() {
+    /// <summary>Clean up laser pointer objects</summary>
+    void OnDisable() {
         Destroy(holder);
         Destroy(pointer);
     }
 
-    private void Update() {
+    /// <summary>Perform raycasts</summary>
+    void Update() {
         // Set self enabled or disabled from Menu state
-        holder.SetActive(menu.visible);
-        pointer.SetActive(menu.visible);
-        if (!menu.visible)
+        holder.SetActive(menu.Visible);
+        pointer.SetActive(menu.Visible);
+        if (!menu.Visible)
             return;
 
         // Raycast all objects in path
@@ -103,12 +99,24 @@ public class LaserPointer : MonoBehaviour {
             new Vector3(thickness * 5f, thickness * 5f, pointer.transform.localScale.z) :
             new Vector3(thickness, thickness, pointer.transform.localScale.z);
     }
-
     #endregion
 
-    #region Private Methods
+    #region Methods
+    /// <summary>
+    /// Will set pointer length to smaller length unless otherwise specified
+    /// </summary>
+    /// <param name="dist">Length in Unity units to set pointer</param>
+    /// <param name="overwrite">Set distance to a longer distance</param>
+    void SetPointerLength(float dist, bool overwrite = true) {
+        if (dist < pointer.transform.localScale.z || overwrite) {
+            pointer.transform.localPosition = new Vector3(0f, 0f, dist / 2f);
+            pointer.transform.localScale = new Vector3(pointer.transform.localScale.x, pointer.transform.localScale.y, dist);
+        }
+    }
+    #endregion
 
-    private void OnPointerClickUp() {
+    #region EventHandlers
+    void OnPointerClickUp() {
         IPointerClickHandler onPointerClick;
         IPointerUpHandler onPointerUp;
         if (interactWithUI.GetStateUp(pose.inputSource)) {
@@ -130,7 +138,7 @@ public class LaserPointer : MonoBehaviour {
         }
     }
 
-    private void OnPointerDown() {
+    void OnPointerDown() {
         IPointerDownHandler onPointerDown;
         if (interactWithUI.GetStateDown(pose.inputSource)) {
             foreach (RaycastHit h in hits) {
@@ -143,7 +151,7 @@ public class LaserPointer : MonoBehaviour {
         }
     }
 
-    private void OnPointerOut() {
+    void OnPointerOut() {
         foreach (Transform prevTransform in enteredTransforms.ToArray()) {
             // Check if destroyed
             if (prevTransform == null) {
@@ -173,7 +181,7 @@ public class LaserPointer : MonoBehaviour {
         }
     }
 
-    private void OnPointerIn() {
+    void OnPointerIn() {
         // OnPointerIn for first object with IPointerEnterHandler
         IPointerEnterHandler onPointerIn;
         foreach (RaycastHit h in hits) {
@@ -188,7 +196,7 @@ public class LaserPointer : MonoBehaviour {
                 if (h.transform.GetComponent<IPointerExitHandler>() != null) {
                     enteredTransforms.Add(h.transform);
                 }
-                    
+
 
                 // Set pointer length
                 SetPointerLength(h.distance);
@@ -201,19 +209,5 @@ public class LaserPointer : MonoBehaviour {
             SetPointerLength(100, true);
         }
     }
-
-    /// <summary>
-    /// Will set pointer length to smaller length unless otherwise specified
-    /// </summary>
-    /// <param name="dist">Length in Unity units to set pointer</param>
-    /// <param name="overwrite">Set distance to a longer distance</param>
-    private void SetPointerLength(float dist, bool overwrite = true) {
-        if (dist < pointer.transform.localScale.z || overwrite) {
-            pointer.transform.localPosition = new Vector3(0f, 0f, dist / 2f);
-            pointer.transform.localScale = new Vector3(pointer.transform.localScale.x, pointer.transform.localScale.y, dist);
-        }
-    }
-
     #endregion
-
 }

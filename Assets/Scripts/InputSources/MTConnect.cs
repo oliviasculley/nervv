@@ -20,9 +20,7 @@ using MTConnectVR.XML.MTConnectStreams;
 /// rules to adjust incoming values with adjustments.
 /// </summary>
 public class MTConnect : InputSource {
-
     #region MTConnect Settings
-
     [Tooltip("Used to specify adjustments to incoming values for individual axes"),
     Header("MTConnect Settings")]
     /// <summary>Used to specify adjustments to incoming values for individual axes</summary>
@@ -35,19 +33,16 @@ public class MTConnect : InputSource {
     [Tooltip("Interval in seconds to poll")]
     /// <summary>Interval in seconds to poll</summary>
     public float pollInterval = 0.1f;
-
     #endregion
 
-    #region Private vars
-
+    #region Vars
     IEnumerator fetchMTConnect;
     float timeToTrigger = 0.0f;
-
     #endregion
 
     #region Unity Methods
-
-    private void OnEnable() {
+    /// <summary>Safety checks and initialize state</summary>
+    void OnEnable() {
         // Safety checks
         Debug.Assert(!string.IsNullOrEmpty(URL), "MTConnectURL is null or empty!");
         if (pollInterval == 0)
@@ -57,7 +52,8 @@ public class MTConnect : InputSource {
         fetchMTConnect = null;
     }
 
-    private void Update() {
+    /// <summary>Check if need to trigger</summary>
+    void Update() {
         if (InputEnabled) {
             // Check if time to trigger
             if (Time.time > timeToTrigger) {
@@ -78,14 +74,12 @@ public class MTConnect : InputSource {
                 StopCoroutine(fetchMTConnect);
         }
     }
-
     #endregion
 
-    #region Private Methods
-
+    #region Methods
     /// <summary>Sends GET request to MTConnectURL</summary>
     /// <returns>Unity Coroutine</returns>
-    private IEnumerator FetchMTConnect() {
+    IEnumerator FetchMTConnect() {
         WWWForm form = new WWWForm();
         using (UnityWebRequest www = UnityWebRequest.Get(URL)) {
             yield return www.SendWebRequest();
@@ -107,7 +101,7 @@ public class MTConnect : InputSource {
     }
 
     /// <summary>Parses XML Object</summary>
-    private void ParseXML(string input) {
+    void ParseXML(string input) {
         XmlSerializer serializer = new XmlSerializer(typeof(MTConnectStreams));
         TextReader reader = new StringReader(input);
         MTConnectStreams xmlData = (MTConnectStreams)serializer.Deserialize(reader);
@@ -180,12 +174,10 @@ public class MTConnect : InputSource {
             }
         }
     }
-
     #endregion
 
     #region IComparer Helpers
-
-    private class PositionTimeStampCompare : IComparer<Position> {
+    class PositionTimeStampCompare : IComparer<Position> {
         public int Compare(Position x, Position y) {
             if (x == null || y == null)
                 return 0;
@@ -196,7 +188,7 @@ public class MTConnect : InputSource {
         }
     }
 
-    private class AngleTimeStampCompare : IComparer<Angle> {
+    class AngleTimeStampCompare : IComparer<Angle> {
         public int Compare(Angle x, Angle y) {
             if (x == null || y == null)
                 return 0;
@@ -207,7 +199,7 @@ public class MTConnect : InputSource {
         }
     }
 
-    private class TorqueTimeStampCompare : IComparer<Torque> {
+    class TorqueTimeStampCompare : IComparer<Torque> {
         public int Compare(Torque x, Torque y) {
             if (x == null || y == null)
                 return 0;
@@ -217,14 +209,11 @@ public class MTConnect : InputSource {
             return x.Timestamp.CompareTo(y.Timestamp);
         }
     }
-
     #endregion
 
     #region AxisValueAdjustment class
-
     [System.Serializable]
     public class AxisValueAdjustment {
-
         /// <summary>Machine to adjust axes for</summary>
         [Tooltip("Machine to adjust axes for")]
         public Machine Machine;
@@ -251,7 +240,5 @@ public class MTConnect : InputSource {
             "input's worldspace to chosen external worldspace")]
         public float ScaleFactor;
     }
-
     #endregion
-
 }

@@ -9,16 +9,12 @@ using UnityEngine;
 using MTConnectVR;
 
 public class OpenHapticsConnect : InputSource {
-
     #region References
-
     [Header("References")]
     public HapticPlugin HapticDevice = null;
-
     #endregion
 
     #region Unity Methods
-
     protected override void Start() {
         base.Start();
 
@@ -31,7 +27,5 @@ public class OpenHapticsConnect : InputSource {
         if (!InputManager.Instance.AddInput(this))
             Debug.LogError("[OpenHapticsConnect] Could not add self to InputManager!");
     }
-
     #endregion
-
 }

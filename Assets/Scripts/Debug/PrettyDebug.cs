@@ -16,7 +16,6 @@ public class PrettyDebug : ILogHandler {
     }
 
     #region Instance Methods
-
     public void LogException(Exception exception, UnityEngine.Object context) {
         Debug.LogException(exception, context);
     }
@@ -51,7 +50,6 @@ public class PrettyDebug : ILogHandler {
                 return;
         }
     }
-
     #endregion
 }
 

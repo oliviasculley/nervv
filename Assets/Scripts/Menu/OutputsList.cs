@@ -8,21 +8,17 @@ using UnityEngine.UI;
 using TMPro;
 
 public class OutputsList : MonoBehaviour {
-
     #region References
-
     /// <summary>Parent to spawn machine buttons underneath</summary>
     [Tooltip("Parent to spawn machine buttons underneath"),
     Header("References")]
     public Transform scrollViewParent;
-
     public GameObject inputButtonPrefab;
-
     #endregion
 
     #region Unity Methods
-
-    private void OnEnable() {
+    /// <summary>Check references and generate buttons OnEnable</summary>
+    void OnEnable() {
         Debug.Assert(inputButtonPrefab != null,
             "Could not get ref to input button prefab!");
         Debug.Assert(OutputManager.Instance != null,
@@ -30,21 +26,19 @@ public class OutputsList : MonoBehaviour {
 
         GenerateOutputButtons();
     }
-
     #endregion
 
     #region Public Methods
-
+    /// <summary>Toggle output enabled</summary>
+    /// <seealso cref="IOutputSource"/>
     public void ToggleOutputs(IOutputSource o) {
         o.OutputEnabled = !o.OutputEnabled;
         GenerateOutputButtons();
     }
-
     #endregion
 
-    #region Private Methods
-
-    private void GenerateOutputButtons() {
+    #region Methods
+    void GenerateOutputButtons() {
         // Delete old objects
         foreach (Transform t in scrollViewParent.transform)
             Destroy(t.gameObject);
@@ -62,6 +56,5 @@ public class OutputsList : MonoBehaviour {
             g.GetComponent<Button>().onClick.AddListener(delegate { ToggleOutputs(buttonOutput); });
         }
     }
-
     #endregion
 }

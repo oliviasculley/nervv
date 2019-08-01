@@ -8,16 +8,12 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public class MenuButtonAnim : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
-
     #region Properties
-
     [Header("Properties")]
     public bool hovered;
-
     #endregion
 
     #region Animation Settings
-
     /// <summary>Resting height for sprite</summary>
     [Tooltip("Resting height for sprite"),
     Header("Animation Settings")]
@@ -34,29 +30,26 @@ public class MenuButtonAnim : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     /// <summary>Ratio of background plane to image</summary>
     [Tooltip("Ratio of background plane to image")]
     public readonly float planeRatio = 1f;
-
     #endregion
 
     #region References
-
     [Tooltip("Menu that menuButton is attached to"),
     Header("References")]
     public Menu menu;
     public GameObject buttonBackground, buttonIcon;
-
     #endregion
 
     #region Unity Methods
-
-    private void Awake() {
+    /// <summary>Check references</summary>
+    void Awake() {
         Debug.Assert(menu != null,
             "[MenuButton] Could not get reference to menu!");
         if (buttonBackground == null && buttonIcon == null)
             Debug.LogWarning("[MenuButton] Button background and icon not set, will not animate!");
     }
 
-    private void Start() {
-        // Init vars
+    /// <summary>Set Plane, button and background to initial states</summary>
+    void Start() {
         hovered = false;
 
         // Set plane size relative to icon
@@ -81,7 +74,8 @@ public class MenuButtonAnim : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         );
     }
 
-    private void Update() {
+    /// <summary>Raise/Lower button and backgrounds when hovered</summary>
+    void Update() {
         // Smoothly raise or lower buttonIcon when hovered
         buttonIcon.transform.localPosition = new Vector3(
             buttonIcon.transform.localPosition.x,
@@ -104,11 +98,9 @@ public class MenuButtonAnim : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             )
         );
     }
-
     #endregion
 
-    #region Public methods
-
+    #region EventHandlers
     /// <summary>Hover on OnPointerEnter</summary>
     /// <param name="data">Event system data</param>
     public void OnPointerEnter(PointerEventData data) {
@@ -120,6 +112,5 @@ public class MenuButtonAnim : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public void OnPointerExit(PointerEventData data) {
         hovered = false;
     }
-
     #endregion
 }

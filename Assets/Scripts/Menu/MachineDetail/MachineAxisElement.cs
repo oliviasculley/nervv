@@ -1,52 +1,46 @@
-﻿using System.Collections;
+﻿// System
+using System.Collections;
 using System.Collections.Generic;
 
+// Unity Engine
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
 namespace MTConnectVR.Menu {
     public class MachineAxisElement : MachineElement {
-
         #region Properties
-
         [Header("Properties")]
         public Machine.Axis Axis;
-
         #endregion
 
         #region Settings
-
         [Header("Settings")]
         public float AxisSpeed = 100f;
-
         #endregion
-
 
         #region References
-
         [Header("References")]
         public TextMeshProUGUI ElementTitle;
-
         #endregion
 
-        #region Private vars
-
+        #region Vars
         /// <summary>Is changing axis?</summary>
-        private bool changingAxis;
+        bool changingAxis;
 
         /// <summary>Which direction (incrementing/decrementing)?</summary>
-        private bool axisDirection;
-
+        bool axisDirection;
         #endregion
 
         #region Unity Methods
-
-        private new void OnEnable() {
-            Debug.Assert(ElementTitle != null, "Could not get axis element title TMP_UGUI!");
+        /// <summary>Check references</summary>
+        new void OnEnable() {
+            Debug.Assert(ElementTitle != null,
+                "Could not get axis element title TMP_UGUI!");
         }
 
-        private void Update() {
+        /// <summary>Update Axis elements</summary>
+        void Update() {
             // If updating axis, modify
             if (changingAxis) {
                 Debug.Assert(Axis != null,
@@ -59,11 +53,9 @@ namespace MTConnectVR.Menu {
             // Live update angles
             UpdateText();
         }
-
         #endregion
 
-        #region Public Functions
-
+        #region Public Methods
         /// <summary>Initialize float element with needed parameters</summary>
         /// <param name="fieldName"></param>
         /// <param name="currMachine"></param>
@@ -71,8 +63,7 @@ namespace MTConnectVR.Menu {
             Debug.Assert(axis != null,
                 "Invalid axis!");
 
-            this.Axis = axis;
-
+            Axis = axis;
             UpdateText();
         }
 
@@ -87,13 +78,11 @@ namespace MTConnectVR.Menu {
         public void StopChanging() {
             changingAxis = false;
         }
-
         #endregion
 
-        #region Private Functions
-
+        #region Methods
         /// <summary>Update text readout with current value</summary>
-        private void UpdateText() {
+        void UpdateText() {
             Debug.Assert(Axis != null,
                 "Invalid axis!");
 
@@ -102,7 +91,6 @@ namespace MTConnectVR.Menu {
                 Axis.Name + ": " + Axis.Value + "\n" +  // Axis 1: <value>
                 "Torque: " + Axis.Torque;               // Torque: <value>
         }
-
         #endregion
     }
 }

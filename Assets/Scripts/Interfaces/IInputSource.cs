@@ -9,9 +9,7 @@
 /// the websocket connection.
 /// </summary>
 public interface IInputSource {
-
     #region Required Fields
-    
     /// <summary>
     /// If the input source is actively publishing to machines
     /// or not. Note that the input source may still be inactive
@@ -27,7 +25,5 @@ public interface IInputSource {
     bool ExclusiveType { get; set; }
 
     string Name { get; set; }
-
     #endregion
-
 }

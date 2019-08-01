@@ -6,9 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class UIPanelSwitcher : MonoBehaviour {
-
     #region Settings
-
     /// <summary>Panel to first be set initially</summary>
     [Tooltip("Panel to first be set initially"), Header("Settings")]
     public GameObject initialPanel;
@@ -16,30 +14,27 @@ public class UIPanelSwitcher : MonoBehaviour {
     /// <summary>If true, set all children as inactive on enable</summary>
     [Tooltip("If true, set all children as inactive on enable")]
     public bool setInactive;
-
     #endregion
 
     #region References
-
     /// <summary>UI Panels to set inactive on load</summary>
     [Tooltip("UI Panels to set inactive on load")]
     public List<GameObject> UIPanels;
-
     #endregion
 
-    #region Private vars
-
-    private GameObject activePanel;
-
+    #region Vars
+    GameObject activePanel;
     #endregion
 
     #region Unity Methods
-
-    private void Awake() {
-        Debug.Assert(initialPanel != null);
+    /// <summary>Check references</summary>
+    void Awake() {
+        Debug.Assert(initialPanel != null,
+            "Initial panel was null!");
     }
 
-    private void OnEnable() {
+    /// <summary>Potentially disable children and display initial panel</summary>
+    void OnEnable() {
         // Disable all children
         if (setInactive)
             foreach (GameObject g in UIPanels)
@@ -48,11 +43,9 @@ public class UIPanelSwitcher : MonoBehaviour {
         // Display initialPanel
         ChangeMenu(initialPanel);
     }
-
     #endregion
 
     #region Public Methods
-
     /// <summary>Changes UI panel to new panel</summary>
     /// <param name="panel">New UI panel to display</param>
     public void ChangeMenu(GameObject panel) {
@@ -61,6 +54,5 @@ public class UIPanelSwitcher : MonoBehaviour {
 
         (activePanel = panel).SetActive(true);
     }
-
     #endregion
 }

@@ -6,7 +6,6 @@ using System.Xml.Serialization;
 
 /// <summary>Generated C# from XML via Visual Studio.</summary>
 namespace MTConnectVR.XML.MTConnectStreams {
-
     [XmlRoot(ElementName = "Header", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
     public class Header {
         [XmlAttribute(AttributeName = "creationTime")]
@@ -246,5 +245,4 @@ namespace MTConnectVR.XML.MTConnectStreams {
         [XmlAttribute(AttributeName = "schemaLocation", Namespace = "http://www.w3.org/2001/XMLSchema-instance")]
         public string SchemaLocation { get; set; }
     }
-
 }

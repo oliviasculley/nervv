@@ -11,9 +11,7 @@ namespace MTConnectVR {
     /// added to the InputManager on load. View IInputSource.cs for more info.
     /// </summary>
     public abstract class InputSource : MonoBehaviour, IInputSource {
-
         #region Input Properties
-
         [SerializeField,
         Tooltip(
             "If the input source is actively publishing to machines " +
@@ -30,11 +28,9 @@ namespace MTConnectVR {
             get { return _inputEnabled; }
             set { _inputEnabled = value; }
         }
-
         #endregion
 
         #region Input Settings
-
         [SerializeField, Header("Input Settings")] protected string _name;
         public virtual string Name {
             get { return _name; }
@@ -45,7 +41,7 @@ namespace MTConnectVR {
             "Are multiple instantiations of this script allowed? " +
             "InputManager will reject multiple types of this script " +
             "if ExclusiveType is true when added to InputManager.")]
-        private bool _exclusiveType;
+        bool _exclusiveType;
         /// <summary>
         /// Are multiple instantiations of this script allowed?
         /// InputManager will reject multiple types of this script
@@ -55,19 +51,15 @@ namespace MTConnectVR {
             get { return _exclusiveType; }
             set { _exclusiveType = value; }
         }
-
         #endregion
 
         #region Unity Methods
-
         protected virtual void Start() {
             // Add self to InputManager, disabling self if failure
             Debug.Assert(InputManager.Instance != null, "Could not get ref to InputManager!");
             if (InputEnabled &= InputManager.Instance.AddInput(this))
                 Debug.LogError("Could not add self to InputManager!");
         }
-
         #endregion
-
     }
 }
