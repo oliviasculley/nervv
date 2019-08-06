@@ -9,9 +9,9 @@ using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.Networking;
 
-// MTConnect
-using MTConnectVR;
-using MTConnectVR.XML.MTConnectStreams;
+// NERVV
+using NERVV;
+using NERVV.XML.MTConnectStreams;
 
 /// <summary>
 /// MTConnect XML parsing InputSource. Connects to a specified URL

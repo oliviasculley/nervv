@@ -8,7 +8,7 @@ using UnityEngine;
 /// to self is set in Awake(), so any calls to Instance must happen
 /// in Start() or later.
 /// </summary>
-namespace MTConnectVR {
+namespace NERVV {
     public class MachineManager : MonoBehaviour {
         #region Static
         public static MachineManager Instance;

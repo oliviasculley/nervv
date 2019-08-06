@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 
 /// <summary>Generated C# from XML via Visual Studio.</summary>
-namespace MTConnectVR.XML.MTConnectStreams {
+namespace NERVV.XML.MTConnectStreams {
     [XmlRoot(ElementName = "Header", Namespace = "urn:mtconnect.org:MTConnectStreams:1.4")]
     public class Header {
         [XmlAttribute(AttributeName = "creationTime")]

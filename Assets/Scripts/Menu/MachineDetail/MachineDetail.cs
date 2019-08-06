@@ -9,7 +9,7 @@ using UnityEngine.UI;
 using Valve.VR;
 using TMPro;
 
-namespace MTConnectVR.Menu {
+namespace NERVV.Menu {
     public class MachineDetail : MonoBehaviour {
         #region Properties
         [Header("Properties")]

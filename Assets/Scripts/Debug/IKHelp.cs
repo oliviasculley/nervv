@@ -5,8 +5,8 @@ using System.Collections.Generic;
 // Unity Engine
 using UnityEngine;
 
-// MTConnectVR
-using MTConnectVR;
+// NERVV
+using NERVV;
 
 /// <summary>
 /// Testing script that calls InverseKinematics on a Machine

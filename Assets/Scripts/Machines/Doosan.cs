@@ -5,8 +5,8 @@ using System.Collections.Generic;
 // Unity Engine
 using UnityEngine;
 
-// MTConnectVR
-using MTConnectVR;
+// NERVV
+using NERVV;
 
 public class Doosan : Machine {
     #region Unity Methods

@@ -8,7 +8,7 @@ using TMPro;
 using Valve.VR;
 using System.Reflection;
 
-namespace MTConnectVR.Menu {
+namespace NERVV.Menu {
     /// <summary>Machine element in machine properties for string</summary>
     public class MachineStringElement : MachineElement {
         #region Properties
@@ -107,7 +107,7 @@ namespace MTConnectVR.Menu {
                 SteamVR.instance.overlay.ShowKeyboard(
                     (int)EGamepadTextInputMode.k_EGamepadTextInputModeNormal,                       // Input mode
                     (int)EGamepadTextInputLineMode.k_EGamepadTextInputLineModeSingleLine,           // Line mode
-                    "MTConnectVR keyboard",                                                         // Description
+                    "NERVV keyboard",                                                         // Description
                     256,                                                                            // Max string length
                     GetFieldValue() ?? "",                                                          // Starting text
                     useKeyboardMinimalMode,                                                         // Keyboard minimal mode

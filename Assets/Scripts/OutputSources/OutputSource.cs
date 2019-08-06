@@ -5,7 +5,7 @@ using System.Collections.Generic;
 // Unity Engine
 using UnityEngine;
 
-namespace MTConnectVR {
+namespace NERVV {
     /// <summary>
     /// This is the base class for outputs. These are dynamically added to OutputManager.
     /// </summary>

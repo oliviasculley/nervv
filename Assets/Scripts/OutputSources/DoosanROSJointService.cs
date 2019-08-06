@@ -12,8 +12,8 @@ using RosSharp.RosBridgeClient.Protocols;
 using RosSharp.RosBridgeClient.Services;
 using RosSharp.RosBridgeClient.Messages.Standard;
 
-// MTConnectVR
-using MTConnectVR;
+// NERVV
+using NERVV;
 
 /// <summary>
 /// Implements Doosan's MoveJoint service.

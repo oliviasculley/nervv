@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-namespace MTConnectVR.Menu {
+namespace NERVV.Menu {
     /// <summary>Machine element in machine properties for float</summary>
     public class MachineFloatElement : MachineElement {
         #region Properties

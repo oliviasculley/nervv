@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-namespace MTConnectVR.Menu {
+namespace NERVV.Menu {
     public class MachineAxisElement : MachineElement {
         #region Properties
         [Header("Properties")]

@@ -1,7 +1,7 @@
 ﻿// Unity Engine
 using UnityEngine;
 
-namespace MTConnectVR {
+namespace NERVV {
     /// <summary>
     /// Interface that must be implemented in order to
     /// enable interpolation.

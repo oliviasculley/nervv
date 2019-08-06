@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-namespace MTConnectVR.Menu {
+namespace NERVV.Menu {
     /// <summary>Displays a list of machines in the menu</summary>
     public class MachinesList : MonoBehaviour {
         #region References

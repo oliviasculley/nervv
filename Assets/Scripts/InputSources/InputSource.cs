@@ -5,7 +5,7 @@ using System.Collections.Generic;
 // Unity Engine
 using UnityEngine;
 
-namespace MTConnectVR {
+namespace NERVV {
     /// <summary>
     /// This is the base implementation for inputs. These are dynamically
     /// added to the InputManager on load. View IInputSource.cs for more info.

@@ -9,8 +9,8 @@ using RosSharp.RosBridgeClient.Protocols;
 using RosSharp.RosBridgeClient.Messages.Sensor;
 using RosSharp.RosBridgeClient.Messages.Standard;
 
-// MTConnectVR
-using MTConnectVR;
+// NERVV
+using NERVV;
 
 public class RosJointPublisher : OutputSource {
     #region Static

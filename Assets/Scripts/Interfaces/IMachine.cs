@@ -5,7 +5,7 @@ using System.Collections.Generic;
 // Unity Engine
 using UnityEngine;
 
-namespace MTConnectVR {
+namespace NERVV {
     /// <summary>
     /// The base machine interface that must be implemented to
     /// be considered as a machine.
