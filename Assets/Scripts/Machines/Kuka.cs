@@ -31,7 +31,7 @@ public class Kuka : Machine {
                 components[i].localRotation = Quaternion.Lerp(
                     components[i].localRotation,
                     Quaternion.Euler(Axes[i].AxisVector3),
-                    Mathf.Clamp(LerpSpeed * Time.deltaTime, 0, 1)
+                    Mathf.Clamp(BlendSpeed * Time.deltaTime, 0, 1)
                 );
         } else {
             // Get latest correct axis angle

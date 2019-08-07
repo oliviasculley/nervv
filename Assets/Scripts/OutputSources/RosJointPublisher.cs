@@ -12,7 +12,7 @@ using RosSharp.RosBridgeClient.Messages.Standard;
 // NERVV
 using NERVV;
 
-public class RosJointPublisher : OutputSource {
+public class ROSJointPublisher : OutputSource {
     #region Static
     public enum ProtocolSelection { WebSocketSharp, WebSocketNET };
     #endregion

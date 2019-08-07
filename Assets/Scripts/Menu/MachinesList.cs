@@ -50,7 +50,7 @@ namespace NERVV.Menu {
 
             // Spawn buttons for each machine
             GameObject g;
-            foreach (Machine m in MachineManager.Instance.machines) {
+            foreach (Machine m in MachineManager.Instance.Machines) {
                 g = Instantiate(machineButtonPrefab, scrollViewParent);
                 g.transform.Find("MachineName").GetComponent<TextMeshProUGUI>().text = "Name: " + m.name;
 

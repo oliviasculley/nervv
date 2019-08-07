@@ -1,29 +1,36 @@
-﻿using System.Collections;
+﻿// System
 using System.Collections.Generic;
+
+// Unity Engine
 using UnityEngine;
 
-/// <summary>
-/// This class handles adding and removing machines from the scene.
-/// It also handles sending data to the machines. Static reference
-/// to self is set in Awake(), so any calls to Instance must happen
-/// in Start() or later.
-/// </summary>
 namespace NERVV {
+    /// <summary>
+    /// This class handles adding and removing machines from the scene.
+    /// It also handles sending data to the machines. Static reference
+    /// to self is set in Awake(), so any calls to Instance must happen
+    /// in Start() or later.
+    /// </summary>
     public class MachineManager : MonoBehaviour {
         #region Static
         public static MachineManager Instance;
         #endregion
 
         #region Properties
+        [SerializeField,
+        Tooltip("List of machines in scene"), Header("Properties")]
+        protected List<IMachine> _machines;
         /// <summary>List of machines in scene</summary>
-        [Tooltip("List of machines in scene"), Header("Properties")]
-        public List<IMachine> machines;
+        public List<IMachine> Machines {
+            get { return _machines; }
+            set { _machines = value; }
+        }
         #endregion
 
         #region Unity Methods
-        /// <summary>Initialize self and set static ref to self</summary>
-        void Awake() {
-            machines = new List<IMachine>();
+        /// <summary>Initialize and set static ref to self</summary>
+        protected virtual void Awake() {
+            _machines = new List<IMachine>();
 
             if (Instance != null)
                 Debug.LogWarning("[MachineManager] Static ref to self was not null!\nOverriding...");
@@ -35,30 +42,30 @@ namespace NERVV {
         /// <summary>Adds machine to machines List</summary>
         /// <param name="machine">Machine to add</param>
         /// <returns>Succesfully added?</returns>
-        public bool AddMachine(IMachine machine) {
+        public virtual bool AddMachine(IMachine machine) {
             // Check for duplicate machines
-            if (machines.Contains(machine)) {
+            if (Machines.Contains(machine)) {
                 return false;
             }
                 
-            machines.Add(machine);
+            Machines.Add(machine);
             return true;
         }
 
         /// <summary>Removes machine from machines list</summary>
         /// <param name="machine">Machine to remove</param>
         /// <returns>Succesfully removed?</returns>
-        public bool RemoveMachine(IMachine machine) {
-            return machines.Remove(machine);
+        public virtual bool RemoveMachine(IMachine machine) {
+            return Machines.Remove(machine);
         }
 
         /// <summary>Returns machines of same type</summary>
         /// <typeparam name="T">Type of machine to return</typeparam>
         /// <returns>List<Machine> of machines</returns>
-        public List<IMachine> GetMachines<T>() {
+        public virtual List<IMachine> GetMachines<T>() {
             List<IMachine> foundMachines = new List<IMachine>();
 
-            foreach (IMachine m in machines)
+            foreach (IMachine m in Machines)
                 if (m.GetType() == typeof(T))
                     foundMachines.Add(m);
 
@@ -68,10 +75,10 @@ namespace NERVV {
         /// <summary>Returns machines of same type</summary>
         /// <param name="type">Type of machine to return</param>
         /// <returns>List<Machine> of machines</returns>
-        public List<IMachine> GetMachines(System.Type type) {
+        public virtual List<IMachine> GetMachines(System.Type type) {
             List<IMachine> foundMachines = new List<IMachine>();
 
-            foreach (IMachine m in machines)
+            foreach (IMachine m in Machines)
                 if (m.GetType() == type)
                     foundMachines.Add(m);
 

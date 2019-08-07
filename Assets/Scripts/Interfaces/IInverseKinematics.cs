@@ -4,9 +4,9 @@ using UnityEngine;
 namespace NERVV {
     /// <summary>
     /// The base machine interface that must be implemented to
-    /// be considered as a machine.
+    /// activate InverseKinematics based on a target position
     /// </summary>
-    public interface IInverseKinematics {
+    public interface IInverseKinematics : IMachine {
         #region Required methods
         /// <summary>
         /// Activate a small delta of inverse kinematics for the target position.

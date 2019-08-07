@@ -108,7 +108,7 @@ public class MTConnect : InputSource {
 
         // For each device
         foreach (DeviceStream ds in xmlData.Streams.DeviceStream) {
-            IMachine m = MachineManager.Instance.machines.Find(
+            IMachine m = MachineManager.Instance.Machines.Find(
                 x => x.UUID == ds.Uuid
             );
             if (m == null) {

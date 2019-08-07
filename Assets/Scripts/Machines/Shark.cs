@@ -29,7 +29,7 @@ public class Shark : Machine {
     void Update() {
         if (Interpolation) {
             // Continually lerp towards final position
-            float clampedLerp = Mathf.Clamp(LerpSpeed * Time.deltaTime, 0, 1);
+            float clampedLerp = Mathf.Clamp(BlendSpeed * Time.deltaTime, 0, 1);
             for (int i = 0; i < components.Length && i < Axes.Count; i++)
                 components[i].localPosition = Vector3.Lerp(
                     components[i].localPosition,

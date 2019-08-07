@@ -70,7 +70,7 @@ namespace NERVV {
         protected float _lerpSpeed = 10f;
         /// <summary>Speed to lerp to correct position</summary>
         ///<seealso cref="IInterpolation"/>
-        public float LerpSpeed {
+        public float BlendSpeed {
             get { return _lerpSpeed; }
             set { _lerpSpeed = value; }
         }
@@ -116,7 +116,7 @@ namespace NERVV {
                     "Could not find component " + i + "!");
             if (IKSpeed == 0)
                 Debug.LogWarning("IK Learning rate is zero, IK will not move!");
-            if (LerpSpeed == 0)
+            if (BlendSpeed == 0)
                 Debug.LogWarning("LerpSpeed is 0, will never move!");
 
             // Link to MachineManager
