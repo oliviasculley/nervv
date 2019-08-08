@@ -1,7 +1,3 @@
-# Ignore Microsoft Word Temp files
-~$cumentation.docx
-~$Todo.docx
-
 # Unity
 /[Ll]ibrary/
 /[Tt]emp/
@@ -58,4 +54,3 @@ sysinfo.txt
 
 # Crashlytics generated file
 crashlytics-build.properties
-
