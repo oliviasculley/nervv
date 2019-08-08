@@ -11,7 +11,8 @@ using NERVV;
 public class Kuka : Machine {
     #region Unity Methods
     /// <summary>Dynamically get components</summary>
-    void Awake() {
+    protected void Awake() {
+        
         components = new Transform[Axes.Count];
 
         Transform t = transform;

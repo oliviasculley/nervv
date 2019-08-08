@@ -111,6 +111,7 @@ namespace NERVV {
         /// </summary>
         protected virtual void Start() {
             // Safety checks
+            Debug.Assert(components != null, "Components are not assigned!");
             for (int i = 0; i < Axes.Count; i++)
                 Debug.Assert(components[i] != null,
                     "Could not find component " + i + "!");
@@ -242,7 +243,7 @@ namespace NERVV {
             }
 
             [SerializeField,
-            Tooltip("Value of axis in Unity worldspace")]
+            Tooltip("")]
             protected float _torque;
             /// <summary></summary>
             public virtual float Torque {
@@ -253,10 +254,10 @@ namespace NERVV {
 
             #region Settings
             [SerializeField,
-            Tooltip("ID of axis, used for matching"),
+            Tooltip("ID of axis, used for pattern matching and search"),
             Header("Settings")]
             protected string _id;
-            /// <summary>ID of axis, used for matching</summary>
+            /// <summary>ID of axis, used for pattern matching and search</summary>
             public virtual string ID {
                 get { return _id; }
                 set { _id = value; }

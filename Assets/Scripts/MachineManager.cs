@@ -33,7 +33,7 @@ namespace NERVV {
             _machines = new List<IMachine>();
 
             if (Instance != null)
-                Debug.LogWarning("[MachineManager] Static ref to self was not null!\nOverriding...");
+                Debug.LogWarning("Static ref to self was not null!\nOverriding...");
             Instance = this;
         }
         #endregion
