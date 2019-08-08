@@ -152,7 +152,7 @@ PlayerSettings:
       dashSupport: 1
       lowOverheadMode: 0
     enable360StereoCapture: 0
-  isWsaHolographicRemotingEnabled: 0
+  isWsaHolographicRemotingEnabled: 1
   protectGraphicsMemory: 0
   enableFrameTimingStats: 0
   useHDRDisplay: 0
@@ -310,6 +310,10 @@ PlayerSettings:
     m_Enabled: 1
     m_Devices:
     - OpenVR
+  - m_BuildTarget: Windows Store Apps
+    m_Enabled: 1
+    m_Devices:
+    - WindowsMR
   openGLRequireES31: 0
   openGLRequireES31AEP: 0
   openGLRequireES32: 0

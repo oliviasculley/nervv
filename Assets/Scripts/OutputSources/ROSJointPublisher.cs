@@ -14,7 +14,7 @@ using NERVV;
 
 public class ROSJointPublisher : OutputSource {
     #region Static
-    public enum ProtocolSelection { WebSocketSharp, WebSocketNET };
+    public enum ProtocolSelection { WebSocketSharp, WebSocketNET, None };
     #endregion
 
     #region Settings

@@ -20,8 +20,10 @@ The sample menu depends on the
 [SteamVR Unity Asset store package](https://assetstore.unity.com/packages/tools/integration/steamvr-plugin-32647).
 The sample ROS input and outputs rely on the
 [ROS-Sharp Unity Asset store package](https://assetstore.unity.com/packages/tools/physics/ros-107085).
-Doosan and Kuka Robotic models are based off of CAD data available by [Doosan Robotics](https://www.doosan.com)
-and [Kuka Robotics](https://www.kuka.com) and included only for example purposes, all rights are reserved.
+Doosan, Kuka, and Sawyer robotic models are based off of CAD data made available by [Doosan Robotics](https://www.doosan.com),
+[Kuka Robotics](https://www.kuka.com), and [Rethink Robotics](https://www.rethinkrobotics.com/)
+respectively, and are included for educational and example purposes only.
+All rights are reserved for their respective owners.
 
 ## Contact Info
 ##### Dr. Martin Jun

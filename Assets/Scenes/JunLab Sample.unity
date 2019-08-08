@@ -194,6 +194,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 4.4691753, y: 2.6410491, z: 0.8750906}
   m_Center: {x: 0.8816526, y: 0.8205246, z: 2.638639}
+--- !u!114 &136885894 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4248639964579419398, guid: 3052f0910360e85408e7aa4b425e48ba,
+    type: 3}
+  m_PrefabInstance: {fileID: 665763888}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5aa27ac8e58a5a942b4325cbf66f4089, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &236112802 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 144230, guid: dc06161b6d97feb419f45f03b62e14b9,
@@ -1001,12 +1013,12 @@ GameObject:
   - component: {fileID: 803703343}
   - component: {fileID: 803703344}
   m_Layer: 0
-  m_Name: RosJointPublisher - Doosan
+  m_Name: ROSJointPublisher - Doosan
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &803703343
 Transform:
   m_ObjectHideFlags: 0
@@ -1033,12 +1045,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9d4fc84beca51644b72be1c820cb7a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _outputEnabled: 0
-  _name: ROS Joint Publisher - Doosan
+  _outputEnabled: 1
+  _name: ROSJointPublisher - Doosan
   _exclusiveType: 0
   Topic: /vr_joint_states
-  machineToPublish: {fileID: 0}
-  pollInterval: 0.1
+  machineToPublish: {fileID: 136885894}
+  pollInterval: 0.25
   URL: 
   Protocol: 1
   SerializationMode: 0
@@ -1189,7 +1201,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1115453530
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1743,7 +1755,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1698882309
 Transform:
   m_ObjectHideFlags: 0
@@ -2039,7 +2051,7 @@ GameObject:
   - component: {fileID: 2107280542}
   - component: {fileID: 2107280543}
   m_Layer: 0
-  m_Name: RosJointMoveService - Doosan
+  m_Name: ROSJointMoveService - Doosan
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2075,7 +2087,7 @@ MonoBehaviour:
   _name: RosJointMoveService - Doosan
   _exclusiveType: 0
   ServiceName: /dsrm0609/motion/move_joint
-  machineToPublish: {fileID: 0}
+  machineToPublish: {fileID: 136885894}
   pollInterval: 0.1
   URL: 
   Protocol: 1

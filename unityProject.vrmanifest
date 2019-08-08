@@ -5,10 +5,10 @@
       "app_key": "application.generated.unity.mtconnectvr.exe",
       "launch_type": "url",
       "url": "steam://launch/",
-      "action_manifest_path": "E:\\mtconnectvr\\actions.json",
+      "action_manifest_path": "E:\\NERVV\\actions.json",
       "strings": {
         "en_us": {
-          "name": "MTConnectVR [Testing]"
+          "name": "NERVV [Testing]"
         }
       }
     }
