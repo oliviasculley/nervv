@@ -42,7 +42,7 @@ public class MTConnect : InputSource {
 
     #region Unity Methods
     /// <summary>Safety checks and initialize state</summary>
-    void OnEnable() {
+    private void OnEnable() {
         // Safety checks
         Debug.Assert(!string.IsNullOrEmpty(URL), "MTConnectURL is null or empty!");
         if (pollInterval == 0)
@@ -50,6 +50,13 @@ public class MTConnect : InputSource {
 
         // Init vars
         fetchMTConnect = null;
+    }
+
+    protected override void Start() {
+        // Initial InputSource fields
+        Name = "MTConnect XML: " + URL;
+        ExclusiveType = false;
+        base.Start();
     }
 
     /// <summary>Check if need to trigger</summary>

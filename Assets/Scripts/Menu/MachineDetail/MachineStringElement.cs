@@ -35,8 +35,7 @@ namespace NERVV.Menu {
         #region Unity Methods
         /// <summary>Check references and start SteamVR keyboard</summary>
         new void OnEnable() {
-            Debug.Assert(elementTitle != null,
-                "Could not get string element title TMP_UGUI!");
+            Debug.Assert(elementTitle != null);
 
             // Listen for keyboard
             SteamVR_Events.System(EVREventType.VREvent_KeyboardCharInput).Listen(OnKeyboard);
@@ -105,13 +104,13 @@ namespace NERVV.Menu {
             // Open OpenVR keyboard
             if (GetFieldValue() != null && SteamVR.instance != null && SteamVR.instance.overlay != null) {
                 SteamVR.instance.overlay.ShowKeyboard(
-                    (int)EGamepadTextInputMode.k_EGamepadTextInputModeNormal,                       // Input mode
-                    (int)EGamepadTextInputLineMode.k_EGamepadTextInputLineModeSingleLine,           // Line mode
-                    "NERVV keyboard",                                                         // Description
-                    256,                                                                            // Max string length
-                    GetFieldValue() ?? "",                                                          // Starting text
-                    useKeyboardMinimalMode,                                                         // Keyboard minimal mode
-                    0                                                                               // User value
+                    (int)EGamepadTextInputMode.k_EGamepadTextInputModeNormal,                   // Input mode
+                    (int)EGamepadTextInputLineMode.k_EGamepadTextInputLineModeSingleLine,       // Line mode
+                    "NERVV keyboard",                                                           // Description
+                    256,                                                                        // Max string length
+                    GetFieldValue() ?? "",                                                      // Starting text
+                    useKeyboardMinimalMode,                                                     // Keyboard minimal mode
+                    0                                                                           // User value
                 );
             } else {
                 if (GetFieldValue() == null)

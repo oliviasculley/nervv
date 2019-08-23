@@ -18,11 +18,8 @@ public class ColliderScaleToUIElement : MonoBehaviour {
     #region Unity Methods
     /// <summary>Get dynamic references</summary>
     void OnEnable() {
-        c = GetComponent<BoxCollider>();
-        Debug.Assert(c != null, "[ColliderScale] Could not get box collider!");
-
-        t = GetComponent<RectTransform>();
-        Debug.Assert(t != null, "[ColliderScale] Could not get rectTransform!");
+        Debug.Assert((c = GetComponent<BoxCollider>()) != null);
+        Debug.Assert((t = GetComponent<RectTransform>()) != null);
     }
 
     /// <summary>Set collider size to rectTransform</summary>

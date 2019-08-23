@@ -111,20 +111,17 @@ namespace NERVV {
         /// </summary>
         protected virtual void Start() {
             // Safety checks
-            Debug.Assert(components != null, "Components are not assigned!");
+            Debug.Assert(components != null);
             for (int i = 0; i < Axes.Count; i++)
-                Debug.Assert(components[i] != null,
-                    "Could not find component " + i + "!");
+                Debug.Assert(components[i] != null, "Could not find component " + i + "!");
             if (IKSpeed == 0)
                 Debug.LogWarning("IK Learning rate is zero, IK will not move!");
             if (BlendSpeed == 0)
-                Debug.LogWarning("LerpSpeed is 0, will never move!");
+                Debug.LogWarning("BlendSpeed is 0, will never move!");
 
             // Link to MachineManager
-            Debug.Assert(MachineManager.Instance != null,
-                "Could not get ref to MachineManager!");
-            Debug.Assert(MachineManager.Instance.AddMachine(this),
-                "Could not add self to MachineManager!");
+            Debug.Assert(MachineManager.Instance != null);
+            Debug.Assert(MachineManager.Instance.AddMachine(this), "Could not add self to MachineManager!");
         }
         #endregion
 

@@ -56,7 +56,7 @@ namespace NERVV {
         #region Unity Methods
         protected virtual void Start() {
             // Add self to InputManager, disabling self if failure
-            Debug.Assert(InputManager.Instance != null, "Could not get ref to InputManager!");
+            Debug.Assert(InputManager.Instance != null);
             if (InputEnabled &= InputManager.Instance.AddInput(this))
                 Debug.LogError("Could not add self to InputManager!");
         }

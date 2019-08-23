@@ -44,7 +44,7 @@ namespace NERVV {
         #region Unity methods
         protected virtual void Start() {
             // Add self to InputManager, disabling self if failure
-            Debug.Assert(OutputManager.Instance != null, "Could not get ref to OutputManager!");
+            Debug.Assert(OutputManager.Instance != null);
             if (OutputEnabled &= OutputManager.Instance.AddOutput(this))
                 Debug.LogError("Could not add self to OutputManager!");
         }

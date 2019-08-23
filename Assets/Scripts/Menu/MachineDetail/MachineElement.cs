@@ -35,9 +35,9 @@ public class MachineElement : MonoBehaviour {
             if (buttons == null) buttons = GetComponentsInChildren<Button>();
             if (colliders == null) colliders = GetComponentsInChildren<BoxCollider>();
             if (triggers == null) triggers = GetComponentsInChildren<EventTrigger>();
-            Debug.Assert(
-                buttons != null && colliders != null && triggers != null,
-                "Could not get button and boxCollider!");
+            Debug.Assert(buttons != null);
+            Debug.Assert(colliders != null);
+            Debug.Assert(triggers != null);
 
             _visible = value;
             foreach (Button b in buttons)

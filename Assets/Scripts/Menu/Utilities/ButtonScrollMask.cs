@@ -25,10 +25,8 @@ public class ButtonScrollMask : MonoBehaviour {
     #region Unity Methods
     /// <summary>Get and check references on object load</summary>
     void OnEnable() {
-        Debug.Assert(content != null, "[ColliderScale] Could not get content parent!");
-
-        t = GetComponent<RectTransform>();
-        Debug.Assert(t != null, "[ColliderScale] Could not get rectTransform!");
+        Debug.Assert(content != null);
+        Debug.Assert((t = GetComponent<RectTransform>()) != null);
     }
 
     /// <summary>Set visiblity of each object depending on position</summary>

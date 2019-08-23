@@ -35,8 +35,7 @@ namespace NERVV.Menu {
         #region Unity Methods
         /// <summary>Check references</summary>
         new void OnEnable() {
-            Debug.Assert(ElementTitle != null,
-                "Could not get axis element title TMP_UGUI!");
+            Debug.Assert(ElementTitle != null);
         }
 
         /// <summary>Update Axis elements</summary>

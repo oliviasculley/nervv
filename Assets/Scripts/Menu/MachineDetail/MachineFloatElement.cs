@@ -33,8 +33,7 @@ namespace NERVV.Menu {
         #region Unity Methods
         /// <summary>Check references</summary>
         new void OnEnable() {
-            Debug.Assert(elementTitle != null,
-                "Could not get Float element title TMP_UGUI!");
+            Debug.Assert(elementTitle != null);
         }
         #endregion
 

@@ -42,10 +42,9 @@ public class MenuButtonAnim : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     #region Unity Methods
     /// <summary>Check references</summary>
     void Awake() {
-        Debug.Assert(menu != null,
-            "[MenuButton] Could not get reference to menu!");
-        if (buttonBackground == null && buttonIcon == null)
-            Debug.LogWarning("[MenuButton] Button background and icon not set, will not animate!");
+        Debug.Assert(menu != null);
+        Debug.Assert(buttonBackground != null);
+        Debug.Assert(buttonIcon != null);
     }
 
     /// <summary>Set Plane, button and background to initial states</summary>

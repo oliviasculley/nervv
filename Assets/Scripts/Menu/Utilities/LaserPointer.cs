@@ -36,12 +36,9 @@ public class LaserPointer : MonoBehaviour {
     /// <summary>Safety checks and initial state</summary>
     void OnEnable() {
         pose = GetComponent<SteamVR_Behaviour_Pose>();
-        Debug.Assert(pose != null,
-            "No SteamVR_Behaviour_Pose component found on this object");
-        Debug.Assert(interactWithUI != null,
-            "No ui interaction action has been set on this component.");
-        Debug.Assert(menu != null,
-            "Could not get reference to main menu!");
+        Debug.Assert(pose != null);
+        Debug.Assert(interactWithUI != null);
+        Debug.Assert(menu != null);
 
         // Init vars
         hits = null;

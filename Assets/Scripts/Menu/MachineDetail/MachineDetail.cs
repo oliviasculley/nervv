@@ -18,7 +18,8 @@ namespace NERVV.Menu {
 
         #region Settings
         [Header("Settings")]
-        public SteamVR_Action_Boolean activateIK;
+        public SteamVR_Action_Boolean activateLeftIK;
+        public SteamVR_Action_Boolean activateRightIK;
 
         /// <summary>String fields to generate handlers for</summary>
         [Tooltip("String fields to generate handlers for")]
@@ -43,7 +44,11 @@ namespace NERVV.Menu {
 
         /// <summary>Sphere on controller to signal IK</summary>
         [Tooltip("Sphere on controller to signal IK")]
-        public GameObject IKSphere;
+        public GameObject RightIKSphere;
+
+        /// <summary>Sphere on controller to signal IK</summary>
+        [Tooltip("Sphere on controller to signal IK")]
+        public GameObject LeftIKSphere;
         #endregion
 
         #region Prefabs
@@ -57,32 +62,31 @@ namespace NERVV.Menu {
         /// <summary>Check references and safety checks</summary>
         void OnEnable() {
             // Get references
-            Debug.Assert(machineTitle != null,
-                "[Menu: Machine Detail] Could not get ref to machine title!");
-            Debug.Assert(
-                machineElementStringPrefab != null &&
-                machineElementFloatPrefab != null &&
-                machineElementAxisPrefab != null,
-                "[Menu: Machine Detail] Could not get machine element prefabs!");
-            Debug.Assert(machineElementParent != null,
-                "[Menu: Machine Detail] Could not get machine element parent!");
-            Debug.Assert(IKSphere != null, "Could not get reference to sphere!");
+            Debug.Assert(machineTitle != null);
+            Debug.Assert(machineElementStringPrefab != null);
+            Debug.Assert(machineElementFloatPrefab != null);
+            Debug.Assert(machineElementAxisPrefab != null);
+            Debug.Assert(machineElementParent != null);
+            Debug.Assert(RightIKSphere != null);
+            Debug.Assert(RightIKSphere != null);
 
             // Safety checks
             foreach (string s in stringFieldNamesToGenerate)
-                Debug.Assert(!string.IsNullOrEmpty(s),
-                    "[Menu: Machine Detail] Invalid string field name!");
+                Debug.Assert(!string.IsNullOrEmpty(s));
         }
 
         /// <summary>Check and perform IK on current machine</summary>
         void Update() {
             // If activated, perform IK on current menu machine
-            if (activateIK.state && currMachine != null) {
-                currMachine.InverseKinematics(IKSphere.transform.position);
+            if (activateLeftIK.state && currMachine != null) {
+                currMachine.InverseKinematics(LeftIKSphere.transform.position);
+            } else if (activateRightIK.state && currMachine != null) {
+                currMachine.InverseKinematics(RightIKSphere.transform.position);
             }
 
             // Set sphere visualizer visibility
-            IKSphere.SetActive(activateIK.state);
+            LeftIKSphere.SetActive(activateLeftIK.state);
+            RightIKSphere.SetActive(activateRightIK.state);
         }
         #endregion
 
@@ -123,7 +127,7 @@ namespace NERVV.Menu {
             g.transform.SetAsLastSibling();
 
             MachineAxisElement e = g.GetComponent<MachineAxisElement>();
-            Debug.Assert(e != null, "Could not get MachineAxisElement from prefab!");
+            Debug.Assert(e != null);
 
             e.InitializeElement(a);
         }
@@ -137,7 +141,7 @@ namespace NERVV.Menu {
             g.transform.SetAsLastSibling();
 
             MachineFloatElement e = g.GetComponent<MachineFloatElement>();
-            Debug.Assert(e != null, "Could not get MachineFloatElement from prefab!");
+            Debug.Assert(e != null);
 
             e.InitializeElement(fieldName, currMachine);
         }
@@ -151,7 +155,7 @@ namespace NERVV.Menu {
             g.transform.SetAsLastSibling();
 
             MachineStringElement e = g.GetComponent<MachineStringElement>();
-            Debug.Assert(e != null, "Could not get MachineStringElement from prefab!");
+            Debug.Assert(e != null);
 
             e.InitializeElement(fieldName, currMachine);
         }

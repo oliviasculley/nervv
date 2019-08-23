@@ -66,8 +66,7 @@ public class Menu : MonoBehaviour {
     /// <summary>Get and check references</summary>
     void Awake() {
         uiSwitcher = GetComponent<UIPanelSwitcher>();
-        Debug.Assert(uiSwitcher != null,
-            "[Menu] Could not get reference to UIPanelSwitcher!");
+        Debug.Assert(uiSwitcher != null);
         foreach (GameObject g in menuElements)
             Debug.Assert(g != null);
     }

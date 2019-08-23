@@ -20,10 +20,8 @@ namespace NERVV.Menu {
         #region Unity Methods
         /// <summary>Check references and generate buttons OnEnable</summary>
         void OnEnable() {
-            Debug.Assert(inputButtonPrefab != null,
-                "Could not get ref to input button prefab!");
-            Debug.Assert(OutputManager.Instance != null,
-                "Could not get ref to OutputManager instance!");
+            Debug.Assert(inputButtonPrefab != null);
+            Debug.Assert(OutputManager.Instance != null);
 
             GenerateOutputButtons();
         }

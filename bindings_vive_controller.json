@@ -73,7 +73,7 @@
             {
                "inputs" : {
                   "click" : {
-                     "output" : "/actions/default/in/activateik"
+                     "output" : "/actions/default/in/activateleftik"
                   }
                },
                "mode" : "button",
@@ -82,7 +82,7 @@
             {
                "inputs" : {
                   "click" : {
-                     "output" : "/actions/default/in/activateik"
+                     "output" : "/actions/default/in/activaterightik"
                   }
                },
                "mode" : "button",
@@ -101,7 +101,7 @@
    "category" : "steamvr_input",
    "controller_type" : "vive_controller",
    "description" : "Default MTConnectVR binding for HTC Vive and Vive Pro",
-   "name" : "MTConnectVR",
+   "name" : "NERVV configuration for Vive Controller",
    "options" : {},
    "simulated_actions" : []
 }

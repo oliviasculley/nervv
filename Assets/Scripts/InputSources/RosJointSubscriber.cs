@@ -49,7 +49,6 @@ public class RosJointSubscriber : InputSource {
     #region Unity Methods
     /// <summary>Initializes input with InputManager</summary>
     protected override void Start() {
-        base.Start();
         // Safety checks
         if (machineToSet == null) {
             Debug.LogError("Machine null, disabling self...");
@@ -60,10 +59,15 @@ public class RosJointSubscriber : InputSource {
                 Debug.LogError("Axis ID is null, disabling self...");
                 InputEnabled = false;
             }
+
+        // Initial InputSource fields
+        Name = "RosJointSubscriber: " + URL + Topic;
+        ExclusiveType = false;
+        base.Start();
     }
 
     /// <summary>Initialize websocket connection</summary>
-    void OnEnable() {
+    private void OnEnable() {
         if (rosConnect != null)
             Debug.LogWarning("Socket not null! Overwriting...");
         rosConnect = null;
@@ -84,7 +88,7 @@ public class RosJointSubscriber : InputSource {
                 return;
         }
 
-        Debug.Assert(p != null, "Could not initialize protocol!");
+        Debug.Assert(p != null);
 
         // OnConnected and OnClosed event handlers
         p.OnConnected += OnConnected;

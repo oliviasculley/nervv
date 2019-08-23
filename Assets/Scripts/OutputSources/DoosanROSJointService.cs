@@ -89,7 +89,7 @@ public class DoosanROSJointService : OutputSource {
                 Debug.LogError("Could not get find matching protocol for RosSocket!");
                 return;
         }
-        Debug.Assert(p != null, "Could not initialize protocol!");
+        Debug.Assert(p != null);
 
         // OnConnected and OnClosed event handlers
         p.OnConnected += OnConnected;

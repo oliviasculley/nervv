@@ -18,14 +18,10 @@ namespace NERVV.Menu {
         #region Unity Methods
         /// <summary>Check references and generate buttons</summary>
         void OnEnable() {
-            Debug.Assert(detailPanel != null,
-                "Could not get ref to machine detail panel!");
-            Debug.Assert(machineButtonPrefab != null,
-                "Could not get ref to machine button prefab!");
-            Debug.Assert(switcher != null,
-                "Could not get ref to switcher!");
-            Debug.Assert(MachineManager.Instance != null,
-                "[Menu: MachinesList] Could not get ref to MachineManager!");
+            Debug.Assert(detailPanel != null);
+            Debug.Assert(machineButtonPrefab != null);
+            Debug.Assert(switcher != null);
+            Debug.Assert(MachineManager.Instance != null);
 
             GenerateMachineButtons();
         }

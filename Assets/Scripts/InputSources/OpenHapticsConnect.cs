@@ -16,16 +16,14 @@ public class OpenHapticsConnect : InputSource {
 
     #region Unity Methods
     protected override void Start() {
-        base.Start();
-
         // Get ref to HapticPlugin
         HapticDevice = (HapticPlugin)FindObjectOfType(typeof(HapticPlugin));
-        Debug.Assert(HapticDevice != null, "[OpenHapticsConnect] Could not find HapticPlugin script in scene!");
+        Debug.Assert(HapticDevice != null);
 
-        // Add self to InputManager
-        Debug.Assert(InputManager.Instance != null, "[OpenHapticsConnect] Could not get ref to InputManager!");
-        if (!InputManager.Instance.AddInput(this))
-            Debug.LogError("[OpenHapticsConnect] Could not add self to InputManager!");
+        // Initial InputSource fields
+        Name = "OpenHaptics Device: " + HapticDevice.name;
+        ExclusiveType = true;
+        base.Start();
     }
     #endregion
 }

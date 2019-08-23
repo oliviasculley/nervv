@@ -16,9 +16,13 @@
       "requirement": "mandatory"
     },
     {
-      "name": "/actions/Default/in/activateIK",
+      "name": "/actions/Default/in/ActivateLeftIK",
       "type": "boolean",
       "requirement": "suggested"
+    },
+    {
+      "name": "/actions/Default/in/ActivateRightIK",
+      "type": "boolean"
     },
     {
       "name": "/actions/Default/out/Haptic",
@@ -29,7 +33,7 @@
   "action_sets": [
     {
       "name": "/actions/Default",
-      "usage": "single"
+      "usage": "leftright"
     }
   ],
   "default_bindings": [

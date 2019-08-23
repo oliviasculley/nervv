@@ -85,7 +85,7 @@ public class ROSJointPublisher : OutputSource {
                 return;
         }
 
-        Debug.Assert(p != null, "Could not initialize protocol!");
+        Debug.Assert(p != null);
 
         // OnConnected and OnClosed event handlers
         p.OnConnected += OnConnected;
@@ -168,7 +168,6 @@ public class ROSJointPublisher : OutputSource {
         }
         
         rosSocket.Publish(topicID, message);
-        Debug.Log("Test");
     }
 
     /// <summary>Callback when socket is connected</summary>

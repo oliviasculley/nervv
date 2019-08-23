@@ -41,11 +41,19 @@ namespace Valve.VR
             }
         }
         
-        public virtual SteamVR_Action_Boolean activateIK
+        public virtual SteamVR_Action_Boolean ActivateLeftIK
         {
             get
             {
-                return SteamVR_Actions.default_activateIK;
+                return SteamVR_Actions.default_ActivateLeftIK;
+            }
+        }
+        
+        public virtual SteamVR_Action_Boolean ActivateRightIK
+        {
+            get
+            {
+                return SteamVR_Actions.default_ActivateRightIK;
             }
         }
         
