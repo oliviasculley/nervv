@@ -1,6 +1,5 @@
 ﻿// System
-using System.Collections;
-using System.Collections.Generic;
+using System;
 
 // Unity Engine
 using UnityEngine;
@@ -10,6 +9,7 @@ namespace NERVV {
     /// This is the base implementation for inputs. These are dynamically
     /// added to the InputManager on load. View IInputSource.cs for more info.
     /// </summary>
+    [Serializable]
     public abstract class InputSource : MonoBehaviour, IInputSource {
         #region Input Properties
         [SerializeField,
@@ -26,7 +26,11 @@ namespace NERVV {
         /// </summary>
         public virtual bool InputEnabled {
             get { return _inputEnabled; }
-            set { _inputEnabled = value; }
+            set {
+                _inputEnabled = value;
+                if (OutputManager.Instance != null && _inputEnabled)
+                    OutputManager.Instance.DisableOutputs();
+            }
         }
         #endregion
 
@@ -57,8 +61,10 @@ namespace NERVV {
         protected virtual void Start() {
             // Add self to InputManager, disabling self if failure
             Debug.Assert(InputManager.Instance != null);
-            if (InputEnabled &= InputManager.Instance.AddInput(this))
+            bool success = InputManager.Instance.AddInput(this);
+            if (!success)
                 Debug.LogError("Could not add self to InputManager!");
+            InputEnabled &= success;
         }
         #endregion
     }

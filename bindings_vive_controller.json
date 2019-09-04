@@ -32,7 +32,16 @@
                "path" : "/user/hand/right/pose/raw"
             }
          ],
-         "skeleton" : [],
+         "skeleton" : [
+            {
+               "output" : "/actions/default/in/leftskeleton",
+               "path" : "/user/hand/left/input/skeleton/left"
+            },
+            {
+               "output" : "/actions/default/in/rightskeleton",
+               "path" : "/user/hand/right/input/skeleton/right"
+            }
+         ],
          "sources" : [
             {
                "inputs" : {
@@ -100,8 +109,8 @@
    },
    "category" : "steamvr_input",
    "controller_type" : "vive_controller",
-   "description" : "Default MTConnectVR binding for HTC Vive and Vive Pro",
-   "name" : "NERVV configuration for Vive Controller",
+   "description" : "Default NERVV binding for HTC Vive and Vive Pro",
+   "name" : "NERVV [Vive/Vive Pro]",
    "options" : {},
    "simulated_actions" : []
 }

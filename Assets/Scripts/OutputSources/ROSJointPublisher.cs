@@ -17,18 +17,10 @@ public class ROSJointPublisher : OutputSource {
     public enum ProtocolSelection { WebSocketSharp, WebSocketNET, None };
     #endregion
 
-    #region Settings
+    #region ROS Settings
     /// <summary>Name of topic to publish</summary>
-    [Tooltip("Name of topic to publish"), Header("Settings")]
+    [Tooltip("Name of topic to publish"), Header("ROS Settings")]
     public string Topic = "/vr_joint_states";
-
-    /// <summary>Machine to set angles from topic</summary>
-    [Tooltip("Machine to set angles from topic")]
-    public Machine machineToPublish;
-
-    /// <summary>Interval in seconds to poll</summary>
-    [Tooltip("Interval in seconds to poll")]
-    public float pollInterval = 0.25f;
 
     /// <summary>URL of RosBridgeClient websocket to subscribe from</summary>
     [Tooltip("URL of RosBridgeClient websocket to subscribe from")]
@@ -41,6 +33,18 @@ public class ROSJointPublisher : OutputSource {
     /// <summary>Serialization mode of RosBridgeClient</summary>
     [Tooltip("Serialization mode of RosBridgeClient")]
     public RosSocket.SerializerEnum SerializationMode = RosSocket.SerializerEnum.JSON;
+    #endregion
+
+    #region NERVV Settings
+    /// <summary>Machine to set angles from topic</summary>
+    [Tooltip("Machine to set angles from topic"), Header("NERVV Settings")]
+    public Machine machineToPublish;
+
+    /// <summary>Interval in seconds to poll</summary>
+    [Tooltip("Interval in seconds to poll")]
+    public float pollInterval = 0.25f;
+
+    public bool PrintLogMessages = false;
     #endregion
 
     #region Vars
@@ -172,12 +176,14 @@ public class ROSJointPublisher : OutputSource {
 
     /// <summary>Callback when socket is connected</summary>
     void OnConnected(object sender, EventArgs e) {
-        Debug.Log("Connected to RosBridge: " + URL);
+        if (PrintLogMessages)
+            Debug.Log("Connected to RosBridge: " + URL);
     }
 
     /// <summary>Callback when socket is disconnected</summary>
     void OnDisconnected(object sender, EventArgs e) {
-        Debug.Log("Disconnected from RosBridge: " + URL);
+        if (PrintLogMessages)
+            Debug.Log("Disconnected from RosBridge: " + URL);
     }
     #endregion
 }

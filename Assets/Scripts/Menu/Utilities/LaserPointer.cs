@@ -57,9 +57,7 @@ public class LaserPointer : MonoBehaviour {
         pointer.transform.localPosition = new Vector3(0f, 0f, 50f);
         pointer.transform.localRotation = Quaternion.identity;
 
-        Material m = new Material(Shader.Find("Unlit/Color"));
-        m.color = color;
-        pointer.GetComponent<MeshRenderer>().material = m;
+        pointer.GetComponent<MeshRenderer>().material.color = color;
     }
 
     /// <summary>Clean up laser pointer objects</summary>

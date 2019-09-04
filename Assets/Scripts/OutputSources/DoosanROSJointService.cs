@@ -24,18 +24,10 @@ public class DoosanROSJointService : OutputSource {
     public enum ProtocolSelection { WebSocketSharp, WebSocketNET };
     #endregion
 
-    #region Settings
+    #region ROS Settings
     /// <summary>Name of service to call</summary>
-    [Tooltip("Name of service to call"), Header("Settings")]
+    [Tooltip("Name of service to call"), Header("ROS Settings")]
     public string ServiceName = "/dsrm0609/motion/move_joint";
-
-    /// <summary>Machine to set angles from topic</summary>
-    [Tooltip("Machine to set angles from topic")]
-    public Machine machineToPublish;
-
-    /// <summary>Interval in seconds to poll</summary>
-    [Tooltip("Interval in seconds to poll")]
-    public float pollInterval = 0.25f;
 
     /// <summary>URL of RosBridgeClient websocket to subscribe from</summary>
     [Tooltip("URL of RosBridgeClient websocket to subscribe from")]
@@ -48,6 +40,18 @@ public class DoosanROSJointService : OutputSource {
     /// <summary>Serialization mode of RosBridgeClient</summary>
     [Tooltip("Serialization mode of RosBridgeClient")]
     public RosSocket.SerializerEnum SerializationMode = RosSocket.SerializerEnum.JSON;
+    #endregion
+
+    #region NERVV Settings
+    /// <summary>Machine to set angles from topic</summary>
+    [Tooltip("Machine to set angles from topic"), Header("NERVV Settings")]
+    public Machine machineToPublish;
+
+    /// <summary>Interval in seconds to poll</summary>
+    [Tooltip("Interval in seconds to poll")]
+    public float pollInterval = 0.25f;
+
+    public bool PrintLogMessages = false;
     #endregion
 
     #region Vars
@@ -122,8 +126,7 @@ public class DoosanROSJointService : OutputSource {
     /// <summary>Sends message to service to move joints to specified location</summary>
     void SendJointsMessage() {
         // Safety checks
-        if (!OutputEnabled)
-            return;
+        if (!OutputEnabled) return;
         if (!rosSocket.protocol.IsAlive()) {
             Debug.LogError("RosSocket is not active!");
             return;
@@ -150,11 +153,11 @@ public class DoosanROSJointService : OutputSource {
             message.pos[i] = machineToPublish.Axes[i].ExternalValue;
 
         // Call move joint service
-        Debug.Log(serviceID = rosSocket.CallService<MoveJointRequest, MoveJointResponse>(
+        serviceID = rosSocket.CallService<MoveJointRequest, MoveJointResponse>(
             ServiceName,
             VerifySuccess,
             message
-        ));
+        );
     }
 
     /// <summary>Callback with response from Doosan MoveJoint Service</summary>
@@ -166,12 +169,14 @@ public class DoosanROSJointService : OutputSource {
 
     /// <summary>Callback when socket is connected</summary>
     void OnConnected(object sender, EventArgs e) {
-        Debug.Log("Connected to RosBridge: " + URL);
+        if (PrintLogMessages)
+            Debug.Log("Doosan ROS Joint Service connected to RosBridge: " + URL);
     }
 
     /// <summary>Callback when socket is disconnected</summary>
     void OnDisconnected(object sender, EventArgs e) {
-        Debug.Log("Disconnected from RosBridge: " + URL);
+        if (PrintLogMessages)
+            Debug.Log("Doosan ROS Joint Service disconnected from RosBridge: " + URL);
     }
     #endregion
 }

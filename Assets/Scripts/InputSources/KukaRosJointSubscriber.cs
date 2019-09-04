@@ -6,15 +6,20 @@ using System.Collections;
 using UnityEngine;
 using RosSharp.RosBridgeClient;
 using RosSharp.RosBridgeClient.Protocols;
-using RosSharp.RosBridgeClient.Messages.Sensor;
 using RosSharp.RosBridgeClient.Messages.Standard;
 
 // NERVV
 using NERVV;
 using System.Net.Sockets;
 
-public class RosJointSubscriber : InputSource {
+public class KukaRosJointSubscriber : InputSource {
+    #region Static
+    public enum ProtocolSelection { WebSocketSharp, WebSocketNET };
+    #endregion
+
     #region Classes
+
+    /// <summary>Used to apply transformations on values coming from ROS</summary>
     [Serializable]
     public class AxisValueAdjustment {
         /// <summary>ID of Axis to map to</summary>
@@ -37,15 +42,24 @@ public class RosJointSubscriber : InputSource {
             "input's worldspace to chosen external worldspace")]
         public float ScaleFactor = 1;
     }
-    #endregion
 
-    #region Static
-    public enum ProtocolSelection { WebSocketSharp, WebSocketNET };
+    [Serializable]
+    public class KukaJoint : Message {
+        public const string RosMessageName = "kuka_robot/joint_angles";
+        public double a1;
+        public double a2;
+        public double a3;
+        public double a4;
+        public double a5;
+        public double a6;
+
+        public KukaJoint() { }
+    }
     #endregion
 
     #region ROS Settings
-    [Tooltip("Topic to subscribe from"), Header("ROS Settings")]
-    public string Topic = "/joint_states";
+    [Tooltip("ROS topic name"), Header("ROS Settings")]
+    public string Topic = "";
 
     [Tooltip("URL of RosBridgeClient websocket to subscribe from")]
     public string URL = "";
@@ -63,7 +77,6 @@ public class RosJointSubscriber : InputSource {
     [Tooltip("Machine to set angles from /joint_states"), Header("NERVV Settings")]
     public Machine machineToSet;
 
-    [Tooltip("Axes to bind")]
     public AxisValueAdjustment[] axesToBind;
     #endregion
 
@@ -130,15 +143,10 @@ public class RosJointSubscriber : InputSource {
             StopCoroutine(rosConnect);
 
         // Unsubscribe and close
-        for (int i = 0; i < 50 && rosSocket != null; i++) {
-            try {
-                if (!string.IsNullOrEmpty(topicID))
-                    rosSocket.Unsubscribe(topicID);
-                rosSocket.Close();
-            } catch (SocketException e) {
-                Debug.LogError("SocketException, trying to quit...\n" +
-                    "----------------------------------------------\n" + e.Message);
-            }
+        if (rosSocket != null) {
+            if (!string.IsNullOrEmpty(topicID))
+                rosSocket.Unsubscribe(topicID);
+            rosSocket.Close();
         }
     }
     #endregion
@@ -155,7 +163,7 @@ public class RosJointSubscriber : InputSource {
                 Debug.LogError("SocketException, trying again in one second...\n" +
                     "----------------------------------------------\n" + e.Message);
             }
-            if (rosConnect != null) break;
+            if (rosSocket != null) break;
             yield return new WaitForSeconds(1);
         }
 
@@ -163,7 +171,7 @@ public class RosJointSubscriber : InputSource {
         yield return new WaitUntil(() => rosSocket.protocol.IsAlive());
 
         // Subscribe to topic once socket is active
-        topicID = rosSocket.Subscribe<JointState>(
+        topicID = rosSocket.Subscribe<KukaJoint>(
             Topic,
             ReceiveMessage,
             0   // the rate(in ms in between messages) at which to throttle the topics
@@ -172,16 +180,24 @@ public class RosJointSubscriber : InputSource {
 
     /// <summary>Called when RosSocket receieves messages</summary>
     /// <param name="message"></param>
-    protected void ReceiveMessage(JointState message) {
+    protected void ReceiveMessage(KukaJoint message) {
         if (InputEnabled) {
-            for (int i = 0; i < message.name.Length && i < axesToBind.Length; i++) {
+            for (int i = 0; i < axesToBind.Length; i++) {
+                var fieldInfo = typeof(KukaJoint).GetField("a" + (i + 1));
+                Debug.Assert(fieldInfo != null);
+                float? val = null;
+                try {
+                    val = (float)(double)fieldInfo.GetValue(message);
+                } catch (InvalidCastException e) {
+                    Debug.LogError("Invalid cast exception, check value type!\n" +
+                        "-----------------------------------------\n" + e.Message);
+                }
+                Debug.Assert(val.HasValue);
                 Machine.Axis a = machineToSet.Axes.Find(x => x.ID == axesToBind[i].ID);
                 Debug.Assert(a != null);
 
-                if (PrintLogMessages)
-                    Debug.Log("Kuka ROS Subscriber: " + a.Name + " has " + message.position[i].ToString());
-                a.ExternalValue = ((float)message.position[i] + axesToBind[i].Offset) *
-                    axesToBind[i].ScaleFactor;
+                if (PrintLogMessages) Debug.Log("Kuka ROS Input: " + a.Name + " has " + val.Value);
+                a.ExternalValue = (val.Value + axesToBind[i].Offset) * axesToBind[i].ScaleFactor;
             }
         }
     }
@@ -189,13 +205,13 @@ public class RosJointSubscriber : InputSource {
     /// <summary>Callback when websocket is connected</summary>
     protected void OnConnected(object sender, EventArgs e) {
         if (PrintLogMessages)
-            Debug.Log("ROSJointSubscriber connected to RosBridge: " + URL);
+            Debug.Log("Kuka ROS Joint Subscriber connected to RosBridge: " + URL);
     }
 
     /// <summary>Callback when websocket is disconnected</summary>
     protected void OnDisconnected(object sender, EventArgs e) {
         if (PrintLogMessages)
-            Debug.Log("ROSJointSubscriber disconnected from RosBridge: " + URL);
+            Debug.Log("Kuka ROS Joint Subscriber disconnected from RosBridge: " + URL);
     }
     #endregion
 }

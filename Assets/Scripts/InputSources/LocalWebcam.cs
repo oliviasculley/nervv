@@ -13,8 +13,9 @@ public class LocalWebcam : InputSource {
     public override bool InputEnabled {
         get { return _inputEnabled; }
         set {
+            _inputEnabled = value;
             foreach (Transform t in transform)
-                t.gameObject.SetActive(_inputEnabled = value);
+                t.gameObject.SetActive(_inputEnabled);
         }
     }
     #endregion
@@ -39,9 +40,8 @@ public class LocalWebcam : InputSource {
         Debug.Assert(planeRenderer != null);
 
         // Initial InputSource fields
-        Name = "Local Webcam: " + localSource;
         ExclusiveType = false;
-        //base.Start();
+        base.Start();
 
         if (printAvailableWebcams)
             PrintAvailableWebcams();
@@ -49,21 +49,21 @@ public class LocalWebcam : InputSource {
     }
 
     /// <summary>Orient webcam plane towards camera</summary>
-    private void Update() {
+    protected void Update() {
         transform.LookAt(Camera.main.transform.position);
     }
     #endregion
 
     #region Methods
     /// <summary>Unity Coroutine for streaming local webcam to plane</summary>
-    IEnumerator GetLocalWebcamFeed() {
+    protected IEnumerator GetLocalWebcamFeed() {
         yield return Application.RequestUserAuthorization(UserAuthorization.WebCam);
         if (Application.HasUserAuthorization(UserAuthorization.WebCam)) {
             WebCamTexture w = new WebCamTexture(localSource);
             Debug.Assert(w != null);
-
-            planeRenderer.material.mainTexture = w;
             w.Play();
+            Debug.Assert(w.isPlaying);
+            planeRenderer.material.mainTexture = w;
         } else {
             Debug.LogWarning("Webcam authorization denied for: \"" + localSource + "\"!");
             gameObject.SetActive(false);

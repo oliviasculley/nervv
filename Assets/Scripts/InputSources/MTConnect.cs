@@ -33,6 +33,8 @@ public class MTConnect : InputSource {
     [Tooltip("Interval in seconds to poll")]
     /// <summary>Interval in seconds to poll</summary>
     public float pollInterval = 0.1f;
+
+    public bool PrintLogMessages = false;
     #endregion
 
     #region Vars
@@ -50,13 +52,6 @@ public class MTConnect : InputSource {
 
         // Init vars
         fetchMTConnect = null;
-    }
-
-    protected override void Start() {
-        // Initial InputSource fields
-        Name = "MTConnect XML: " + URL;
-        ExclusiveType = false;
-        base.Start();
     }
 
     /// <summary>Check if need to trigger</summary>
@@ -127,7 +122,8 @@ public class MTConnect : InputSource {
             foreach (ComponentStream cs in ds.ComponentStream) {
                 Machine.Axis a = m.Axes.Find(x => x.ID == cs.ComponentId);
                 if (a == null) {
-                    //Debug.LogWarning("Did not find matching Axis: " + cs.ComponentId);
+                    if (PrintLogMessages)
+                        Debug.Log("Did not find matching Axis: " + cs.ComponentId);
                     continue;
                 }
 
@@ -139,12 +135,11 @@ public class MTConnect : InputSource {
                             break;
                         cs.Samples.Position.Sort(new PositionTimeStampCompare());
                         Position p = cs.Samples.Position[cs.Samples.Position.Count - 1];
-
-                        if (p.Text == "UNAVAILABLE")
-                            break;
+                        if (p.Text == "UNAVAILABLE") break;
 
                         // Set axis
-                        //Debug.Log("[MTConnect] Set Position " + a.GetID() + "'s value: " + p.Text);
+                        if (PrintLogMessages)
+                            Debug.Log("[MTConnect] Set axis " + a.Name + "'s ExternalValue: " + p.Text);
                         a.ExternalValue = float.Parse(p.Text, CultureInfo.InvariantCulture);
                         break;
 
@@ -153,12 +148,11 @@ public class MTConnect : InputSource {
                         if (cs.Samples.Angle.Count > 0) {
                             cs.Samples.Angle.Sort(new AngleTimeStampCompare());
                             Angle angle = cs.Samples.Angle[cs.Samples.Angle.Count - 1];
-
-                            if (angle.Text == "UNAVAILABLE")
-                                break;
+                            if (angle.Text == "UNAVAILABLE") break;
 
                             // Set axis
-                            //Debug.Log("[MTConnect] Set Angle " + a.GetID() + "'s value: " + angle.Text);
+                            if (PrintLogMessages)
+                                Debug.Log("[MTConnect] Set axis " + a.Name + "'s angle: " + angle.Text);
                             a.ExternalValue = float.Parse(angle.Text, CultureInfo.InvariantCulture);
                         }
 
@@ -166,10 +160,10 @@ public class MTConnect : InputSource {
                         if (cs.Samples.Torque.Count > 0) {
                             cs.Samples.Torque.Sort(new TorqueTimeStampCompare());
                             Torque torque = cs.Samples.Torque[cs.Samples.Torque.Count - 1];
+                            if (torque.Text == "UNAVAILABLE") break;
 
-                            if (torque.Text == "UNAVAILABLE")
-                                break;
-
+                            if (PrintLogMessages)
+                                Debug.Log("[MTConnect] Set axis " + a.Name + "'s torque: " + torque.Text);
                             a.Torque = float.Parse(torque.Text, CultureInfo.InvariantCulture);
                         }
                         break;
@@ -188,9 +182,9 @@ public class MTConnect : InputSource {
         public int Compare(Position x, Position y) {
             if (x == null || y == null)
                 return 0;
-            Debug.Log("xT: " + x.Timestamp + ", " +
-                "yT: " + y.Timestamp + ", " +
-                x.Timestamp.CompareTo(y.Timestamp));
+            //Debug.Log("xT: " + x.Timestamp + ", " +
+            //    "yT: " + y.Timestamp + ", " +
+            //    x.Timestamp.CompareTo(y.Timestamp));
             return x.Timestamp.CompareTo(y.Timestamp);
         }
     }
@@ -199,9 +193,9 @@ public class MTConnect : InputSource {
         public int Compare(Angle x, Angle y) {
             if (x == null || y == null)
                 return 0;
-            Debug.Log("xT: " + x.Timestamp + ", " +
-                "yT: " + y.Timestamp + ", " +
-                x.Timestamp.CompareTo(y.Timestamp));
+            //Debug.Log("xT: " + x.Timestamp + ", " +
+            //    "yT: " + y.Timestamp + ", " +
+            //    x.Timestamp.CompareTo(y.Timestamp));
             return x.Timestamp.CompareTo(y.Timestamp);
         }
     }
@@ -210,9 +204,9 @@ public class MTConnect : InputSource {
         public int Compare(Torque x, Torque y) {
             if (x == null || y == null)
                 return 0;
-            Debug.Log("xT: " + x.Timestamp + ", " +
-                "yT: " + y.Timestamp + ", " +
-                x.Timestamp.CompareTo(y.Timestamp));
+            //Debug.Log("xT: " + x.Timestamp + ", " +
+            //    "yT: " + y.Timestamp + ", " +
+            //    x.Timestamp.CompareTo(y.Timestamp));
             return x.Timestamp.CompareTo(y.Timestamp);
         }
     }

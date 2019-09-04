@@ -24,10 +24,10 @@ namespace NERVV {
 
         #region Machine Settings
         [SerializeField,
-        Tooltip("Name of Machine"),
+        Tooltip("Human-readable name of machine"),
         Header("Machine Settings")]
         protected string _name;
-        /// <summary>Name of Machine</summary>
+        /// <summary>Human readable name of machine</summary>
         /// <see cref="IMachine"/>
         public virtual string Name {
             get { return _name; }
@@ -260,9 +260,9 @@ namespace NERVV {
                 set { _id = value; }
             }
 
-            [SerializeField, Tooltip("Name of axis")]
+            [SerializeField, Tooltip("Human-readable name of axis")]
             protected string _name;
-            /// <summary>Name of axis. Should only be used for informative purposes.</summary>
+            /// <summary>Human-readable name of axis. Should only be used for informative purposes.</summary>
             public virtual string Name {
                 get { return _name; }
                 set { _name = value; }

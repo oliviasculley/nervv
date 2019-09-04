@@ -1,4 +1,5 @@
 ﻿// System
+using System;
 using System.Collections.Generic;
 
 // Unity Engine
@@ -24,6 +25,17 @@ namespace NERVV {
             get { return _outputs; }
             set { _outputs = value; }
         }
+        #endregion
+
+        #region Settings
+        /// <summary>
+        /// Outputs that won't get disabled by default when an output source
+        /// runs. Can still get disabled if DisableInputs(true) is called!
+        /// </summary>
+        [Tooltip("Outputs that won't get disabled by default" +
+            " when an input source initializes. Can still get disabled if " +
+            "DisableOutputs(true) is called!"), Header("Settings")]
+        public List<OutputSource> DisableExceptions;
         #endregion
 
         #region Vars
@@ -104,7 +116,23 @@ namespace NERVV {
 
             return foundOutputs;
         }
+
+        /// <summary>Disables all outputs not in DisableExceptions List</summary>
+        /// <param name="forceDisable">
+        /// If true, will disable all outputs, regardless if outputs
+        /// are in DisableExceptions List or not.
+        /// </param>
+        public void DisableOutputs(bool forceDisable = false) {
+            foreach (IOutputSource o in Outputs) {
+                try {
+                    if (!forceDisable && DisableExceptions.Contains((OutputSource)o)) continue;
+                } catch (InvalidCastException) {
+                    // continue since can't be in DisableExceptions by definition
+                    continue;
+                }
+                o.OutputEnabled = false;
+            }
+        }
         #endregion
     }
 }
-

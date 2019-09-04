@@ -231,12 +231,6 @@ MonoBehaviour:
   color: {r: 0, g: 0, b: 0, a: 0}
   clickColor: {r: 0, g: 1, b: 0, a: 1}
   menu: {fileID: 1177126906}
---- !u!4 &236334734 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4583424822498384, guid: 7cdb4dbd1f8f22a4a9a363f1a23b8217,
-    type: 3}
-  m_PrefabInstance: {fileID: 443746639}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &267055147 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1622101110672614435, guid: 9d00d3f27989ea61eb2c0fb3c949a256,
@@ -410,7 +404,7 @@ Transform:
   m_Children:
   - {fileID: 386268455}
   m_Father: {fileID: 2011387096}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &393471029
 MonoBehaviour:
@@ -430,67 +424,6 @@ MonoBehaviour:
   localSource: Logitech HD Webcam C270
   printAvailableWebcams: 0
   planeRenderer: {fileID: 386268453}
---- !u!1001 &443746639
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 1074957911}
-    m_Modifications:
-    - target: {fileID: 4583424822498384, guid: 7cdb4dbd1f8f22a4a9a363f1a23b8217, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.2190553
-      objectReference: {fileID: 0}
-    - target: {fileID: 4583424822498384, guid: 7cdb4dbd1f8f22a4a9a363f1a23b8217, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.7648283
-      objectReference: {fileID: 0}
-    - target: {fileID: 4583424822498384, guid: 7cdb4dbd1f8f22a4a9a363f1a23b8217, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.28493842
-      objectReference: {fileID: 0}
-    - target: {fileID: 4583424822498384, guid: 7cdb4dbd1f8f22a4a9a363f1a23b8217, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4583424822498384, guid: 7cdb4dbd1f8f22a4a9a363f1a23b8217, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4583424822498384, guid: 7cdb4dbd1f8f22a4a9a363f1a23b8217, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4583424822498384, guid: 7cdb4dbd1f8f22a4a9a363f1a23b8217, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4583424822498384, guid: 7cdb4dbd1f8f22a4a9a363f1a23b8217, type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4583424822498384, guid: 7cdb4dbd1f8f22a4a9a363f1a23b8217, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4583424822498384, guid: 7cdb4dbd1f8f22a4a9a363f1a23b8217, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4583424822498384, guid: 7cdb4dbd1f8f22a4a9a363f1a23b8217, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1896115111616518, guid: 7cdb4dbd1f8f22a4a9a363f1a23b8217, type: 3}
-      propertyPath: m_Name
-      value: HapticDeviceWithGrabber
-      objectReference: {fileID: 0}
-    - target: {fileID: 1896115111616518, guid: 7cdb4dbd1f8f22a4a9a363f1a23b8217, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 7cdb4dbd1f8f22a4a9a363f1a23b8217, type: 3}
 --- !u!1 &511611816
 GameObject:
   m_ObjectHideFlags: 0
@@ -715,7 +648,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2011387096}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &684061551
 MonoBehaviour:
@@ -726,13 +659,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 684061549}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9bbdc82d6590624dac0352968cbf929, type: 3}
+  m_Script: {fileID: 11500000, guid: c9ca7b32782347f419e72040c6d6b0e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _inputEnabled: 0
-  _name: ROSJointSub - Kuka
+  _name: Kuka ROS Joint Subscriber
   _exclusiveType: 0
-  Topic: /kuka_topic/joint_states
+  Topic: /chatter
+  URL: 
+  Protocol: 1
+  SerializationMode: 0
+  PrintLogMessages: 0
+  machineToSet: {fileID: 690470216}
   axesToBind:
   - ID: a1
     Offset: 0
@@ -752,10 +690,6 @@ MonoBehaviour:
   - ID: a6
     Offset: 0
     ScaleFactor: 1
-  machineToSet: {fileID: 690470216}
-  URL: 
-  Protocol: 1
-  SerializationMode: 0
 --- !u!1001 &690470214
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -886,6 +820,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0db88ee331aac9442864e1edfe5237d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DisableExceptions:
+  - {fileID: 393471029}
 --- !u!1 &790494680
 GameObject:
   m_ObjectHideFlags: 0
@@ -976,7 +912,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &803703343
 Transform:
   m_ObjectHideFlags: 0
@@ -1003,15 +939,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9d4fc84beca51644b72be1c820cb7a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _outputEnabled: 1
+  _outputEnabled: 0
   _name: ROSJointPublisher - Doosan
   _exclusiveType: 0
   Topic: /vr_joint_states
-  machineToPublish: {fileID: 136885894}
-  pollInterval: 0.25
   URL: 
   Protocol: 1
   SerializationMode: 0
+  machineToPublish: {fileID: 136885894}
+  pollInterval: 0.25
+  PrintLogMessages: 0
 --- !u!224 &809350605 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6065009914219119850, guid: 9d00d3f27989ea61eb2c0fb3c949a256,
@@ -1095,54 +1032,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f6ccb57805f60045a648be7ddf87bd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1074957909
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1074957911}
-  - component: {fileID: 1074957910}
-  m_Layer: 0
-  m_Name: OpenHaptics
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &1074957910
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1074957909}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b9964a93e6b6e541a2802cc68b21099, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _inputEnabled: 1
-  _name: 
-  _exclusiveType: 1
-  HapticDevice: {fileID: 2034027309}
---- !u!4 &1074957911
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1074957909}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.30728084, y: -0.68538, z: -0.96242744}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 236334734}
-  m_Father: {fileID: 2011387096}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  DisableExceptions: []
 --- !u!1 &1115453529
 GameObject:
   m_ObjectHideFlags: 0
@@ -1159,7 +1049,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1115453530
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1178,6 +1068,7 @@ MonoBehaviour:
   adjustments: []
   URL: 
   pollInterval: 0.1
+  PrintLogMessages: 0
 --- !u!4 &1115453531
 Transform:
   m_ObjectHideFlags: 0
@@ -1190,7 +1081,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2011387096}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1149192154
 GameObject:
@@ -1822,7 +1713,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2011387096}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1698882310
 MonoBehaviour:
@@ -1839,31 +1730,30 @@ MonoBehaviour:
   _inputEnabled: 0
   _name: ROSJointSub - Doosan
   _exclusiveType: 0
-  Topic: /dsrm0609/joint_states
-  axesToBind:
-  - ID: DR1_A1
-    Offset: 0
-    ScaleFactor: 1
-  - ID: DR1_A2
-    Offset: 0
-    ScaleFactor: 1
-  - ID: DR1_A3
-    Offset: 0
-    ScaleFactor: 1
-  - ID: DR1_A4
-    Offset: 0
-    ScaleFactor: 1
-  - ID: DR1_A5
-    Offset: 0
-    ScaleFactor: 1
-  - ID: DR1_A6
-    Offset: 0
-    ScaleFactor: 1
-
-  machineToSet: {fileID: 136885894}
+  Topic: /dsr01m0609/joint_states
   URL: 
   Protocol: 1
   SerializationMode: 0
+  PrintLogMessages: 0
+  machineToSet: {fileID: 136885894}
+  axesToBind:
+  - ID: DR1_A1
+    Offset: 0
+    ScaleFactor: 57.29578
+  - ID: DR1_A2
+    Offset: 0
+    ScaleFactor: 57.29578
+  - ID: DR1_A3
+    Offset: 0
+    ScaleFactor: 57.29578
+  - ID: DR1_A4
+    Offset: 0
+    ScaleFactor: 57.29578
+  - ID: DR1_A5
+    Offset: 0
+    ScaleFactor: 57.29578
+  - ID: DR1_A6
+    Offset: 0
 --- !u!1 &1789768505
 GameObject:
   m_ObjectHideFlags: 0
@@ -1924,7 +1814,6 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1074957911}
   - {fileID: 1115453531}
   - {fileID: 684061550}
   - {fileID: 1698882309}
@@ -1932,18 +1821,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2034027309 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 114312932697678990, guid: 7cdb4dbd1f8f22a4a9a363f1a23b8217,
-    type: 3}
-  m_PrefabInstance: {fileID: 443746639}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2307560af17f8c64dba01b84045f565f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2043377931
 GameObject:
   m_ObjectHideFlags: 0
@@ -2064,12 +1941,13 @@ MonoBehaviour:
   _outputEnabled: 0
   _name: RosJointMoveService - Doosan
   _exclusiveType: 0
-  ServiceName: /dsrm0609/motion/move_joint
-  machineToPublish: {fileID: 136885894}
-  pollInterval: 0.1
+  ServiceName: /dsr01m0609/motion/move_joint
   URL: 
   Protocol: 1
   SerializationMode: 0
+  machineToPublish: {fileID: 136885894}
+  pollInterval: 0.1
+  PrintLogMessages: 0
 --- !u!1001 &417748264673809919
 PrefabInstance:
   m_ObjectHideFlags: 0

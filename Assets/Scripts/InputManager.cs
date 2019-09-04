@@ -1,4 +1,5 @@
 ﻿// System
+using System;
 using System.Collections.Generic;
 
 // Unity Engine
@@ -25,6 +26,17 @@ namespace NERVV {
         public List<IInputSource> Inputs {
             get { return _inputs; }
         }
+        #endregion
+
+        #region Settings
+        /// <summary>
+        /// Inputs that won't get disabled by default when an output source
+        /// initializes. Can still get disabled if DisableInputs(true) is called!
+        /// </summary>
+        [SerializeField, Tooltip("Inputs that won't get disabled by default" +
+            " when an output source runs. Can still get disabled if " +
+            "DisableInputs(true) is called!"), Header("Settings")]
+        public List<InputSource> DisableExceptions;
         #endregion
 
         #region Vars
@@ -104,6 +116,23 @@ namespace NERVV {
                     foundInputs.Add(i);
 
             return foundInputs;
+        }
+
+        /// <summary>Disables all inputs not in DisableExceptions List</summary>
+        /// <param name="forceDisable">
+        /// If true, will disable all inputs, regardless if inputs
+        /// are in DisableExceptions List or not.
+        /// </param>
+        public void DisableInputs(bool forceDisable = false) {
+            foreach (IInputSource i in Inputs) {
+                try {
+                    if (!forceDisable && DisableExceptions.Contains((InputSource)i)) continue;
+                } catch (InvalidCastException) {
+                    // continue since can't be in DisableExceptions by definition
+                    continue;
+                }
+                i.InputEnabled = false;
+            }
         }
         #endregion
     }

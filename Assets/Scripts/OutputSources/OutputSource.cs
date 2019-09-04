@@ -1,6 +1,5 @@
 ﻿// System
-using System.Collections;
-using System.Collections.Generic;
+using System;
 
 // Unity Engine
 using UnityEngine;
@@ -9,6 +8,7 @@ namespace NERVV {
     /// <summary>
     /// This is the base class for outputs. These are dynamically added to OutputManager.
     /// </summary>
+    [Serializable]
     public abstract class OutputSource : MonoBehaviour, IOutputSource {
         #region Output Properties
         [SerializeField,
@@ -17,10 +17,13 @@ namespace NERVV {
         /// <summary>Is this output currently enabled?</summary>
         public virtual bool OutputEnabled {
             get { return _outputEnabled; }
-            set { _outputEnabled = value; }
+            set {
+                _outputEnabled = value;
+                if (InputManager.Instance != null && _outputEnabled)
+                    InputManager.Instance.DisableInputs();
+            }
         }
         #endregion
-
 
         #region Output Settings
         [SerializeField, Header("Output Settings")]
@@ -45,8 +48,10 @@ namespace NERVV {
         protected virtual void Start() {
             // Add self to InputManager, disabling self if failure
             Debug.Assert(OutputManager.Instance != null);
-            if (OutputEnabled &= OutputManager.Instance.AddOutput(this))
+            bool success = OutputManager.Instance.AddOutput(this);
+            if (!success)
                 Debug.LogError("Could not add self to OutputManager!");
+            OutputEnabled &= success;
         }
         #endregion
     }
