@@ -7,11 +7,11 @@ manufacturing devices.
 
 ## Contribution
 NERVV is an evolving specification and gladly welcomes all
-[merge requests](https://gitlab.com/csculley/mtconnectvr/merge_requests).
+[merge requests](https://gitlab.com/csculley/nervv/merge_requests).
 Please follow the
 [contribution guide](https://gitlab.com/csculley/nervv/blob/master/CONTRIBUTING.md)
 to allow for speedy integration!
-The [wiki](https://gitlab.com/csculley/mtconnectvr/wikis/Home)
+The [wiki](https://gitlab.com/csculley/nervv/wikis/Home)
 is also currently in development and contains helpful information and examples
 for integration and contribution.
 
