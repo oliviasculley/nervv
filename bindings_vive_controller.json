@@ -96,6 +96,24 @@
                },
                "mode" : "button",
                "path" : "/user/hand/right/input/grip"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/default/in/teleport"
+                  }
+               },
+               "mode" : "trigger",
+               "path" : "/user/hand/left/input/trigger"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/default/in/teleport"
+                  }
+               },
+               "mode" : "trigger",
+               "path" : "/user/hand/right/input/trigger"
             }
          ]
       },
@@ -110,7 +128,7 @@
    "category" : "steamvr_input",
    "controller_type" : "vive_controller",
    "description" : "Default NERVV binding for HTC Vive and Vive Pro",
-   "name" : "NERVV [Vive/Vive Pro]",
+   "name" : "NERVV configuration for HTC Vive and Vive Pro",
    "options" : {},
    "simulated_actions" : []
 }

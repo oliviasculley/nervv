@@ -36,6 +36,8 @@ namespace NERVV {
             " when an input source initializes. Can still get disabled if " +
             "DisableOutputs(true) is called!"), Header("Settings")]
         public List<OutputSource> DisableExceptions;
+
+        public bool PrintDebugMessages = false;
         #endregion
 
         #region Vars
@@ -45,15 +47,20 @@ namespace NERVV {
 
         #region Unity Methods
         /// <summary>Set static ref to self and initialize vars</summary>
-        protected virtual void Awake() {
+        protected virtual void OnEnable() {
             // Initialize vars
             knownExclusives = new List<System.Type>();
             _outputs = new List<IOutputSource>();
 
             // Add static reference to self
-            if (Instance != null)
+            if (PrintDebugMessages && Instance != null)
                 Debug.LogWarning("[OutputManager] Static ref to self was not null!\nOverriding...");
             Instance = this;
+        }
+
+        /// <summary>Sets instance to null</summary>
+        protected virtual void OnDisable() {
+            Instance = null;
         }
         #endregion
 
@@ -63,16 +70,13 @@ namespace NERVV {
         /// <returns>Succesfully added?</returns>
         public virtual bool AddOutput(IOutputSource output) {
             // Check for duplicate outputs
-            if (Outputs.Contains(output))
-                return false;
+            if (Outputs.Contains(output)) return false;
 
             // Check for same type for exclusive types
-            if (knownExclusives.Contains(output.GetType()))
-                return false;
+            if (knownExclusives.Contains(output.GetType())) return false;
 
             // Add to knownExclusives if exclusive
-            if (output.ExclusiveType)
-                knownExclusives.Add(output.GetType());
+            if (output.ExclusiveType) knownExclusives.Add(output.GetType());
 
             // Add to list of outputs
             Outputs.Add(output);
@@ -84,8 +88,7 @@ namespace NERVV {
         /// <returns>Succesfully removed?</returns>
         public virtual bool RemoveOutput(IOutputSource output) {
             // If exclusive, remove from exclusives list
-            if (output.ExclusiveType)
-                knownExclusives.Remove(output.GetType());
+            if (output.ExclusiveType) knownExclusives.Remove(output.GetType());
 
             // Remove from list of outputs
             return Outputs.Remove(output);

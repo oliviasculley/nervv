@@ -1,4 +1,5 @@
 ﻿// System
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -18,34 +19,57 @@ public class LocalWebcam : InputSource {
                 t.gameObject.SetActive(_inputEnabled);
         }
     }
+
+    [SerializeField, Header("Properties")]
+    protected int _deviceID;
+    public int DeviceID {
+        get { return _deviceID; }
+        protected set { SetWebcamFeedID(value); }
+    }
     #endregion
 
     #region Settings
     [Header("Settings")]
-    public string localSource;
     public bool printAvailableWebcams = false;
     #endregion
 
     #region References
     [Header("References")]
-    public Renderer planeRenderer;
+    public Renderer PlaneRenderer;
     #endregion
 
     #region Vars
+    WebCamTexture w = null;
     #endregion
 
     #region Unity Methods
     /// <summary>Safety checks and get local camera feed</summary>
-    protected override void Start() {
-        Debug.Assert(planeRenderer != null);
+    /// <exception cref="ArgumentNullException">
+    /// If Plane renderer or PlaneRenderTexture is null
+    /// </exception>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// If webcam DeviceID is out of range of WebCamTexture.devices
+    /// </exception>
+    protected override void OnEnable() {
+        if (PlaneRenderer == null)
+            throw new ArgumentNullException("Plane Renderer is null!");
+        if (_deviceID < 0 || _deviceID >= WebCamTexture.devices.Length)
+            throw new ArgumentOutOfRangeException("Webcam DeviceID out of range!");
 
         // Initial InputSource fields
         ExclusiveType = false;
-        base.Start();
+        base.OnEnable();
 
         if (printAvailableWebcams)
             PrintAvailableWebcams();
         StartCoroutine(GetLocalWebcamFeed());
+    }
+
+    protected override void OnDisable() {
+        StopCoroutine(GetLocalWebcamFeed());
+        w?.Stop();
+        w = null;
+        base.OnDisable();
     }
 
     /// <summary>Orient webcam plane towards camera</summary>
@@ -59,13 +83,25 @@ public class LocalWebcam : InputSource {
     protected IEnumerator GetLocalWebcamFeed() {
         yield return Application.RequestUserAuthorization(UserAuthorization.WebCam);
         if (Application.HasUserAuthorization(UserAuthorization.WebCam)) {
-            WebCamTexture w = new WebCamTexture(localSource);
-            Debug.Assert(w != null);
-            w.Play();
-            Debug.Assert(w.isPlaying);
-            planeRenderer.material.mainTexture = w;
+            w = null;
+
+            WebCamDevice d = WebCamTexture.devices[DeviceID];
+
+            Resolution r = (d.availableResolutions?.Length ?? 0) > 0 ?
+                r = d.availableResolutions[d.availableResolutions.Length - 1] :
+                r = new Resolution() { width = 100, height = 100, refreshRate = 15 };
+            PlaneRenderer.material.mainTexture = w = new WebCamTexture(
+                deviceName: WebCamTexture.devices[DeviceID].name,
+                requestedWidth: r.width,
+                requestedHeight: r.height,
+                requestedFPS: r.refreshRate);
+            w?.Play();
+            Debug.Assert(w != null && w.isPlaying);
+            
         } else {
-            Debug.LogWarning("Webcam authorization denied for: \"" + localSource + "\"!");
+            if (PrintDebugMessages)
+                Debug.LogWarning("Webcam authorization denied for: \"" +
+                    WebCamTexture.devices[_deviceID].name + "\"!");
             gameObject.SetActive(false);
         }
     }
@@ -76,6 +112,18 @@ public class LocalWebcam : InputSource {
         foreach (WebCamDevice d in WebCamTexture.devices)
             s += "\n" + d.name;
         Debug.Log(s);
+    }
+
+    /// <summary>Sets Webcam feed amount</summary>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Throws when <paramref name="deviceID"/> is not a valid webcam device
+    /// </exception>
+    public void SetWebcamFeedID(int deviceID) {
+        if (deviceID < 0 || deviceID > WebCamTexture.devices.Length)
+            throw new ArgumentOutOfRangeException("Invalid webcam device ID");
+        _deviceID = deviceID;
+        OnDisable();
+        StartCoroutine(GetLocalWebcamFeed());
     }
     #endregion
 }

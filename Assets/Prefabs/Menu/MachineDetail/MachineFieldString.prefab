@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4423197391337011291}
   - component: {fileID: 4423197391337011293}
   - component: {fileID: 4423197391337011292}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: FieldName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -174,7 +174,7 @@ GameObject:
   - component: {fileID: 661635358}
   - component: {fileID: 5893852334406048231}
   - component: {fileID: 2005004471}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: MachineFieldString
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -298,7 +298,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _visible: 0
   fieldName: 
-  currMachine: {fileID: 0}
   useKeyboardMinimalMode: 0
   elementTitle: {fileID: 4423197391337011292}
 --- !u!114 &661635358

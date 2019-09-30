@@ -1,4 +1,5 @@
 ﻿// System
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -61,6 +62,8 @@ namespace NERVV {
             get { return _model; }
             set { _model = value; }
         }
+
+        public bool PrintDebugMessages = false;
         #endregion
 
         #region Interpolation Settings
@@ -100,28 +103,31 @@ namespace NERVV {
         public float IKEpsilon = 0.0001f;
         #endregion
 
-        #region Protected Vars
-        protected Transform[] components;
-        #endregion
-
         #region Unity Methods
         /// <summary>
         /// Runs initial safety checks and
         /// adds self to MachineManager
         /// </summary>
-        protected virtual void Start() {
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if Axes.AxisTransform is null</exception>
+        /// <exception cref="Exception">
+        /// Thrown if could not add self to MachineManager
+        /// </exception>
+        protected virtual void OnEnable() {
             // Safety checks
-            Debug.Assert(components != null);
             for (int i = 0; i < Axes.Count; i++)
-                Debug.Assert(components[i] != null, "Could not find component " + i + "!");
-            if (IKSpeed == 0)
+                if (Axes[i].AxisTransform == null)
+                    throw new ArgumentNullException("Could not find Transform for axis " + i + "!");
+            if (PrintDebugMessages && IKSpeed == 0)
                 Debug.LogWarning("IK Learning rate is zero, IK will not move!");
-            if (BlendSpeed == 0)
+            if (PrintDebugMessages && BlendSpeed == 0)
                 Debug.LogWarning("BlendSpeed is 0, will never move!");
 
             // Link to MachineManager
-            Debug.Assert(MachineManager.Instance != null);
-            Debug.Assert(MachineManager.Instance.AddMachine(this), "Could not add self to MachineManager!");
+            if (MachineManager.Instance == null)
+                throw new ArgumentNullException("MachineManager.Instance is null!");
+            if (!MachineManager.Instance.AddMachine(this))
+                throw new Exception("Could not add self to MachineManager!");
         }
         #endregion
 
@@ -132,10 +138,9 @@ namespace NERVV {
         /// <param name="axes">Array of floats with axis values to calculate</param>
         /// <returns>Vector3 of final position in world space</returns>
         public virtual Vector3 ForwardKinematics(Axis[] axes) {
-            if (components.Length == 0)
-                return Vector3.zero;
+            if (axes.Length == 0) return Vector3.zero;
 
-            Vector3 prevPoint = components[0].position;
+            Vector3 prevPoint = axes[0].AxisTransform.position;
             Quaternion rotation = transform.rotation;
 
             Vector3 nextPoint;
@@ -143,16 +148,17 @@ namespace NERVV {
                 if (axes[i].Type == Axis.AxisType.Rotary) {
                     // Rotary axes
                     rotation *= Quaternion.AngleAxis(Mathf.Repeat(axes[i].Value, 360), Axes[i].AxisVector3);
-                    Debug.DrawRay(prevPoint, rotation * components[i + 1].localPosition, Color.red);
-                    nextPoint = prevPoint + (rotation * components[i + 1].localPosition);
+                    Debug.DrawRay(prevPoint, rotation * axes[i + 1].AxisTransform.localPosition, Color.red);
+                    nextPoint = prevPoint + (rotation * axes[i + 1].AxisTransform.localPosition);
                 } else if (axes[i].Type == Axis.AxisType.Linear) {
                     // Linear Axes
                     Debug.DrawRay(prevPoint, Axes[i].AxisVector3 * Axes[i].Value, Color.red);
-                    Debug.Log(Axes[i].AxisVector3 * Axes[i].Value);
+                    if (PrintDebugMessages) Debug.Log(Axes[i].AxisVector3 * Axes[i].Value);
                     nextPoint = prevPoint + (Axes[i].AxisVector3 * Axes[i].Value);
                 } else {
                     // Invalid axis type
-                    Debug.LogError("Invalid axis type, cannot perform forward kinematics on this axis!");
+                    if (PrintDebugMessages)
+                        Debug.LogError("Invalid axis type, cannot perform forward kinematics on this axis! Skipping...");
                     nextPoint = prevPoint;
                 }
                 prevPoint = nextPoint;
@@ -193,11 +199,13 @@ namespace NERVV {
         /// <param name="axes">Angles to calculate from</param>
         /// <param name="axisID">Angle to return gradient for</param>
         /// <returns>Partial gradient as float</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when axisID is out of range</exception>
         /// <see cref="IInverseKinematics"/>
         float PartialGradient(Vector3 target, List<Axis> axes, int axisID) {
             // Safety checks
-            Debug.Assert(axisID >= 0 && axisID < axes.Count,
-                "Invalid axisID: " + axisID);
+            if (axisID < 0 || axisID >= axes.Count)
+                throw new ArgumentOutOfRangeException("Invalid axisID: " + axisID);
 
             // Gradient : [F(x+Time per frame) - F(axisToCalculate)] / h
 
@@ -214,7 +222,6 @@ namespace NERVV {
         /// <summary>Axis class, controls robot's dimensions of movement.</summary>
         [System.Serializable]
         public class Axis {
-
             #region Properties
             [SerializeField,
             Tooltip("Value of axis in external worldspace"),
@@ -335,6 +342,15 @@ namespace NERVV {
             public virtual Vector3 AxisVector3 {
                 get { return _axisVector3 * Value; }
                 set { _axisVector3 = value.normalized; }
+            }
+
+            [SerializeField,
+            Tooltip("Ref to transform in scene")]
+            protected Transform _axisTransform;
+            /// <summary>Ref to transform in scene</summary>
+            public virtual Transform AxisTransform {
+                get { return _axisTransform; }
+                set { _axisTransform = value; }
             }
             #endregion
         }

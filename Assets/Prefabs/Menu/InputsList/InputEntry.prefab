@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 872614302813203052}
   - component: {fileID: 2448865614674160795}
   - component: {fileID: 4795442137033344292}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: InputEntry
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -170,7 +170,7 @@ GameObject:
   - component: {fileID: 872614303070184838}
   - component: {fileID: 872614303070184839}
   - component: {fileID: 872614303070184835}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: InputName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -348,7 +348,7 @@ GameObject:
   - component: {fileID: 4795442136123853183}
   - component: {fileID: 4795442136123853178}
   - component: {fileID: 4795442136123853181}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: ToggleEnabled
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -463,7 +463,7 @@ GameObject:
   - component: {fileID: 4795442136368179130}
   - component: {fileID: 4795442136368179132}
   - component: {fileID: 4795442136368179133}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Checkmark
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -538,7 +538,7 @@ GameObject:
   - component: {fileID: 4795442136830930277}
   - component: {fileID: 4795442136830930279}
   - component: {fileID: 4795442136830930276}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}

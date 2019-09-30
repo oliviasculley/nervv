@@ -1,4 +1,5 @@
 ﻿// System
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -33,8 +34,6 @@ public class MTConnect : InputSource {
     [Tooltip("Interval in seconds to poll")]
     /// <summary>Interval in seconds to poll</summary>
     public float pollInterval = 0.1f;
-
-    public bool PrintLogMessages = false;
     #endregion
 
     #region Vars
@@ -44,18 +43,24 @@ public class MTConnect : InputSource {
 
     #region Unity Methods
     /// <summary>Safety checks and initialize state</summary>
-    private void OnEnable() {
+    /// <exception cref="ArgumentException">
+    /// Thrown when MTConnectURL is null or empty
+    /// </exception>
+    protected override void OnEnable() {
         // Safety checks
-        Debug.Assert(!string.IsNullOrEmpty(URL), "MTConnectURL is null or empty!");
-        if (pollInterval == 0)
+        if (string.IsNullOrEmpty(URL))
+            throw new ArgumentException("MTConnectURL is null or empty!");
+        if (PrintDebugMessages && pollInterval == 0)
             Debug.LogWarning("Poll interval set to 0, will send GET request every frame!");
+
+        base.OnEnable();
 
         // Init vars
         fetchMTConnect = null;
     }
 
     /// <summary>Check if need to trigger</summary>
-    void Update() {
+    protected void Update() {
         if (InputEnabled) {
             // Check if time to trigger
             if (Time.time > timeToTrigger) {
@@ -66,7 +71,8 @@ public class MTConnect : InputSource {
                 // Call GET request, get new coroutine
                 if (fetchMTConnect != null) {
                     StopCoroutine(fetchMTConnect);
-                    Debug.LogWarning("Old HTTP fetch request, refetching...");
+                    if (PrintDebugMessages)
+                        Debug.LogWarning("Old HTTP fetch request, refetching...");
                 }
                 StartCoroutine(fetchMTConnect = FetchMTConnect());
             }
@@ -87,7 +93,8 @@ public class MTConnect : InputSource {
             yield return www.SendWebRequest();
 
             if (www.isNetworkError || www.isHttpError) {
-                Debug.LogError("GET request returned error: " + www.error);
+                if (PrintDebugMessages)
+                    Debug.LogError("GET request returned error: " + www.error);
             } else {
                 //Debug.Log("[INFO] GET request returned: " + www.downloadHandler.text);
 
@@ -103,6 +110,8 @@ public class MTConnect : InputSource {
     }
 
     /// <summary>Parses XML Object</summary>
+    /// <exception cref="NotSupportedException">
+    /// Thrown if AxisType is not recognized</exception>
     void ParseXML(string input) {
         XmlSerializer serializer = new XmlSerializer(typeof(MTConnectStreams));
         TextReader reader = new StringReader(input);
@@ -114,7 +123,8 @@ public class MTConnect : InputSource {
                 x => x.UUID == ds.Uuid
             );
             if (m == null) {
-                Debug.LogWarning("Did not find matching machine: " + ds.Uuid);
+                if (PrintDebugMessages)
+                    Debug.LogWarning("Did not find matching machine: " + ds.Uuid);
                 continue;
             }
 
@@ -122,7 +132,7 @@ public class MTConnect : InputSource {
             foreach (ComponentStream cs in ds.ComponentStream) {
                 Machine.Axis a = m.Axes.Find(x => x.ID == cs.ComponentId);
                 if (a == null) {
-                    if (PrintLogMessages)
+                    if (PrintDebugMessages)
                         Debug.Log("Did not find matching Axis: " + cs.ComponentId);
                     continue;
                 }
@@ -138,7 +148,7 @@ public class MTConnect : InputSource {
                         if (p.Text == "UNAVAILABLE") break;
 
                         // Set axis
-                        if (PrintLogMessages)
+                        if (PrintDebugMessages)
                             Debug.Log("[MTConnect] Set axis " + a.Name + "'s ExternalValue: " + p.Text);
                         a.ExternalValue = float.Parse(p.Text, CultureInfo.InvariantCulture);
                         break;
@@ -151,7 +161,7 @@ public class MTConnect : InputSource {
                             if (angle.Text == "UNAVAILABLE") break;
 
                             // Set axis
-                            if (PrintLogMessages)
+                            if (PrintDebugMessages)
                                 Debug.Log("[MTConnect] Set axis " + a.Name + "'s angle: " + angle.Text);
                             a.ExternalValue = float.Parse(angle.Text, CultureInfo.InvariantCulture);
                         }
@@ -162,15 +172,14 @@ public class MTConnect : InputSource {
                             Torque torque = cs.Samples.Torque[cs.Samples.Torque.Count - 1];
                             if (torque.Text == "UNAVAILABLE") break;
 
-                            if (PrintLogMessages)
+                            if (PrintDebugMessages)
                                 Debug.Log("[MTConnect] Set axis " + a.Name + "'s torque: " + torque.Text);
                             a.Torque = float.Parse(torque.Text, CultureInfo.InvariantCulture);
                         }
                         break;
 
                     default:
-                        Debug.LogError("[MTConnect] Invalid AxisType!");
-                        break;
+                        throw new NotSupportedException("Invalid AxisType!");
                 }
             }
         }

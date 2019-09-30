@@ -889,6 +889,7 @@ MonoBehaviour:
     _scaleFactor: 1
     _type: 0
     _axisVector3: {x: 0, y: 1, z: 0}
+    _axisTransform: {fileID: 5332587871350572142}
   - _externalValue: -90
     _torque: 0
     _id: a2
@@ -899,6 +900,7 @@ MonoBehaviour:
     _scaleFactor: -1
     _type: 0
     _axisVector3: {x: 1, y: 0, z: 0}
+    _axisTransform: {fileID: 5332587870876466499}
   - _externalValue: 90
     _torque: 0
     _id: a3
@@ -909,6 +911,7 @@ MonoBehaviour:
     _scaleFactor: -1
     _type: 0
     _axisVector3: {x: 1, y: 0, z: 0}
+    _axisTransform: {fileID: 5332587869600290057}
   - _externalValue: 0
     _torque: 0
     _id: a4
@@ -919,6 +922,7 @@ MonoBehaviour:
     _scaleFactor: -1
     _type: 0
     _axisVector3: {x: 0, y: 0, z: 1}
+    _axisTransform: {fileID: 5332587870153527646}
   - _externalValue: 0
     _torque: 0
     _id: a5
@@ -929,6 +933,7 @@ MonoBehaviour:
     _scaleFactor: -1
     _type: 0
     _axisVector3: {x: 1, y: 0, z: 0}
+    _axisTransform: {fileID: 5332587870461650944}
   - _externalValue: 0
     _torque: 0
     _id: a6
@@ -939,7 +944,7 @@ MonoBehaviour:
     _scaleFactor: 1
     _type: 0
     _axisVector3: {x: 0, y: 0, z: 1}
-  _maxSpeed: 100
+    _axisTransform: {fileID: 5332587870792879133}
   _name: KUKA_Robot
   _uuid: KUKA_Robot
   _manufacturer: MTC

@@ -55,8 +55,6 @@ public class RosJointSubscriber : InputSource {
 
     [Tooltip("Serialization mode of RosBridgeClient")]
     public RosSocket.SerializerEnum SerializationMode = RosSocket.SerializerEnum.JSON;
-
-    public bool PrintLogMessages = false;
     #endregion
 
     #region NERVV Settings
@@ -75,25 +73,28 @@ public class RosJointSubscriber : InputSource {
     #endregion
 
     #region Unity Methods
-    /// <summary>Initializes input with InputManager</summary>
-    protected override void Start() {
+    /// <summary>Initializes websocket connection</summary>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if machineToSet is null or axisID in axesToBind is null
+    /// </exception>
+    /// <exception cref="NotSupportedException">
+    /// Thrown if no matching protocol handler
+    /// </exception>
+    protected override void OnEnable() {
         // Safety checks
         if (machineToSet == null) {
-            Debug.LogError("Machine null, disabling self...");
             InputEnabled = false;
+            throw new ArgumentNullException("Machine null, disabling self...");
         }
         foreach (AxisValueAdjustment a in axesToBind)
             if (string.IsNullOrEmpty(a.ID)) {
-                Debug.LogError("Axis ID is null, disabling self...");
                 InputEnabled = false;
+                throw new ArgumentNullException("Axis ID is null, disabling self...");
             }
 
-        base.Start();
-    }
+        base.OnEnable();
 
-    /// <summary>Initialize websocket connection</summary>
-    protected void OnEnable() {
-        if (rosConnect != null)
+        if (PrintDebugMessages && rosConnect != null)
             Debug.LogWarning("Socket not null! Overwriting...");
         rosConnect = null;
 
@@ -109,10 +110,8 @@ public class RosJointSubscriber : InputSource {
                 break;
 
             default:
-                Debug.LogError("Could not get find matching protocol for RosSocket!");
-                return;
+                throw new NotSupportedException("Could not get find matching protocol for RosSocket!");
         }
-
         Debug.Assert(p != null);
 
         // OnConnected and OnClosed event handlers
@@ -124,7 +123,7 @@ public class RosJointSubscriber : InputSource {
     }
 
     /// <summary>Disable websocket connection</summary>
-    protected void OnDisable() {
+    protected override void OnDisable() {
         // Stop rosConnect coroutine if still running
         if (rosConnect != null)
             StopCoroutine(rosConnect);
@@ -136,10 +135,15 @@ public class RosJointSubscriber : InputSource {
                     rosSocket.Unsubscribe(topicID);
                 rosSocket.Close();
             } catch (SocketException e) {
-                Debug.LogError("SocketException, trying to quit...\n" +
-                    "----------------------------------------------\n" + e.Message);
+                if (PrintDebugMessages)
+                    Debug.LogError("SocketException, trying to quit...\n" +
+                        "----------------------------------------------\n" +
+                        e.Message);
             }
+            rosSocket = null;
         }
+
+        base.OnDisable();   // Remove self from InputManager
     }
     #endregion
 
@@ -152,8 +156,9 @@ public class RosJointSubscriber : InputSource {
             try {
                 rosSocket = new RosSocket(p, SerializationMode);
             } catch (SocketException e) {
-                Debug.LogError("SocketException, trying again in one second...\n" +
-                    "----------------------------------------------\n" + e.Message);
+                if (PrintDebugMessages)
+                    Debug.LogError("SocketException, trying again in one second...\n" +
+                        "----------------------------------------------\n" + e.Message);
             }
             if (rosConnect != null) break;
             yield return new WaitForSeconds(1);
@@ -171,14 +176,18 @@ public class RosJointSubscriber : InputSource {
     }
 
     /// <summary>Called when RosSocket receieves messages</summary>
-    /// <param name="message"></param>
+    /// <param name="message">Incoming joint angles</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if Axis is not found for AxisID
+    /// </exception>
     protected void ReceiveMessage(JointState message) {
         if (InputEnabled) {
             for (int i = 0; i < message.name.Length && i < axesToBind.Length; i++) {
                 Machine.Axis a = machineToSet.Axes.Find(x => x.ID == axesToBind[i].ID);
-                Debug.Assert(a != null);
+                if (a == null)
+                    throw new ArgumentNullException("Axis not found for axis ID: " + axesToBind[i].ID);
 
-                if (PrintLogMessages)
+                if (PrintDebugMessages)
                     Debug.Log("Kuka ROS Subscriber: " + a.Name + " has " + message.position[i].ToString());
                 a.ExternalValue = ((float)message.position[i] + axesToBind[i].Offset) *
                     axesToBind[i].ScaleFactor;
@@ -188,13 +197,13 @@ public class RosJointSubscriber : InputSource {
 
     /// <summary>Callback when websocket is connected</summary>
     protected void OnConnected(object sender, EventArgs e) {
-        if (PrintLogMessages)
+        if (PrintDebugMessages)
             Debug.Log("ROSJointSubscriber connected to RosBridge: " + URL);
     }
 
     /// <summary>Callback when websocket is disconnected</summary>
     protected void OnDisconnected(object sender, EventArgs e) {
-        if (PrintLogMessages)
+        if (PrintDebugMessages)
             Debug.Log("ROSJointSubscriber disconnected from RosBridge: " + URL);
     }
     #endregion

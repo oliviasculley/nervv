@@ -1,4 +1,5 @@
 ﻿// System
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -41,10 +42,16 @@ public class MenuButtonAnim : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     #region Unity Methods
     /// <summary>Check references</summary>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if Menu, Button background or icon is null
+    /// </exception>
     void Awake() {
-        Debug.Assert(menu != null);
-        Debug.Assert(buttonBackground != null);
-        Debug.Assert(buttonIcon != null);
+        if (menu == null)
+            throw new ArgumentNullException("Menu is null!");
+        if (buttonBackground == null)
+            throw new ArgumentNullException("Button background is null!");
+        if (buttonIcon == null)
+            throw new ArgumentNullException("Button icon is null!");
     }
 
     /// <summary>Set Plane, button and background to initial states</summary>

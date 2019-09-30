@@ -1,4 +1,5 @@
 ﻿// System
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -25,14 +26,22 @@ public class RemoteWebcam : InputSource {
 
     #region Unity Methods
     /// <summary>Safety checks</summary>
-    protected override void Start() {
-        Debug.Assert(planeRenderer != null);
-        Debug.Assert(!string.IsNullOrEmpty(source));
+    /// <exception cref="ArgumentException">
+    /// Thrown when source string is empty or null
+    /// </exception>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when plane renderer is null
+    /// </exception>
+    protected override void OnEnable() {
+        if (planeRenderer == null)
+            throw new ArgumentNullException("Plane renderer is null!");
+        if (string.IsNullOrEmpty(source))
+            throw new ArgumentException("Source is empty or null!");
 
         // Initial InputSource fields
         Name = "RemoteWebcam: " + source;
         ExclusiveType = false;
-        base.Start();
+        base.OnEnable();
     }
 
     /// <summary>Orient webcam plane and get remote feeds</summary>

@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3143035659276368238}
   - component: {fileID: 4899417054097071334}
   - component: {fileID: 3143035659276368240}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: ButtonDecrement
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -192,7 +192,7 @@ GameObject:
   - component: {fileID: 3143035659505148799}
   - component: {fileID: 3143035659505148793}
   - component: {fileID: 3143035659505148792}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -353,7 +353,7 @@ GameObject:
   - component: {fileID: 3143035660515261015}
   - component: {fileID: 7930823112456673144}
   - component: {fileID: 3143035660515261016}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: ButtonIncrement
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -530,7 +530,7 @@ GameObject:
   - component: {fileID: 3143035660952910295}
   - component: {fileID: 3143035660952910289}
   - component: {fileID: 3143035660952910288}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -690,7 +690,7 @@ GameObject:
   - component: {fileID: 6089383112968363241}
   - component: {fileID: 6089383112968363254}
   - component: {fileID: 5593451915333228246}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: MachineFieldFloat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -816,7 +816,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _visible: 0
   fieldName: 
-  currMachine: {fileID: 0}
   delta: 1
   minValue: 0
   maxValue: 10000
@@ -833,7 +832,7 @@ GameObject:
   - component: {fileID: 6089383113220854531}
   - component: {fileID: 6089383113220854530}
   - component: {fileID: 6089383113220854529}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: FieldName
   m_TagString: Untagged
   m_Icon: {fileID: 0}

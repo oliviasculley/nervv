@@ -75,9 +75,16 @@ public class LaserPointer : MonoBehaviour {
             return;
 
         // Raycast all objects in path
-        hits = Physics.RaycastAll(transform.position, transform.forward);
-        if (hits.Length == 0)
-            SetPointerLength(0, true);
+        hits = Physics.RaycastAll(new Ray(transform.position, transform.forward), 100, LayerMask.GetMask("Menu"));
+        Debug.DrawRay(transform.position, transform.forward * 100, Color.red);
+        if (hits.Length == 0) {
+            SetPointerLength(0);
+        } else {
+            var max = 100f;
+            foreach (RaycastHit hit in hits)
+                max = hit.distance < max ? hit.distance : max;
+            SetPointerLength(max, true);
+        }
 
         // Pointer events
         OnPointerOut();
@@ -115,35 +122,28 @@ public class LaserPointer : MonoBehaviour {
         IPointerClickHandler onPointerClick;
         IPointerUpHandler onPointerUp;
         if (interactWithUI.GetStateUp(pose.inputSource)) {
-            foreach (RaycastHit h in hits) {
+            foreach (RaycastHit h in hits)
                 if ((onPointerClick = h.transform.GetComponent<IPointerClickHandler>()) != null) {
                     onPointerClick.OnPointerClick(new PointerEventData(EventSystem.current));
-                    SetPointerLength(h.distance);
                     break;
                 }
-            }
 
-            foreach (RaycastHit h in hits) {
+            foreach (RaycastHit h in hits)
                 if ((onPointerUp = h.transform.GetComponent<IPointerUpHandler>()) != null) {
                     onPointerUp.OnPointerUp(new PointerEventData(EventSystem.current));
-                    SetPointerLength(h.distance);
                     break;
                 }
-            }
         }
     }
 
     void OnPointerDown() {
         IPointerDownHandler onPointerDown;
-        if (interactWithUI.GetStateDown(pose.inputSource)) {
-            foreach (RaycastHit h in hits) {
+        if (interactWithUI.GetStateDown(pose.inputSource))
+            foreach (RaycastHit h in hits)
                 if ((onPointerDown = h.transform.GetComponent<IPointerDownHandler>()) != null) {
                     onPointerDown.OnPointerDown(new PointerEventData(EventSystem.current));
-                    SetPointerLength(h.distance);
                     break;
                 }
-            }
-        }
     }
 
     void OnPointerOut() {
@@ -172,6 +172,8 @@ public class LaserPointer : MonoBehaviour {
                     new PointerEventData(EventSystem.current)
                 );
                 enteredTransforms.Remove(prevTransform);
+                if (prevTransform == currentHovered)
+                    currentHovered = null;
             }
         }
     }
@@ -191,17 +193,11 @@ public class LaserPointer : MonoBehaviour {
                 if (h.transform.GetComponent<IPointerExitHandler>() != null) {
                     enteredTransforms.Add(h.transform);
                 }
-
-
-                // Set pointer length
-                SetPointerLength(h.distance);
-
                 break;
             }
         }
         if (hits.Length == 0) {
             currentHovered = null;
-            SetPointerLength(100, true);
         }
     }
     #endregion

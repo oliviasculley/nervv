@@ -35,6 +35,10 @@
       "skeleton": "/skeleton/hand/right"
     },
     {
+      "name": "/actions/Default/in/Teleport",
+      "type": "boolean"
+    },
+    {
       "name": "/actions/Default/out/Haptic",
       "type": "vibration",
       "requirement": "suggested"

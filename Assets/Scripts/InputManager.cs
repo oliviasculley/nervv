@@ -37,6 +37,8 @@ namespace NERVV {
             " when an output source runs. Can still get disabled if " +
             "DisableInputs(true) is called!"), Header("Settings")]
         public List<InputSource> DisableExceptions;
+
+        public bool PrintDebugMessages = false;
         #endregion
 
         #region Vars
@@ -46,15 +48,20 @@ namespace NERVV {
 
         #region Unity Methods
         /// <summary>Set static reference to self and initialize variables</summary>
-        protected virtual void Awake() {
+        protected virtual void OnEnable() {
             // Initialize vars
             knownExclusives = new List<System.Type>();
             _inputs = new List<IInputSource>();
 
             // Add static reference to self
-            if (Instance != null)
+            if (PrintDebugMessages && Instance != null)
                 Debug.LogWarning("[InputManager] Static ref to self was not null!\nOverriding...");
             Instance = this;
+        }
+
+        /// <summary>Sets instance to null</summary>
+        protected virtual void OnDisable() {
+            Instance = null;
         }
         #endregion
 

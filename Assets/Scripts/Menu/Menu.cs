@@ -4,7 +4,10 @@ using System.Collections.Generic;
 
 // Unity Engine
 using UnityEngine;
+using NERVV;
+
 using Valve.VR;
+using Valve.VR.InteractionSystem;
 
 [RequireComponent(typeof(UIPanelSwitcher))]
 public class Menu : MonoBehaviour {
@@ -22,10 +25,11 @@ public class Menu : MonoBehaviour {
             foreach (Transform t in transform)
                 t.gameObject.SetActive(false);
 
-            // Set UI panel switcher enabled or disabled
-            foreach (GameObject g in menuElements)
-                g.SetActive(value);
+            // Set other objects to value
+            foreach (GameObject g in menuElements) g.SetActive(value);
             uiSwitcher.enabled = value;
+            foreach (GameObject g in TeleportGameObjects) g.SetActive(!value);
+            foreach (LaserPointer p in LaserPointers) p.enabled = value;
         }
     }
     #endregion
@@ -55,6 +59,8 @@ public class Menu : MonoBehaviour {
     /// <summary>Menu elements that mirror menu visibility</summary>
     [Tooltip("Menu elements that mirror menu visibility"), Header("References")]
     public GameObject[] menuElements;
+    public GameObject[] TeleportGameObjects;
+    public LaserPointer[] LaserPointers;
     #endregion
 
     #region Vars
@@ -67,6 +73,12 @@ public class Menu : MonoBehaviour {
     void Awake() {
         uiSwitcher = GetComponent<UIPanelSwitcher>();
         Debug.Assert(uiSwitcher != null);
+        Debug.Assert(TeleportGameObjects != null);
+        Debug.Assert(LaserPointers != null);
+        foreach (GameObject g in TeleportGameObjects)
+            Debug.Assert(g != null);
+        foreach (LaserPointer p in LaserPointers)
+            Debug.Assert(p != null);
         foreach (GameObject g in menuElements)
             Debug.Assert(g != null);
     }

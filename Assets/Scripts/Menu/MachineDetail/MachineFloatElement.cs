@@ -1,4 +1,5 @@
 ﻿// System
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -32,8 +33,12 @@ namespace NERVV.Menu {
 
         #region Unity Methods
         /// <summary>Check references</summary>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if element title is null!
+        /// </exception>
         new void OnEnable() {
-            Debug.Assert(elementTitle != null);
+            if (elementTitle == null)
+                throw new ArgumentNullException("Element title is null!");
         }
         #endregion
 
@@ -41,11 +46,14 @@ namespace NERVV.Menu {
         /// <summary>Initialize float element with needed parameters</summary>
         /// <param name="fieldName"></param>
         /// <param name="currMachine"></param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when currMachine or fieldName is null
+        /// </exception>
         public void InitializeElement(string fieldName, IMachine currMachine, float minValue = default, float maxValue = default) {
-            Debug.Assert(currMachine != null && !string.IsNullOrEmpty(fieldName));
+            if (string.IsNullOrEmpty(fieldName)) throw new ArgumentNullException("fieldName is null!");
 
             this.fieldName = fieldName;
-            this.currMachine = currMachine;
+            this.currMachine = currMachine ?? throw new ArgumentNullException("currMachine is null!");
             this.minValue = minValue;
             this.maxValue = maxValue;
 
@@ -53,8 +61,12 @@ namespace NERVV.Menu {
         }
 
         /// <summary>Increments float value</summary>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when currMachine or fieldName is null
+        /// </exception>
         public void Increment() {
-            Debug.Assert(currMachine != null && !string.IsNullOrEmpty(fieldName));
+            if (currMachine == null) throw new ArgumentNullException("currMachine is null!");
+            if (string.IsNullOrEmpty(fieldName)) throw new ArgumentNullException("fieldName is null!");
 
             if (GetFieldValue() != null) {
                 SetField((float)GetFieldValue() + delta);
@@ -63,8 +75,12 @@ namespace NERVV.Menu {
         }
 
         /// <summary>Decrements float value</summary>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when currMachine or fieldName is null
+        /// </exception>
         public void Decrement() {
-            Debug.Assert(currMachine != null && !string.IsNullOrEmpty(fieldName));
+            if (currMachine == null) throw new ArgumentNullException("currMachine is null!");
+            if (string.IsNullOrEmpty(fieldName)) throw new ArgumentNullException("fieldName is null!");
 
             if (GetFieldValue() != null) {
                 SetField((float)GetFieldValue() - delta);

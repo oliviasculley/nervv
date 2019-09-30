@@ -50,8 +50,6 @@ public class DoosanROSJointService : OutputSource {
     /// <summary>Interval in seconds to poll</summary>
     [Tooltip("Interval in seconds to poll")]
     public float pollInterval = 0.25f;
-
-    public bool PrintLogMessages = false;
     #endregion
 
     #region Vars
@@ -109,6 +107,7 @@ public class DoosanROSJointService : OutputSource {
         if (rosSocket != null) {
             serviceID = null;
             rosSocket.Close();
+            rosSocket = null;
         }
     }
 
@@ -131,20 +130,20 @@ public class DoosanROSJointService : OutputSource {
             Debug.LogError("RosSocket is not active!");
             return;
         }
-        if (!string.IsNullOrEmpty(serviceID)) {
-            Debug.Log("ServiceID not null, not calling again");
-            return;
-        }
+        //if (!string.IsNullOrEmpty(serviceID)) {
+        //    Debug.Log("ServiceID not null, not calling again");
+        //    return;
+        //}
 
         // Create new JointState message
         MoveJointRequest message = new MoveJointRequest {
             pos = new float[machineToPublish.Axes.Count],
-            vel = 75,
-            acc = 0,
-            time = 0,
-            radius = 0,
+            vel = 225,
+            acc = 225,
+            time = 1,
+            radius = 20,
             mode = 0,
-            blendType = 0,
+            blendType = 1,
             syncType = 0
         };
 
@@ -169,13 +168,13 @@ public class DoosanROSJointService : OutputSource {
 
     /// <summary>Callback when socket is connected</summary>
     void OnConnected(object sender, EventArgs e) {
-        if (PrintLogMessages)
+        if (PrintDebugMessages)
             Debug.Log("Doosan ROS Joint Service connected to RosBridge: " + URL);
     }
 
     /// <summary>Callback when socket is disconnected</summary>
     void OnDisconnected(object sender, EventArgs e) {
-        if (PrintLogMessages)
+        if (PrintDebugMessages)
             Debug.Log("Doosan ROS Joint Service disconnected from RosBridge: " + URL);
     }
     #endregion

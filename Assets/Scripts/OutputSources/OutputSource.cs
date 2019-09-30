@@ -42,16 +42,36 @@ namespace NERVV {
             get { return _exclusiveType; }
             set { _exclusiveType = value; }
         }
+
+        public bool PrintDebugMessages = false;
         #endregion
 
         #region Unity methods
+        /// <summary>Adds self to OutputManager</summary>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if OutputManager.Instance is null
+        /// </exception>
         protected virtual void Start() {
             // Add self to InputManager, disabling self if failure
-            Debug.Assert(OutputManager.Instance != null);
+            if (OutputManager.Instance == null)
+                throw new ArgumentNullException("OutputManager.Instance is null!");
+
             bool success = OutputManager.Instance.AddOutput(this);
-            if (!success)
+            if (PrintDebugMessages && !success)
                 Debug.LogError("Could not add self to OutputManager!");
             OutputEnabled &= success;
+        }
+
+        /// <summary>Removes self from OutputManager</summary>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if OutputManager.Instance is null
+        /// </exception>
+        protected virtual void OnDisable() {
+            if (OutputManager.Instance == null)
+                throw new ArgumentNullException("OutputManager.Instance is null!");
+
+            if (!OutputManager.Instance.RemoveOutput(this) && PrintDebugMessages)
+                Debug.LogError("Could not remove self from OutputManager!");
         }
         #endregion
     }

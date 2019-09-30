@@ -27,12 +27,17 @@ namespace NERVV {
         }
         #endregion
 
+        #region Settings
+        [Header("Settings")]
+        public bool PrintDebugMessages = false;
+        #endregion
+
         #region Unity Methods
         /// <summary>Initialize and set static ref to self</summary>
         protected virtual void Awake() {
             _machines = new List<IMachine>();
 
-            if (Instance != null)
+            if (PrintDebugMessages && Instance != null)
                 Debug.LogWarning("Static ref to self was not null!\nOverriding...");
             Instance = this;
         }

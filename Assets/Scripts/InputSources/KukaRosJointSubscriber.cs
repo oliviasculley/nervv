@@ -1,6 +1,7 @@
 ﻿// System
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 // Unity Engine
 using UnityEngine;
@@ -69,8 +70,6 @@ public class KukaRosJointSubscriber : InputSource {
 
     [Tooltip("Serialization mode of RosBridgeClient")]
     public RosSocket.SerializerEnum SerializationMode = RosSocket.SerializerEnum.JSON;
-
-    public bool PrintLogMessages = false;
     #endregion
 
     #region NERVV Settings
@@ -88,25 +87,28 @@ public class KukaRosJointSubscriber : InputSource {
     #endregion
 
     #region Unity Methods
-    /// <summary>Initializes input with InputManager</summary>
-    protected override void Start() {
+    /// <summary>Initializes websocket connection</summary>
+    /// <exception cref="ArgumentNullException">
+    /// If machineToSet is null or AxisValueAdjustment axisID is null
+    /// </exception>
+    /// <exception cref="NotSupportedException">
+    /// If matching ProtocolSelection is not found
+    /// </exception>
+    protected override void OnEnable() {
         // Safety checks
         if (machineToSet == null) {
-            Debug.LogError("Machine null, disabling self...");
             InputEnabled = false;
+            throw new ArgumentNullException("Machine null, disabling self...");
         }
         foreach (AxisValueAdjustment a in axesToBind)
             if (string.IsNullOrEmpty(a.ID)) {
-                Debug.LogError("Axis ID is null, disabling self...");
                 InputEnabled = false;
+                throw new ArgumentNullException("Axis ID is null, disabling self...");
             }
 
-        base.Start();
-    }
+        base.OnEnable();
 
-    /// <summary>Initialize websocket connection</summary>
-    protected void OnEnable() {
-        if (rosConnect != null)
+        if (PrintDebugMessages && rosConnect != null)
             Debug.LogWarning("Socket not null! Overwriting...");
         rosConnect = null;
 
@@ -122,10 +124,8 @@ public class KukaRosJointSubscriber : InputSource {
                 break;
 
             default:
-                Debug.LogError("Could not get find matching protocol for RosSocket!");
-                return;
+                throw new NotSupportedException("Could not get find matching protocol for RosSocket!");
         }
-
         Debug.Assert(p != null);
 
         // OnConnected and OnClosed event handlers
@@ -137,7 +137,7 @@ public class KukaRosJointSubscriber : InputSource {
     }
 
     /// <summary>Disable websocket connection</summary>
-    protected void OnDisable() {
+    protected override void OnDisable() {
         // Stop rosConnect coroutine if still running
         if (rosConnect != null)
             StopCoroutine(rosConnect);
@@ -147,7 +147,10 @@ public class KukaRosJointSubscriber : InputSource {
             if (!string.IsNullOrEmpty(topicID))
                 rosSocket.Unsubscribe(topicID);
             rosSocket.Close();
+            rosSocket = null;
         }
+
+        base.OnDisable();
     }
     #endregion
 
@@ -160,8 +163,9 @@ public class KukaRosJointSubscriber : InputSource {
             try {
                 rosSocket = new RosSocket(p, SerializationMode);
             } catch (SocketException e) {
-                Debug.LogError("SocketException, trying again in one second...\n" +
-                    "----------------------------------------------\n" + e.Message);
+                if (PrintDebugMessages)
+                    Debug.LogError("SocketException, trying again in one second...\n" +
+                        "----------------------------------------------\n" + e.Message);
             }
             if (rosSocket != null) break;
             yield return new WaitForSeconds(1);
@@ -179,38 +183,54 @@ public class KukaRosJointSubscriber : InputSource {
     }
 
     /// <summary>Called when RosSocket receieves messages</summary>
-    /// <param name="message"></param>
+    /// <param name="message">Incoming joint angles</param>
+    /// <exception cref="KeyNotFoundException">
+    /// Thrown when reflection does not find field with name
+    /// </exception>
+    /// <exception cref="InvalidCastException">
+    /// Thrown when found field does not match double
+    /// </exception>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when axis is not found for axis ID in axesToBind
+    /// </exception>
     protected void ReceiveMessage(KukaJoint message) {
-        if (InputEnabled) {
-            for (int i = 0; i < axesToBind.Length; i++) {
-                var fieldInfo = typeof(KukaJoint).GetField("a" + (i + 1));
-                Debug.Assert(fieldInfo != null);
-                float? val = null;
-                try {
-                    val = (float)(double)fieldInfo.GetValue(message);
-                } catch (InvalidCastException e) {
-                    Debug.LogError("Invalid cast exception, check value type!\n" +
-                        "-----------------------------------------\n" + e.Message);
-                }
-                Debug.Assert(val.HasValue);
-                Machine.Axis a = machineToSet.Axes.Find(x => x.ID == axesToBind[i].ID);
-                Debug.Assert(a != null);
+        if (!InputEnabled) return;
 
-                if (PrintLogMessages) Debug.Log("Kuka ROS Input: " + a.Name + " has " + val.Value);
-                a.ExternalValue = (val.Value + axesToBind[i].Offset) * axesToBind[i].ScaleFactor;
+        for (int i = 0; i < axesToBind.Length; i++) {
+            // Get field
+            var fieldInfo = typeof(KukaJoint).GetField("a" + (i + 1));
+            if (fieldInfo == null)
+                throw new KeyNotFoundException("Could not find field with name: " + fieldInfo);
+
+            // Get value
+            float? val = null;
+            try {
+                val = (float)(double)fieldInfo.GetValue(message);
+            } catch (InvalidCastException e) {
+                throw new InvalidCastException(
+                    "Invalid cast exception, check value type!\n" +
+                    "-----------------------------------------\n", e);
             }
+
+            // Set Axis
+            Debug.Assert(val.HasValue);
+            Machine.Axis a = machineToSet.Axes.Find(x => x.ID == axesToBind[i].ID);
+            if (a == null)
+                throw new ArgumentNullException("Axis not found for axis ID: " + axesToBind[i].ID);
+            a.ExternalValue = (val.Value + axesToBind[i].Offset) * axesToBind[i].ScaleFactor;
+            if (PrintDebugMessages) Debug.Log("Kuka ROS Input: " + a.Name + " has " + val.Value);
         }
     }
 
     /// <summary>Callback when websocket is connected</summary>
     protected void OnConnected(object sender, EventArgs e) {
-        if (PrintLogMessages)
+        if (PrintDebugMessages)
             Debug.Log("Kuka ROS Joint Subscriber connected to RosBridge: " + URL);
     }
 
     /// <summary>Callback when websocket is disconnected</summary>
     protected void OnDisconnected(object sender, EventArgs e) {
-        if (PrintLogMessages)
+        if (PrintDebugMessages)
             Debug.Log("Kuka ROS Joint Subscriber disconnected from RosBridge: " + URL);
     }
     #endregion

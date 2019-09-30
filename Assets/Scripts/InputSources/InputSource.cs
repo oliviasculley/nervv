@@ -40,31 +40,51 @@ namespace NERVV {
             get { return _name; }
             set { _name = value; }
         }
+
         [SerializeField,
         Tooltip(
             "Are multiple instantiations of this script allowed? " +
             "InputManager will reject multiple types of this script " +
             "if ExclusiveType is true when added to InputManager.")]
         bool _exclusiveType;
-        /// <summary>
-        /// Are multiple instantiations of this script allowed?
+        /// <summary>Are multiple instantiations of this script allowed?</summary>
+        /// <remarks>
         /// InputManager will reject multiple types of this script
         /// if ExclusiveType is true when added to InputManager.
-        /// </summary>
+        /// </remarks>
         public virtual bool ExclusiveType {
             get { return _exclusiveType; }
             set { _exclusiveType = value; }
         }
+
+        public bool PrintDebugMessages = false;
         #endregion
 
         #region Unity Methods
-        protected virtual void Start() {
-            // Add self to InputManager, disabling self if failure
-            Debug.Assert(InputManager.Instance != null);
-            bool success = InputManager.Instance.AddInput(this);
-            if (!success)
+        /// <summary>Add self to InputManager, disabling self if failure</summary>
+        /// <exception cref="ArgumentNullException">
+        /// Throws if InputManager.Instance is null
+        /// </exception>
+        protected virtual void OnEnable() {
+            if (InputManager.Instance == null)
+                throw new ArgumentNullException("InputManager.Instance is null!");
+
+            var success = InputManager.Instance.AddInput(this);
+            if (PrintDebugMessages && !success)
                 Debug.LogError("Could not add self to InputManager!");
             InputEnabled &= success;
+        }
+
+        /// <summary>Removes input from InputManager</summary>
+        /// <exception cref="ArgumentNullException">
+        /// Throws if InputManager.Instance is null
+        /// </exception>
+        protected virtual void OnDisable() {
+            if (InputManager.Instance == null)
+                throw new ArgumentNullException("InputManager.Instance is null!");
+
+            if (PrintDebugMessages && !InputManager.Instance.RemoveInput(this))
+                Debug.LogError("Could not remove self from InputManager!");
         }
         #endregion
     }
