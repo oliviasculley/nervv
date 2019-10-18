@@ -2,7 +2,7 @@
   "source": "Unity",
   "applications": [
     {
-      "app_key": "application.generated.unity.mtconnectvr.exe",
+      "app_key": "application.generated.unity.nervv.exe",
       "launch_type": "url",
       "url": "steam://launch/",
       "action_manifest_path": "C:\\Users\\csscu\\Documents\\NERVV\\actions.json",
