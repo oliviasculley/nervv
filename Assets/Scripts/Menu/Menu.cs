@@ -1,4 +1,5 @@
 ﻿//System
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -22,8 +23,7 @@ public class Menu : MonoBehaviour {
         }
         set {
             // Set all children of menu false
-            foreach (Transform t in transform)
-                t.gameObject.SetActive(false);
+            foreach (Transform t in transform) t.gameObject.SetActive(false);
 
             // Set other objects to value
             foreach (GameObject g in menuElements) g.SetActive(value);
@@ -70,43 +70,36 @@ public class Menu : MonoBehaviour {
 
     #region Unity Methods
     /// <summary>Get and check references</summary>
-    void Awake() {
+    /// <exception cref="ArgumentNullException">
+    /// Thrown if any References are null
+    /// </exception>
+    protected void Awake() {
         uiSwitcher = GetComponent<UIPanelSwitcher>();
-        Debug.Assert(uiSwitcher != null);
-        Debug.Assert(TeleportGameObjects != null);
-        Debug.Assert(LaserPointers != null);
+        if (uiSwitcher == null) throw new ArgumentNullException();
+        if (TeleportGameObjects == null) throw new ArgumentNullException();
+        if (LaserPointers == null) throw new ArgumentNullException();
         foreach (GameObject g in TeleportGameObjects)
-            Debug.Assert(g != null);
+            if (g == null) throw new ArgumentNullException();
         foreach (LaserPointer p in LaserPointers)
-            Debug.Assert(p != null);
+            if (p == null) throw new ArgumentNullException();
         foreach (GameObject g in menuElements)
-            Debug.Assert(g != null);
+            if (g == null) throw new ArgumentNullException();
     }
 
     /// <summary>Set initial menu state</summary>
-    void Start() {
+    protected void Start() {
         lerping = Visible = false;
-    }
-    #endregion
-
-    #region Public methods
-    /// <summary>Set menu visible</summary>
-    /// <param name="isVisible">true to enable menu, false to hide menu</param>
-    public void SetVisible(bool isVisible) {
-        lerping = false;
-        Visible = isVisible;
     }
 
     /// <summary>Lerp menu towards camera if needed</summary>
-    void Update() {
+    protected void Update() {
         // User wants menu to float towards controller
         Vector3 vel = Vector3.zero;
-        lerping |= callMenu.GetState(SteamVR_Input_Sources.Any);
+        lerping |= callMenu.state;
 
         if (lerping) {
             // Enable menu visible if disabled
-            if (!Visible)
-                Visible = true;
+            if (!Visible) Visible = true;
 
             // Move towards target position
             transform.position = Vector3.SmoothDamp(
@@ -127,10 +120,19 @@ public class Menu : MonoBehaviour {
     }
     #endregion
 
+    #region Public methods
+    /// <summary>UI Button wrapper function to set Visible</summary>
+    /// <param name="isVisible">true to enable menu, false to hide menu</param>
+    public void SetVisible(bool isVisible) {
+        lerping = false;
+        Visible = isVisible;
+    }
+    #endregion
+
     #region Methods
     /// <summary>Return target menu location to move toward</summary>
     /// <returns>Target in world space</returns>
-    Vector3 GetTargetPos() {
+    protected virtual Vector3 GetTargetPos() {
         return Camera.main.transform.forward +
             Camera.main.transform.TransformPoint(offset);
     }
