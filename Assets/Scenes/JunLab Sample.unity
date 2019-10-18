@@ -1897,7 +1897,7 @@ MonoBehaviour:
   _name: ROSJointSub - Doosan
   _exclusiveType: 0
   PrintDebugMessages: 1
-  Topic: /dsr01m0609/joint_states
+  Topic: /dsr01m0609/joint_states_throttle
   URL: ws://192.168.1.30:9090
   Protocol: 1
   SerializationMode: 0

@@ -3524,25 +3524,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41f7aa4b4d05e631d955773cc7ed2624, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currMachine: {fileID: 0}
+  _currMachine: {fileID: 0}
   AxisHandlers: []
-  activateLeftIK:
+  ActivateLeftIK:
     actionPath: /actions/Default/in/ActivateLeftIK
     needsReinit: 0
-  activateRightIK:
+  ActivateRightIK:
     actionPath: /actions/Default/in/ActivateRightIK
     needsReinit: 0
   InteractUI:
     actionPath: /actions/Default/in/InteractUI
     needsReinit: 0
-  stringFieldNamesToGenerate:
-  - _name
-  - _uuid
-  - _manufacturer
-  - _model
-  floatFieldNamesToGenerate: []
-  generateAxisElements: 1
-  generateAxisHandles: 1
+  StringFieldNamesToGenerate: []
+  FloatFieldNamesToGenerate: []
+  GenerateAxisElements: 1
+  GenerateAxisHandlers: 1
+  PrintDebugMessages: 0
   machineTitle: {fileID: 417748264741289793}
   machineElementParent: {fileID: 417748265255631964}
   RightIKSphere: {fileID: 0}
@@ -7811,6 +7808,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6065009914219119850}
     m_Modifications:
+    - target: {fileID: 872614302813203048, guid: 102559c851bc1b14b8cca1b3b8314b2f,
+        type: 3}
+      propertyPath: m_Name
+      value: InputEntry
+      objectReference: {fileID: 0}
     - target: {fileID: 872614302813203055, guid: 102559c851bc1b14b8cca1b3b8314b2f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -7915,11 +7917,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 872614302813203048, guid: 102559c851bc1b14b8cca1b3b8314b2f,
-        type: 3}
-      propertyPath: m_Name
-      value: InputEntry
       objectReference: {fileID: 0}
     - target: {fileID: 4795442136123853179, guid: 102559c851bc1b14b8cca1b3b8314b2f,
         type: 3}
@@ -8170,6 +8167,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 417748264584962608}
     m_Modifications:
+    - target: {fileID: 872614302813203048, guid: 102559c851bc1b14b8cca1b3b8314b2f,
+        type: 3}
+      propertyPath: m_Name
+      value: InputEntry
+      objectReference: {fileID: 0}
     - target: {fileID: 872614302813203055, guid: 102559c851bc1b14b8cca1b3b8314b2f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -8275,21 +8277,6 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 872614302813203048, guid: 102559c851bc1b14b8cca1b3b8314b2f,
-        type: 3}
-      propertyPath: m_Name
-      value: InputEntry
-      objectReference: {fileID: 0}
-    - target: {fileID: 4795442136123853179, guid: 102559c851bc1b14b8cca1b3b8314b2f,
-        type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0.825
-      objectReference: {fileID: 0}
-    - target: {fileID: 4795442136123853179, guid: 102559c851bc1b14b8cca1b3b8314b2f,
-        type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0.975
-      objectReference: {fileID: 0}
     - target: {fileID: 872614302813203052, guid: 102559c851bc1b14b8cca1b3b8314b2f,
         type: 3}
       propertyPath: m_MinWidth
@@ -8309,6 +8296,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_PreferredHeight
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4795442136123853179, guid: 102559c851bc1b14b8cca1b3b8314b2f,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.825
+      objectReference: {fileID: 0}
+    - target: {fileID: 4795442136123853179, guid: 102559c851bc1b14b8cca1b3b8314b2f,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.975
       objectReference: {fileID: 0}
     - target: {fileID: 872614303070184839, guid: 102559c851bc1b14b8cca1b3b8314b2f,
         type: 3}
