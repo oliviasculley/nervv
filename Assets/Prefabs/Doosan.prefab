@@ -1076,6 +1076,7 @@ MonoBehaviour:
   _uuid: doosan_robot
   _manufacturer: Doosan Robotics
   _model: M0609
+  PrintDebugMessages: 1
   _lerpSpeed: 10
   _interpolation: 1
   IKSpeed: 10
@@ -1347,6 +1348,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: AxisHandler
       objectReference: {fileID: 0}
+    - target: {fileID: 5809205640023584331, guid: 16fe920598181ef4b942020571b59456,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5809205640023584375, guid: 16fe920598181ef4b942020571b59456,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1421,6 +1427,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: AxisHandler
+      objectReference: {fileID: 0}
+    - target: {fileID: 5809205640023584331, guid: 16fe920598181ef4b942020571b59456,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5809205640023584375, guid: 16fe920598181ef4b942020571b59456,
         type: 3}
@@ -1497,6 +1508,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: AxisHandler
       objectReference: {fileID: 0}
+    - target: {fileID: 5809205640023584331, guid: 16fe920598181ef4b942020571b59456,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5809205640023584375, guid: 16fe920598181ef4b942020571b59456,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1572,6 +1588,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: AxisHandler
       objectReference: {fileID: 0}
+    - target: {fileID: 5809205640023584331, guid: 16fe920598181ef4b942020571b59456,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5809205640023584375, guid: 16fe920598181ef4b942020571b59456,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1627,6 +1648,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5809205640023584375, guid: 16fe920598181ef4b942020571b59456,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5809205640023584375, guid: 16fe920598181ef4b942020571b59456,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 16fe920598181ef4b942020571b59456, type: 3}
 --- !u!4 &2381243295466537813 stripped
@@ -1646,6 +1677,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: AxisHandler
+      objectReference: {fileID: 0}
+    - target: {fileID: 5809205640023584331, guid: 16fe920598181ef4b942020571b59456,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5809205640023584375, guid: 16fe920598181ef4b942020571b59456,
         type: 3}
@@ -1702,6 +1738,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5809205640023584375, guid: 16fe920598181ef4b942020571b59456,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5809205640023584375, guid: 16fe920598181ef4b942020571b59456,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 16fe920598181ef4b942020571b59456, type: 3}
 --- !u!4 &2707590280715607955 stripped
@@ -1721,6 +1767,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: AxisHandler
+      objectReference: {fileID: 0}
+    - target: {fileID: 5809205640023584331, guid: 16fe920598181ef4b942020571b59456,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5809205640023584375, guid: 16fe920598181ef4b942020571b59456,
         type: 3}

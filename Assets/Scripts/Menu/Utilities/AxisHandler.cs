@@ -1,5 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿// System
+using System;
+
+// Unity Engine
 using UnityEngine;
 
 using Valve.VR;
@@ -15,7 +17,18 @@ public class AxisHandler : MonoBehaviour {
     #endregion
 
     #region Settings
+    [Header("Settings")]
     public float MaxDeltaPerFrameFactor = 100;
+    [Range(0, 1)]
+    public float MaxOpacity = 0.5f;
+    [Range(0, 1)]
+    public float MinOpacity = 0.1f;
+    public float ColorBlendSpeed = 100f;
+    #endregion
+
+    #region References
+    [Header("References")]
+    public GameObject Torus;
     #endregion
 
     #region Vars
@@ -26,24 +39,47 @@ public class AxisHandler : MonoBehaviour {
     protected Transform currHand;
     protected Vector3 prevHandPos;
     protected bool grabbing;
+    protected MeshRenderer mr;
     #endregion
 
     #region Unity Methods
     /// <summary>Error checking, init state, register callbacks</summary>
     protected void OnEnable() {
-        Debug.Assert(Axis != null);
-        Debug.Assert(InteractUI != null);
+        if (Axis == null) throw new ArgumentNullException();
+        mr = (Torus ?? throw new ArgumentNullException()).GetComponent<MeshRenderer>();
+        if (mr == null) throw new ArgumentNullException();
 
         availableHands = null;
         currHand = null;
         grabbing = false;
-        InteractUI.onStateDown += OnGrabDown;
+        (InteractUI ?? throw new ArgumentNullException()).onStateDown += OnGrabDown;
         InteractUI.onStateUp += OnGrabUp;
         InteractUI.onState += OnGrab;
+        mr.material.color = new Color(
+            mr.material.color.r,
+            mr.material.color.g,
+            mr.material.color.b,
+            MinOpacity);
     }
 
+    /// <summary>Lerp towards full color when hand is colliding</summary>
+    protected void Update() {
+        mr.material.color = new Color(
+            mr.material.color.r,
+            mr.material.color.g,
+            mr.material.color.b,
+            Mathf.Lerp(
+                mr.material.color.a,
+                (availableHands != null || grabbing) ? MaxOpacity : MinOpacity,
+                Mathf.Clamp01(Time.deltaTime * ColorBlendSpeed)
+            )
+        );
+    }
+    #endregion
+
+    #region Grab Callbacks
     /// <summary>OnGrabDown register starting hand pos and grabbing bool</summary>
-    public void OnGrabDown (SteamVR_Action_Boolean b, SteamVR_Input_Sources inputSource) {
+    public void OnGrabDown(SteamVR_Action_Boolean b, SteamVR_Input_Sources inputSource) {
         if (availableHands == null) return;
         Debug.Assert(currHand == null);
         prevHandPos = (currHand = availableHands).position;
