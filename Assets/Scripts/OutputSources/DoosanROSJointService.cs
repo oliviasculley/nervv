@@ -130,10 +130,10 @@ public class DoosanROSJointService : OutputSource {
             Debug.LogError("RosSocket is not active!");
             return;
         }
-        //if (!string.IsNullOrEmpty(serviceID)) {
-        //    Debug.Log("ServiceID not null, not calling again");
-        //    return;
-        //}
+        if (!string.IsNullOrEmpty(serviceID)) {
+            Debug.Log("ServiceID not null, not calling again");
+            return;
+        }
 
         // Create new JointState message
         MoveJointRequest message = new MoveJointRequest {
