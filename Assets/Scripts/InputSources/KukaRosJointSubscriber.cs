@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Sockets;
 
 // Unity Engine
 using UnityEngine;
@@ -11,7 +12,7 @@ using RosSharp.RosBridgeClient.Messages.Standard;
 
 // NERVV
 using NERVV;
-using System.Net.Sockets;
+using NERVV.Samples.Junlab;
 
 public class KukaRosJointSubscriber : InputSource {
     #region Static
@@ -19,7 +20,6 @@ public class KukaRosJointSubscriber : InputSource {
     #endregion
 
     #region Classes
-
     /// <summary>Used to apply transformations on values coming from ROS</summary>
     [Serializable]
     public class AxisValueAdjustment {
@@ -42,19 +42,6 @@ public class KukaRosJointSubscriber : InputSource {
         [Tooltip("Scale factor used to correct between particular " +
             "input's worldspace to chosen external worldspace")]
         public float ScaleFactor = 1;
-    }
-
-    [Serializable]
-    public class KukaJoint : Message {
-        public const string RosMessageName = "kuka_robot/joint_angles";
-        public double a1;
-        public double a2;
-        public double a3;
-        public double a4;
-        public double a5;
-        public double a6;
-
-        public KukaJoint() { }
     }
     #endregion
 
@@ -180,6 +167,8 @@ public class KukaRosJointSubscriber : InputSource {
             ReceiveMessage,
             0   // the rate(in ms in between messages) at which to throttle the topics
         );
+        if (PrintDebugMessages && !string.IsNullOrEmpty(topicID))
+            Debug.Log("Subscribed to socket!");
     }
 
     /// <summary>Called when RosSocket receieves messages</summary>
@@ -190,35 +179,23 @@ public class KukaRosJointSubscriber : InputSource {
     /// <exception cref="InvalidCastException">
     /// Thrown when found field does not match double
     /// </exception>
-    /// <exception cref="ArgumentNullException">
+    /// <exception cref="KeyNotFoundException">
     /// Thrown when axis is not found for axis ID in axesToBind
     /// </exception>
     protected void ReceiveMessage(KukaJoint message) {
         if (!InputEnabled) return;
 
-        for (int i = 0; i < axesToBind.Length; i++) {
-            // Get field
-            var fieldInfo = typeof(KukaJoint).GetField("a" + (i + 1));
-            if (fieldInfo == null)
-                throw new KeyNotFoundException("Could not find field with name: " + fieldInfo);
+        Debug.Assert(
+            message.angles.Length == message.xyzs.Length &&
+            message.xyzs.Length == message.torques.Length);
 
-            // Get value
-            float? val = null;
-            try {
-                val = (float)(double)fieldInfo.GetValue(message);
-            } catch (InvalidCastException e) {
-                throw new InvalidCastException(
-                    "Invalid cast exception, check value type!\n" +
-                    "-----------------------------------------\n", e);
-            }
-
-            // Set Axis
-            Debug.Assert(val.HasValue);
+        for (int i = 0; i < message.angles.Length; i++) {
             Machine.Axis a = machineToSet.Axes.Find(x => x.ID == axesToBind[i].ID);
-            if (a == null)
-                throw new ArgumentNullException("Axis not found for axis ID: " + axesToBind[i].ID);
-            a.ExternalValue = (val.Value + axesToBind[i].Offset) * axesToBind[i].ScaleFactor;
-            if (PrintDebugMessages) Debug.Log("Kuka ROS Input: " + a.Name + " has " + val.Value);
+            if (a == null) throw new KeyNotFoundException("Axis not found for axis ID: " + axesToBind[i].ID);
+
+            a.ExternalValue = ((float)message.angles[i] + axesToBind[i].Offset) * axesToBind[i].ScaleFactor;
+            a.Torque = (float)message.torques[i];
+            if (PrintDebugMessages) Debug.Log("Kuka ROS Input: " + a.Name + " has " + message.angles[i]);
         }
     }
 

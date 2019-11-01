@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 7317375fb250b024d872ed842ade1ce0
+guid: a6f327cca4ba651408d3239f863f72e1
 ModelImporter:
   serializedVersion: 28
   internalIDToNameTable:
@@ -11,13 +11,13 @@ ModelImporter:
     second: //RootNode
   - first:
       21: 2100000
-    second: color_ccccccff
-  - first:
-      21: 2100002
     second: color_999999ff
   - first:
+      21: 2100002
+    second: color_e0f4ffff
+  - first:
       21: 2100004
-    second: color_55b0ffff
+    second: color_666666ff
   - first:
       21: 2100006
     second: Fbx Default Material
@@ -29,7 +29,7 @@ ModelImporter:
     second: //RootNode
   - first:
       43: 4300000
-    second: Imported17
+    second: Imported15
   externalObjects:
   - first:
       type: UnityEngine:Material
@@ -39,8 +39,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: color_55b0ffff
-    second: {fileID: 2100000, guid: 5eec451533c422444b0fee391a82fe4e, type: 2}
+      name: color_666666ff
+    second: {fileID: 2100000, guid: 12a3336ee87081b43867b4e1bc12fe36, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -49,8 +49,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: color_ccccccff
-    second: {fileID: 2100000, guid: 59f1300a1529bc64bad336420fe3154d, type: 2}
+      name: color_e0f4ffff
+    second: {fileID: 2100000, guid: 2e2fe05b8ec2b6445b93ba3d583f24ce, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
@@ -82,11 +82,11 @@ ModelImporter:
   meshes:
     lODScreenPercentages: []
     globalScale: 1
-    meshCompression: 0
+    meshCompression: 3
     addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
-    importVisibility: 0
+    importVisibility: 1
     importBlendShapes: 1
     importCameras: 0
     importLights: 0
@@ -99,7 +99,7 @@ ModelImporter:
     skinWeightsMode: 0
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
-    meshOptimizationFlags: 0
+    meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
