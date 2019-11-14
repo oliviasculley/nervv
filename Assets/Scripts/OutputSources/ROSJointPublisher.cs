@@ -120,7 +120,9 @@ public class ROSJointPublisher : OutputSource {
                 RosSocket.Close();
             } catch (SocketException e) {
                 if (PrintDebugMessages)
-                    Debug.LogError("Socket was closed while trying to unadvertise topic");
+                    Debug.LogError(
+                        "Socket was closed while trying to unadvertise topic!\n" +
+                        e.Message);
             } finally {
                 RosSocket = null;
             }

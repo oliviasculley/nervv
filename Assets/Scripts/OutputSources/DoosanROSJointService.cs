@@ -102,13 +102,15 @@ public class DoosanROSJointService : OutputSource {
     }
 
     /// <summary>Destroys socket connection if object is disabled</summary>
-    void OnDisable() {
+    protected override void OnDisable() {
         // Stop socket and close
         if (rosSocket != null) {
             serviceID = null;
             rosSocket.Close();
             rosSocket = null;
         }
+
+        base.OnDisable();
     }
 
     /// <summary>Check if need to publish message</summary>
