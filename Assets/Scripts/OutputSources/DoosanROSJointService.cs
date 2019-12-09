@@ -109,7 +109,6 @@ public class DoosanROSJointService : OutputSource {
             rosSocket.Close();
             rosSocket = null;
         }
-
         base.OnDisable();
     }
 

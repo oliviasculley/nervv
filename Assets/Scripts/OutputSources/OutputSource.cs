@@ -16,11 +16,11 @@ namespace NERVV {
         protected bool _outputEnabled = true;
         /// <summary>Is this output currently enabled?</summary>
         public virtual bool OutputEnabled {
-            get { return _outputEnabled; }
+            get => _outputEnabled;
             set {
                 _outputEnabled = value;
-                if (InputManager.Instance != null && _outputEnabled)
-                    InputManager.Instance.DisableInputs();
+                if (InputManager != null && _outputEnabled)
+                    InputManager.DisableInputs();
             }
         }
         #endregion
@@ -30,8 +30,8 @@ namespace NERVV {
         protected string _name;
         /// <summary></summary>
         public virtual string Name {
-            get { return _name; }
-            set { _name = value; }
+            get => _name;
+            set => _name = value;
         }
 
         [SerializeField,
@@ -39,24 +39,54 @@ namespace NERVV {
         protected bool _exclusiveType = false;
         /// <summary>Is output type exclusive (Only one output of this type allowed?)</summary>
         public virtual bool ExclusiveType {
-            get { return _exclusiveType; }
-            set { _exclusiveType = value; }
+            get => _exclusiveType;
+            set => _exclusiveType = value;
         }
 
         public bool PrintDebugMessages = false;
         #endregion
 
+        #region Output References
+        [SerializeField,
+        Tooltip("If null, will attempt to use global reference"), Header("Output References")]
+        protected OutputManager _outputManager;
+        public OutputManager OutputManager {
+            get {
+                if (_outputManager == null) {
+                    if (OutputManager.Instances.Count > 0)
+                        _outputManager = OutputManager.Instances[0];
+                    else
+                        throw new ArgumentNullException("Could not get a ref to an OutputManager!");
+                }
+                return _outputManager;
+            }
+            set => _outputManager = value;
+        }
+
+        [SerializeField,
+        Tooltip("If null, will attempt to use global reference")]
+        protected InputManager _inputManager = null;
+        public InputManager InputManager {
+            get {
+                if (_inputManager == null) {
+                    if (InputManager.Instances.Count > 0)
+                        _inputManager = InputManager.Instances[0];
+                    else
+                        throw new ArgumentNullException("Could not get a ref to an InputManager!");
+                }
+                return _inputManager;
+            }
+            set => _inputManager = value;
+        }
+        #endregion
+
         #region Unity methods
         /// <summary>Adds self to OutputManager</summary>
         /// <exception cref="ArgumentNullException">
-        /// Thrown if OutputManager.Instance is null
+        /// Thrown if OutputManager is null
         /// </exception>
         protected virtual void Start() {
-            // Add self to InputManager, disabling self if failure
-            if (OutputManager.Instance == null)
-                throw new ArgumentNullException("OutputManager.Instance is null!");
-
-            bool success = OutputManager.Instance.AddOutput(this);
+            bool success = OutputManager.AddOutput(this);
             if (PrintDebugMessages && !success)
                 Debug.LogError("Could not add self to OutputManager!");
             OutputEnabled &= success;
@@ -64,13 +94,10 @@ namespace NERVV {
 
         /// <summary>Removes self from OutputManager</summary>
         /// <exception cref="ArgumentNullException">
-        /// Thrown if OutputManager.Instance is null
+        /// Thrown if OutputManager is null
         /// </exception>
         protected virtual void OnDisable() {
-            if (OutputManager.Instance == null)
-                throw new ArgumentNullException("OutputManager.Instance is null!");
-
-            if (!OutputManager.Instance.RemoveOutput(this) && PrintDebugMessages)
+            if (!OutputManager.RemoveOutput(this) && PrintDebugMessages)
                 Debug.LogError("Could not remove self from OutputManager!");
         }
         #endregion

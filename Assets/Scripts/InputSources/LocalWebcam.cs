@@ -12,7 +12,7 @@ using NERVV;
 public class LocalWebcam : InputSource {
     #region Properties
     public override bool InputEnabled {
-        get { return _inputEnabled; }
+        get => _inputEnabled;
         set {
             _inputEnabled = value;
             foreach (Transform t in transform)
@@ -23,7 +23,7 @@ public class LocalWebcam : InputSource {
     [SerializeField, Header("Properties")]
     protected int _deviceID;
     public int DeviceID {
-        get { return _deviceID; }
+        get => _deviceID;
         protected set { SetWebcamFeedID(value); }
     }
     #endregion
@@ -55,10 +55,11 @@ public class LocalWebcam : InputSource {
             throw new ArgumentNullException("Plane Renderer is null!");
         if (_deviceID < 0 || _deviceID >= WebCamTexture.devices.Length)
             throw new ArgumentOutOfRangeException("Webcam DeviceID out of range!");
+        base.OnEnable();
+
 
         // Initial InputSource fields
         ExclusiveType = false;
-        base.OnEnable();
 
         if (printAvailableWebcams)
             PrintAvailableWebcams();

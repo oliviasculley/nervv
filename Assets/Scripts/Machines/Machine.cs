@@ -7,75 +7,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace NERVV {
-    /// <summary>
-    /// Base implementation of a machine. These are automatically
-    /// added to MachineManager when they are initialized.
-    /// </summary>
-    public abstract class Machine : MonoBehaviour, IMachine, IInterpolation, IInverseKinematics {
-        #region Machine Properties
-        [Header("Machine Properties")]
-        public List<Axis> _axes;
-        /// <summary>Machine axes of possible movement/rotation</summary>
-        /// <see cref="IMachine"/>
-        public virtual List<Axis> Axes {
-            get { return _axes; }
-            set { _axes = value; }
-        }
-        #endregion
-
-        #region Machine Settings
-        [SerializeField,
-        Tooltip("Human-readable name of machine"),
-        Header("Machine Settings")]
-        protected string _name;
-        /// <summary>Human readable name of machine</summary>
-        /// <see cref="IMachine"/>
-        public virtual string Name {
-            get { return _name; }
-            set { _name = value; }
-        }
-
-        [SerializeField,
-        Tooltip("Individual ID, used for individual machine identification and matching")]
-        protected string _uuid;
-        /// <summary>Individual ID, used for individual machine identification and matching</summary>
-        /// <see cref="IMachine"/>
-        public virtual string UUID {
-            get { return _uuid; }
-            set { _uuid = value; }
-        }
-
-        [SerializeField, Tooltip("Name of machine manufacturer")]
-        protected string _manufacturer;
-        /// <summary>Name of machine manufacturer</summary>
-        /// <see cref="IMachine"/>
-        public virtual string Manufacturer {
-            get { return _manufacturer; }
-            set { _manufacturer = value; }
-        }
-
-        [SerializeField, Tooltip("Model of machine")]
-        protected string _model;
-        /// <summary>Model of machine</summary>
-        /// <see cref="IMachine"/>
-        public virtual string Model {
-            get { return _model; }
-            set { _model = value; }
-        }
-
-        public bool PrintDebugMessages = false;
-        #endregion
-
+    /// <summary>Implementation of a machine with all features</summary>
+    /// <see cref="BaseMachine"/>
+    /// <seealso cref="IInterpolation"/>
+    /// <seealso cref="IInverseKinematics"/>
+    public class Machine : BaseMachine, IInterpolation, IInverseKinematics {
         #region Interpolation Settings
         [SerializeField,
-        Tooltip("Speed to lerp to correct position"),
+        Tooltip("Speed to blend to correct position"),
         Header("Interpolation Settings")]
-        protected float _lerpSpeed = 10f;
-        /// <summary>Speed to lerp to correct position</summary>
+        protected float _blendSpeed = 10f;
+        /// <summary>Speed to blend to correct position</summary>
         ///<seealso cref="IInterpolation"/>
         public float BlendSpeed {
-            get { return _lerpSpeed; }
-            set { _lerpSpeed = value; }
+            get => _blendSpeed;
+            set => _blendSpeed = value;
         }
 
         [SerializeField,
@@ -84,50 +30,68 @@ namespace NERVV {
         /// <summary>Toggles lerping to final position</summary>
         ///<seealso cref="IInterpolation"/>
         public bool Interpolation {
-            get { return _interpolation; }
-            set { _interpolation = value; }
+            get => _interpolation;
+            set => _interpolation = value;
         }
         #endregion
 
         #region IK Settings
         /// <summary>Learning rate of gradient descent</summary>
-        [Tooltip("Learning rate of gradient descent"), Header("IK Settings")]
-        public float IKSpeed = 10f;
-        
+        [SerializeField, Tooltip("Learning rate of gradient descent"), Header("IK Settings")]
+        protected float _ikSpeed = 10f;
+        public float IKSpeed {
+            get => _ikSpeed;
+            set => _ikSpeed = value;
+        }
+
         /// <summary>Axis delta to check IK</summary>
-        [Tooltip("Axis delta to check IK")]
-        public float SamplingDistance = 0.01f;
+        [SerializeField, Tooltip("Axis delta to check IK")]
+        protected float _samplingDistance = 0.01f;
+        public float SamplingDistance {
+            get => _samplingDistance;
+            set => _samplingDistance = value;
+        }
 
         /// <summary>Minimum distance delta to apply IK</summary>
-        [Tooltip("Minimum distance delta to apply IK")]
-        public float IKEpsilon = 0.0001f;
+        [SerializeField, Tooltip("Minimum distance delta to apply IK")]
+        protected float _ikEpsilon = 0.0001f;
+        public float IKEpsilon {
+            get => _ikEpsilon;
+            set => _ikEpsilon = value;
+        }
         #endregion
 
         #region Unity Methods
         /// <summary>
-        /// Runs initial safety checks and
-        /// adds self to MachineManager
+        /// Runs initial safety checks and adds self to MachineManager
         /// </summary>
-        /// <exception cref="ArgumentNullException">
-        /// Thrown if Axes.AxisTransform is null</exception>
-        /// <exception cref="Exception">
-        /// Thrown if could not add self to MachineManager
-        /// </exception>
-        protected virtual void OnEnable() {
-            // Safety checks
-            for (int i = 0; i < Axes.Count; i++)
-                if (Axes[i].AxisTransform == null)
-                    throw new ArgumentNullException("Could not find Transform for axis " + i + "!");
-            if (PrintDebugMessages && IKSpeed == 0)
-                Debug.LogWarning("IK Learning rate is zero, IK will not move!");
-            if (PrintDebugMessages && BlendSpeed == 0)
-                Debug.LogWarning("BlendSpeed is 0, will never move!");
+        protected override void OnEnable() {
+            base.OnEnable();
 
-            // Link to MachineManager
-            if (MachineManager.Instance == null)
-                throw new ArgumentNullException("MachineManager.Instance is null!");
-            if (!MachineManager.Instance.AddMachine(this))
-                throw new Exception("Could not add self to MachineManager!");
+            if (PrintDebugMessages) {
+                if (IKSpeed == 0)
+                    Debug.LogWarning("IK Learning rate is zero, IK will not move!");
+                if (BlendSpeed == 0)
+                    Debug.LogWarning("BlendSpeed is 0, will never move!");
+            }
+        }
+
+        protected virtual void Update() {
+            if (Interpolation) {
+                // Continually lerp towards final position
+                for (int i = 0; i < Axes.Count; i++)
+                    Axes[i].AxisTransform.localRotation = Quaternion.Lerp(
+                        Axes[i].AxisTransform.localRotation,
+                        Quaternion.Euler(Axes[i].AxisVector3),
+                        Mathf.Clamp(BlendSpeed * Time.deltaTime, 0, 1));
+            } else {
+                // Get latest correct axis angle
+                for (int i = 0; i < Axes.Count; i++)
+                    Axes[i].AxisTransform.localEulerAngles = Axes[i].AxisVector3;
+            }
+
+            // DEBUG: Draw forward kinematics every frame
+            ForwardKinematics(Axes.ToArray());
         }
         #endregion
 
@@ -142,7 +106,6 @@ namespace NERVV {
 
             Vector3 prevPoint = axes[0].AxisTransform.position;
             Quaternion rotation = transform.rotation;
-
             Vector3 nextPoint;
             for (int i = 0; i < axes.Length - 1; i++) {
                 if (axes[i].Type == Axis.AxisType.Rotary) {
@@ -180,15 +143,7 @@ namespace NERVV {
             float delta;
             for (int i = 0; i < Axes.Count; i++) {
                 delta = ((PartialGradient(target, Axes, i) > 0) ? IKSpeed : -IKSpeed) * Time.deltaTime;
-
                 Axes[i].Value -= delta;
-
-                //Axes[i].ExternalValue =
-                //    Mathf.Clamp(
-                //        Axes[i].ExternalValue - delta,
-                //        (-Axes[i].MaxDelta) + (IKSpeed * Time.deltaTime),
-                //        Axes[i].MaxDelta - (IKSpeed * Time.deltaTime)
-                //    );
             }
         }
         #endregion
@@ -227,15 +182,18 @@ namespace NERVV {
             Tooltip("Value of axis in external worldspace"),
             Header("Properties")]protected float _externalValue;
             public virtual float ExternalValue {
-                get { return _externalValue; }
-                set { _externalValue = value; }
+                get => _externalValue;
+                set => _externalValue = Mathf.Clamp(
+                    value,
+                    MinExternalValue,
+                    MaxExternalValue);
             }
 
             /// <summary>Value of axis in Unity worldspace</summary>
             public virtual float Value {
                 get {
                     // Get value with offset and external value
-                    float value = (_externalValue % MaxDelta + Offset) * ScaleFactor;
+                    float value = (_externalValue + Offset) * ScaleFactor;
 
                     // If rotary, keep between 0 and 360
                     if (Type == AxisType.Rotary)
@@ -243,16 +201,18 @@ namespace NERVV {
 
                     return value;
                 }
-                set { _externalValue += (Value - value) / ScaleFactor; }
+                set => _externalValue += (Value - value) / ScaleFactor;
             }
 
             [SerializeField,
-            Tooltip("")]
+            Tooltip("Saved torque value. Physics are not simulated using this value")]
             protected float _torque;
-            /// <summary></summary>
+            /// <summary>
+            /// Saved torque value. Physics are not simulated using this value
+            /// </summary>
             public virtual float Torque {
-                get { return _torque; }
-                set { _torque = value; }
+                get => _torque;
+                set => _torque = value;
             }
             #endregion
 
@@ -263,37 +223,52 @@ namespace NERVV {
             protected string _id;
             /// <summary>ID of axis, used for pattern matching and search</summary>
             public virtual string ID {
-                get { return _id; }
-                set { _id = value; }
+                get => _id;
+                set => _id = value;
             }
 
             [SerializeField, Tooltip("Human-readable name of axis")]
             protected string _name;
-            /// <summary>Human-readable name of axis. Should only be used for informative purposes.</summary>
+            /// <summary>
+            /// Human-readable name of axis. Should only be used for informative purposes.
+            /// </summary>
             public virtual string Name {
-                get { return _name; }
-                set { _name = value; }
+                get => _name;
+                set => _name = value;
             }
 
             [SerializeField, Tooltip("Short description of axis")]
             protected string _desc;
             /// <summary>Short description of axis</summary>
             public virtual string Description {
-                get { return _desc; }
-                set { _desc = value; }
+                get => _desc;
+                set => _desc = value;
             }
 
             [SerializeField,
             Tooltip("Maximum allowed deviation. External angles" +
-                " will be moduloed by this value.")]
-            protected float _maxDelta;
+                " will at most be clamped to this value.")]
+            protected float _maxExternalValue;
             /// <summary>
             /// Maximum allowed deviation. External angles
-            /// will be moduloed by this value.
+            /// will at most be clamped by this value.
             /// </summary>
-            public virtual float MaxDelta {
-                get { return _maxDelta; }
-                set { _maxDelta = value; }
+            public virtual float MaxExternalValue {
+                get => _maxExternalValue;
+                set => _maxExternalValue = value;
+            }
+
+            [SerializeField,
+            Tooltip("Maximum allowed deviation. External angles" +
+                " will at least be clamped by this value.")]
+            protected float _minExternalValue;
+            /// <summary>
+            /// Maximum allowed deviation. External angles
+            /// will at least be clamped by this value.
+            /// </summary>
+            public virtual float MinExternalValue {
+                get => _minExternalValue;
+                set => _minExternalValue = value;
             }
 
             [SerializeField,
@@ -305,8 +280,8 @@ namespace NERVV {
             /// worldspace to Unity's worldspace
             /// </summary>
             public virtual float Offset {
-                get { return _offset; }
-                set { _offset = value; }
+                get => _offset;
+                set => _offset = value;
             }
 
             [SerializeField,
@@ -318,8 +293,8 @@ namespace NERVV {
             /// worldspace to Unity's worldspace
             /// </summary>
             public virtual float ScaleFactor {
-                get { return _scaleFactor; }
-                set { _scaleFactor = value; }
+                get => _scaleFactor;
+                set => _scaleFactor = value;
             }
 
             public enum AxisType { Rotary, Linear, None }
@@ -327,8 +302,8 @@ namespace NERVV {
             protected AxisType _type;
             /// <summary>Type of axis</summary>
             public virtual AxisType Type {
-                get { return _type; }
-                set { _type = value; }
+                get => _type;
+                set => _type = value;
             }
 
             [SerializeField,
@@ -340,8 +315,8 @@ namespace NERVV {
             /// Use this to set position/rotation of objects from the axis.
             /// </summary>
             public virtual Vector3 AxisVector3 {
-                get { return _axisVector3 * Value; }
-                set { _axisVector3 = value.normalized; }
+                get => _axisVector3 * Value;
+                set => _axisVector3 = value.normalized;
             }
 
             [SerializeField,
@@ -349,8 +324,8 @@ namespace NERVV {
             protected Transform _axisTransform;
             /// <summary>Ref to transform in scene</summary>
             public virtual Transform AxisTransform {
-                get { return _axisTransform; }
-                set { _axisTransform = value; }
+                get => _axisTransform;
+                set => _axisTransform = value;
             }
             #endregion
         }

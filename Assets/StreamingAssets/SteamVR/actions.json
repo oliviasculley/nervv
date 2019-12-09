@@ -1,0 +1,100 @@
+{
+  "actions": [
+    {
+      "name": "/actions/Default/in/CallMenu",
+      "type": "boolean",
+      "requirement": "suggested"
+    },
+    {
+      "name": "/actions/Default/in/InteractUI",
+      "type": "boolean",
+      "requirement": "mandatory"
+    },
+    {
+      "name": "/actions/Default/in/Pose",
+      "type": "pose",
+      "requirement": "mandatory"
+    },
+    {
+      "name": "/actions/Default/in/ActivateLeftIK",
+      "type": "boolean",
+      "requirement": "suggested"
+    },
+    {
+      "name": "/actions/Default/in/ActivateRightIK",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/Default/in/LeftSkeleton",
+      "type": "skeleton",
+      "skeleton": "/skeleton/hand/left"
+    },
+    {
+      "name": "/actions/Default/in/RightSkeleton",
+      "type": "skeleton",
+      "skeleton": "/skeleton/hand/right"
+    },
+    {
+      "name": "/actions/Default/in/Teleport",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/Default/in/HeadsetOnHead",
+      "type": "boolean"
+    },
+    {
+      "name": "/actions/Default/out/Haptic",
+      "type": "vibration",
+      "requirement": "suggested"
+    }
+  ],
+  "action_sets": [
+    {
+      "name": "/actions/Default",
+      "usage": "leftright"
+    }
+  ],
+  "default_bindings": [
+    {
+      "controller_type": "vive_controller",
+      "binding_url": "bindings_vive_controller.json"
+    },
+    {
+      "controller_type": "oculus_touch",
+      "binding_url": "bindings_oculus_touch.json"
+    },
+    {
+      "controller_type": "knuckles",
+      "binding_url": "bindings_knuckles.json"
+    },
+    {
+      "controller_type": "holographic_controller",
+      "binding_url": "bindings_holographic_controller.json"
+    },
+    {
+      "controller_type": "vive",
+      "binding_url": "binding_vive.json"
+    },
+    {
+      "controller_type": "vive_pro",
+      "binding_url": "binding_vive_pro.json"
+    },
+    {
+      "controller_type": "rift",
+      "binding_url": "binding_rift.json"
+    },
+    {
+      "controller_type": "holographic_hmd",
+      "binding_url": "binding_holographic_hmd.json"
+    },
+    {
+      "controller_type": "vive_tracker_camera",
+      "binding_url": "binding_vive_tracker_camera.json"
+    }
+  ],
+  "localization": [
+    {
+      "language_tag": "en_US"
+    }
+  ]
+}

@@ -7,6 +7,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using Valve.VR;
 
+// NERVV
+using NERVV.Menu;
+
 [RequireComponent(typeof(SteamVR_Behaviour_Pose))]
 public class LaserPointer : MonoBehaviour {
     #region Settings

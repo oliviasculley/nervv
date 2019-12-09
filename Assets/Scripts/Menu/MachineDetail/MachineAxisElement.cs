@@ -1,4 +1,5 @@
 ﻿// System
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -7,11 +8,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-namespace NERVV.Menu {
+namespace NERVV.Menu.MachineDetailPanel {
     public class MachineAxisElement : MachineElement {
         #region Properties
-        [Header("Properties")]
-        public Machine.Axis Axis;
+        [SerializeField, Header("Properties")]
+        protected Machine.Axis _axis;
+        public Machine.Axis Axis {
+            get => _axis;
+            set => _axis = value ?? throw new ArgumentNullException();
+        }
         #endregion
 
         #region Settings
@@ -33,39 +38,28 @@ namespace NERVV.Menu {
         #endregion
 
         #region Unity Methods
-        /// <summary>Check references</summary>
-        new void OnEnable() {
-            Debug.Assert(ElementTitle != null);
+        protected override void OnEnable() {
+            if (ElementTitle == null) throw new ArgumentNullException();
+
+            if (Axis == null) gameObject.SetActive(false);
+
+            base.OnEnable();
         }
 
-        /// <summary>Update Axis elements</summary>
-        void Update() {
-            // If updating axis, modify
-            if (changingAxis) {
-                Debug.Assert(Axis != null,
-                    "Invalid axis!");
-
-                // Set axis value depending on direction
+        /// <summary>Update text elements</summary>
+        protected void Update() {
+            // Set axis value depending on direction
+            if (changingAxis)
                 Axis.Value += (axisDirection ? Time.deltaTime : -Time.deltaTime) * AxisSpeed;
-            }
 
             // Live update angles
-            UpdateText();
+            ElementTitle.text =
+                Axis.Name + ": " + Axis.Value + "\n" +  // Axis 1: <value>
+                "Torque: " + Axis.Torque;               // Torque: <value>
         }
         #endregion
 
         #region Public Methods
-        /// <summary>Initialize float element with needed parameters</summary>
-        /// <param name="fieldName"></param>
-        /// <param name="currMachine"></param>
-        public void InitializeElement(Machine.Axis axis) {
-            Debug.Assert(axis != null,
-                "Invalid axis!");
-
-            Axis = axis;
-            UpdateText();
-        }
-
         /// <summary>Starts increasing or decreasing axis value</summary>
         /// <param name="direction">Direction to start changing axis value</param>
         public void StartChanging(bool direction) {
@@ -77,18 +71,10 @@ namespace NERVV.Menu {
         public void StopChanging() {
             changingAxis = false;
         }
-        #endregion
 
-        #region Methods
-        /// <summary>Update text readout with current value</summary>
-        void UpdateText() {
-            Debug.Assert(Axis != null,
-                "Invalid axis!");
-
-            // Set text with current value
-            ElementTitle.text =
-                Axis.Name + ": " + Axis.Value + "\n" +  // Axis 1: <value>
-                "Torque: " + Axis.Torque;               // Torque: <value>
+        public void InitializeElement(Machine.Axis Axis) {
+            this.Axis = Axis;
+            gameObject.SetActive(true);
         }
         #endregion
     }

@@ -16,8 +16,8 @@ namespace UnityEngine.UI {
         float _targetVertNormPos;
         /// <summary>Target position as normalized value between 0 and 1</summary>
         public float targetVertNormPos {
-            get { return _targetVertNormPos; }
-            set { _targetVertNormPos = Mathf.Clamp(value, 0, 1); }
+            get => _targetVertNormPos;
+            set => _targetVertNormPos = Mathf.Clamp(value, 0, 1);
         }
         #endregion
 

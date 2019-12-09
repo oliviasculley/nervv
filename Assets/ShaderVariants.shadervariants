@@ -8,9 +8,16 @@ ShaderVariantCollection:
   m_PrefabAsset: {fileID: 0}
   m_Name: ShaderVariants
   m_Shaders:
+  - first: {fileID: 64, guid: 0000000000000000f000000000000000, type: 0}
+    second:
+      variants:
+      - keywords: SHADOWS_SPLIT_SPHERES
+        passType: 0
   - first: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
     second:
       variants:
+      - keywords: 
+        passType: 0
       - keywords: 
         passType: 8
       - keywords: INSTANCING_ON
@@ -19,46 +26,55 @@ ShaderVariantCollection:
         passType: 13
       - keywords: UNITY_SINGLE_PASS_STEREO
         passType: 13
+      - keywords: _MAIN_LIGHT_SHADOWS
+        passType: 13
+      - keywords: _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS
+        passType: 13
+      - keywords: _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS _SPECULAR_SETUP
+        passType: 13
       - keywords: _ADDITIONAL_LIGHTS
         passType: 13
       - keywords: _ADDITIONAL_LIGHTS _EMISSION
         passType: 13
-      - keywords: INSTANCING_ON _ADDITIONAL_LIGHTS
+      - keywords: _ADDITIONAL_LIGHTS _EMISSION _NORMALMAP
         passType: 13
-      - keywords: _MAIN_LIGHT_SHADOWS _SHADOWS_SOFT
+      - keywords: _ADDITIONAL_LIGHTS _ALPHAPREMULTIPLY_ON _EMISSION
         passType: 13
-      - keywords: UNITY_SINGLE_PASS_STEREO _MAIN_LIGHT_SHADOWS _SHADOWS_SOFT
+      - keywords: _ADDITIONAL_LIGHTS _EMISSION _METALLICSPECGLOSSMAP _NORMALMAP
+        passType: 13
+      - keywords: _ADDITIONAL_LIGHTS _ALPHAPREMULTIPLY_ON _EMISSION _METALLICSPECGLOSSMAP
+          _NORMALMAP
+        passType: 13
+      - keywords: _ADDITIONAL_LIGHTS _EMISSION _METALLICSPECGLOSSMAP _NORMALMAP _OCCLUSIONMAP
         passType: 13
       - keywords: _ADDITIONAL_LIGHTS _ENVIRONMENTREFLECTIONS_OFF
-        passType: 13
-      - keywords: _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS _SHADOWS_SOFT
         passType: 13
       - keywords: _ADDITIONAL_LIGHTS _EMISSION _SPECULAR_SETUP
         passType: 13
       - keywords: _ADDITIONAL_LIGHTS _ENVIRONMENTREFLECTIONS_OFF _SPECULAR_SETUP
         passType: 13
-      - keywords: _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS _SHADOWS_SOFT _SPECULAR_SETUP
+      - keywords: _MAIN_LIGHT_SHADOWS _SHADOWS_SOFT
         passType: 13
-      - keywords: UNITY_SINGLE_PASS_STEREO _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS
-          _SHADOWS_SOFT _SPECULAR_SETUP
+      - keywords: _EMISSION _MAIN_LIGHT_SHADOWS _SHADOWS_SOFT
         passType: 13
-      - keywords: _ADDITIONAL_LIGHTS _NORMALMAP
+      - keywords: UNITY_SINGLE_PASS_STEREO _MAIN_LIGHT_SHADOWS _SHADOWS_SOFT
         passType: 13
-      - keywords: _ADDITIONAL_LIGHTS _EMISSION _NORMALMAP
+      - keywords: UNITY_SINGLE_PASS_STEREO _EMISSION _MAIN_LIGHT_SHADOWS _SHADOWS_SOFT
         passType: 13
       - keywords: _EMISSION _MAIN_LIGHT_SHADOWS _NORMALMAP _SHADOWS_SOFT
         passType: 13
       - keywords: UNITY_SINGLE_PASS_STEREO _EMISSION _MAIN_LIGHT_SHADOWS _NORMALMAP
           _SHADOWS_SOFT
         passType: 13
-      - keywords: _ADDITIONAL_LIGHTS _ALPHAPREMULTIPLY_ON _ENVIRONMENTREFLECTIONS_OFF
+      - keywords: _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS _SHADOWS_SOFT
         passType: 13
-      - keywords: _ALPHAPREMULTIPLY_ON _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS
+      - keywords: UNITY_SINGLE_PASS_STEREO _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS
           _SHADOWS_SOFT
         passType: 13
-      - keywords: _ADDITIONAL_LIGHTS _EMISSION _METALLICSPECGLOSSMAP _NORMALMAP
+      - keywords: _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS _SHADOWS_SOFT _SPECULAR_SETUP
         passType: 13
-      - keywords: _ADDITIONAL_LIGHTS _EMISSION _METALLICSPECGLOSSMAP _NORMALMAP _OCCLUSIONMAP
+      - keywords: UNITY_SINGLE_PASS_STEREO _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS
+          _SHADOWS_SOFT _SPECULAR_SETUP
         passType: 13
   - first: {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
     second:
@@ -72,7 +88,11 @@ ShaderVariantCollection:
       variants:
       - keywords: 
         passType: 0
+      - keywords: UNITY_SINGLE_PASS_STEREO
+        passType: 0
       - keywords: UNITY_UI_ALPHACLIP
+        passType: 0
+      - keywords: UNITY_SINGLE_PASS_STEREO UNITY_UI_ALPHACLIP
         passType: 0
   - first: {fileID: 66, guid: 0000000000000000f000000000000000, type: 0}
     second:
@@ -94,6 +114,12 @@ ShaderVariantCollection:
       - keywords: DIRECTIONAL
         passType: 5
       - keywords: SHADOWS_DEPTH
+        passType: 8
+      - keywords: SHADOWS_DEPTH _ALPHAPREMULTIPLY_ON
+        passType: 8
+      - keywords: SHADOWS_DEPTH _METALLICGLOSSMAP
+        passType: 8
+      - keywords: SHADOWS_DEPTH _ALPHAPREMULTIPLY_ON _METALLICGLOSSMAP
         passType: 8
   - first: {fileID: 106, guid: 0000000000000000f000000000000000, type: 0}
     second:
@@ -187,13 +213,15 @@ ShaderVariantCollection:
       variants:
       - keywords: 
         passType: 0
-      - keywords: _ALPHAPREMULTIPLY_ON _COLORADDSUBDIFF_ON
-        passType: 0
   - first: {fileID: 4800000, guid: 650dd9526735d5b46b79224bc6e94025, type: 3}
     second:
       variants:
       - keywords: 
         passType: 0
+      - keywords: UNITY_SINGLE_PASS_STEREO
+        passType: 0
+      - keywords: UNITY_SINGLE_PASS_STEREO
+        passType: 13
   - first: {fileID: 4800000, guid: 787d7485aa6482341a9f55fa37fb84f1, type: 3}
     second:
       variants:
@@ -213,40 +241,39 @@ ShaderVariantCollection:
         passType: 8
       - keywords: _ADDITIONAL_LIGHTS _GLOSSINESS_FROM_BASE_ALPHA _SPECULAR_COLOR
         passType: 13
-  - first: {fileID: 4800000, guid: 0eda13fed4d1be14aa1ab948b08aef30, type: 3}
-    second:
-      variants:
-      - keywords: SHADOWS_DEPTH
-        passType: 8
   - first: {fileID: 4800000, guid: de053fb214897cc439db35fc0361a282, type: 3}
     second:
       variants:
       - keywords: 
+        passType: 0
+      - keywords: UNITY_SINGLE_PASS_STEREO
         passType: 0
   - first: {fileID: 4800000, guid: fe393ace9b354375a9cb14cdbbc28be4, type: 3}
     second:
       variants:
       - keywords: 
         passType: 0
+      - keywords: UNITY_SINGLE_PASS_STEREO
+        passType: 0
       - keywords: OUTLINE_ON
         passType: 0
       - keywords: OUTLINE_ON UNDERLAY_ON
+        passType: 0
+  - first: {fileID: 4800000, guid: 65df88701913c224d95fc554db28381a, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: e7857e9d0c934dc4f83f270f8447b006, type: 3}
+    second:
+      variants:
+      - keywords: 
         passType: 0
   - first: {fileID: 4800000, guid: e260cfa7296ee7642b167f1eb5be5023, type: 3}
     second:
       variants:
       - keywords: 
         passType: 13
-  - first: {fileID: 4800000, guid: 341b058cd7dee4f5cba5cc59a513619e, type: 3}
-    second:
-      variants:
-      - keywords: 
-        passType: 0
-  - first: {fileID: 4800000, guid: 4e76d4023d7e0411297c670f878973e2, type: 3}
-    second:
-      variants:
-      - keywords: 
-        passType: 0
   - first: {fileID: 4800000, guid: c26db15b9a2ed4b2ebefefd26ce85ae1, type: 3}
     second:
       variants:
@@ -268,6 +295,11 @@ ShaderVariantCollection:
       - keywords: 
         passType: 0
   - first: {fileID: 4800000, guid: cfa7edf01005f4e338d973cea2f6eab3, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: e6e9a19c3678ded42a3bc431ebef7dbd, type: 3}
     second:
       variants:
       - keywords: 

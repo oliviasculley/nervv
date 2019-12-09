@@ -36,6 +36,24 @@ public class MTConnect : InputSource {
     public float pollInterval = 0.1f;
     #endregion
 
+    #region MTConnect References
+    [SerializeField,
+    Tooltip("If null, will attempt to use global reference"), Header("MTConnect References")]
+    protected MachineManager _machineManager;
+    public MachineManager MachineManager {
+        get {
+            if (_machineManager == null) {
+                if (MachineManager.Instances.Count > 0)
+                    _machineManager = MachineManager.Instances[0];
+                else
+                    throw new ArgumentNullException("Could not get a ref to a MachineManager!");
+            }
+            return _machineManager;
+        }
+        set => _machineManager = value;
+    }
+    #endregion
+
     #region Vars
     IEnumerator fetchMTConnect;
     float timeToTrigger = 0.0f;
@@ -53,10 +71,10 @@ public class MTConnect : InputSource {
         if (PrintDebugMessages && pollInterval == 0)
             Debug.LogWarning("Poll interval set to 0, will send GET request every frame!");
 
-        base.OnEnable();
-
         // Init vars
         fetchMTConnect = null;
+
+        base.OnEnable();
     }
 
     /// <summary>Check if need to trigger</summary>
@@ -119,9 +137,7 @@ public class MTConnect : InputSource {
 
         // For each device
         foreach (DeviceStream ds in xmlData.Streams.DeviceStream) {
-            IMachine m = MachineManager.Instance.Machines.Find(
-                x => x.UUID == ds.Uuid
-            );
+            IMachine m = MachineManager.Machines.Find(x => x.UUID == ds.Uuid);
             if (m == null) {
                 if (PrintDebugMessages)
                     Debug.LogWarning("Did not find matching machine: " + ds.Uuid);

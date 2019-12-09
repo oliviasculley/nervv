@@ -10,15 +10,79 @@ using UnityEngine.UI;
 using Valve.VR;
 using TMPro;
 
-namespace NERVV.Menu {
-    public class MachineDetail : MonoBehaviour {
+namespace NERVV.Menu.MachineDetailPanel {
+    public class MachineDetail : MenuPanel {
         #region Properties
-        [SerializeField, Header("Properties")]
-        protected Machine _currMachine;
+        [Header("Properties")]
+        protected IMachine _currMachine;
         /// <summary>New machine to display</summary>
-        public Machine CurrMachine {
-            get { return _currMachine; }
-            set { DisplayMachine(value); }
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if new value is null
+        /// </exception>
+        public IMachine CurrMachine {
+            get => _currMachine;
+            set {
+                _currMachine = value ?? throw new ArgumentNullException();
+
+                // Disable old components
+                DisableAxisHandlers();
+                foreach (Transform t in machineElementParent)
+                    Destroy(t.gameObject);
+                LeftIKSphere.SetActive(false);
+                RightIKSphere.SetActive(false);
+
+                // Generate string fields
+                if (GenerateStringElements) {
+                    var fields = new string[] {
+                        nameof(_currMachine.Name),
+                        nameof(_currMachine.UUID),
+                        nameof(_currMachine.Model),
+                        nameof(_currMachine.Manufacturer)
+                    };
+                    foreach (var str in fields) {
+                        var prop = typeof(IMachine).GetProperty(str);
+                        Debug.Assert(prop != null);
+                        GenerateStringElement(prop);
+                    }
+                }
+                
+                // Generate float fields
+                if (GenerateFloatElements) {
+                    if (_currMachine is IInterpolation IntMachine) {
+                        var fields = new string[] { nameof(IntMachine.BlendSpeed) };
+                        foreach (var str in fields) {
+                            var prop = typeof(IInterpolation).GetProperty(str);
+                            Debug.Assert(prop != null);
+                            GenerateFloatElement(prop);
+                        }
+                    }
+
+                    if (_currMachine is IInverseKinematics IKMachine) {
+                        var fields = new string[] {
+                            nameof(IKMachine.IKSpeed),
+                            nameof(IKMachine.IKEpsilon),
+                            nameof(IKMachine.SamplingDistance)
+                        };
+                        foreach (var str in fields) {
+                            var prop = typeof(IInverseKinematics).GetProperty(str);
+                            Debug.Assert(prop != null);
+                            GenerateFloatElement(prop);
+                        }
+                    }
+                }
+
+                // Generate angles
+                if (GenerateAxisElements)
+                    foreach (Machine.Axis a in CurrMachine.Axes)
+                        GenerateAxisElement(a);
+
+                // Generate circular axis handle gameObjects
+                if (GenerateAxisHandlers) {
+                    DisableAxisHandlers();
+                    foreach (Machine.Axis a in CurrMachine.Axes)
+                        GenerateAxisHandle(a);
+                }
+            }
         }
 
         /// <summary>List of angle controllers generated for new machine</summary>
@@ -31,13 +95,13 @@ namespace NERVV.Menu {
         public SteamVR_Action_Boolean ActivateRightIK;
         public SteamVR_Action_Boolean InteractUI;
 
-        /// <summary>String fields to generate handlers for</summary>
-        [Tooltip("String fields to generate handlers for")]
-        public string[] StringFieldNamesToGenerate;
+        /// <summary>Generates string fields</summary>
+        [Tooltip("Generates string fields")]
+        public bool GenerateStringElements = true;
 
-        /// <summary>Float fields to generate handlers for</summary>
-        [Tooltip("Float fields to generate handlers for")]
-        public string[] FloatFieldNamesToGenerate;
+        /// <summary>Generates float fields</summary>
+        [Tooltip("Generates float fields")]
+        public bool GenerateFloatElements = true;
 
         /// <summary>Generates axis elements</summary>
         [Tooltip("Generates axis elements")]
@@ -80,84 +144,54 @@ namespace NERVV.Menu {
 
         #region Unity Methods
         /// <summary>Check references and safety checks</summary>
-        protected void OnEnable() {
+        protected override void OnEnable() {
             // Get references
-            Debug.Assert(machineTitle != null);
-            Debug.Assert(machineElementStringPrefab != null);
-            Debug.Assert(machineElementFloatPrefab != null);
-            Debug.Assert(machineElementAxisPrefab != null);
-            Debug.Assert(machineElementParent != null);
-            Debug.Assert(RightIKSphere != null);
-            Debug.Assert(RightIKSphere != null);
-            Debug.Assert(AxisHandlerPrefab != null);
-            Debug.Assert(InteractUI != null);
+            if (machineTitle == null)                   throw new ArgumentNullException();
+            if (machineElementStringPrefab == null)     throw new ArgumentNullException();
+            if (machineElementFloatPrefab == null)      throw new ArgumentNullException();
+            if (machineElementAxisPrefab == null)       throw new ArgumentNullException();
+            if (machineElementParent == null)           throw new ArgumentNullException();
+            if (RightIKSphere == null)                  throw new ArgumentNullException();
+            if (RightIKSphere == null)                  throw new ArgumentNullException();
+            if (AxisHandlerPrefab == null)              throw new ArgumentNullException();
+            if (InteractUI == null)                     throw new ArgumentNullException();
 
             if (PrintDebugMessages) Debug.Log("OnEnable() run!");
-            if (AxisHandlers == null) AxisHandlers = new List<AxisHandler>();
+            AxisHandlers = AxisHandlers ?? new List<AxisHandler>();
             Debug.Assert(AxisHandlers != null);
 
-            // Safety checks
-            foreach (string s in StringFieldNamesToGenerate)
-                Debug.Assert(!string.IsNullOrEmpty(s));
+            base.OnEnable();
         }
 
         /// <summary>Check and perform IK on current machine</summary>
         protected void Update() {
-            // If activated, perform IK on current menu machine
-            if (ActivateLeftIK.state && CurrMachine != null) {
-                CurrMachine.InverseKinematics(LeftIKSphere.transform.position);
-            } else if (ActivateRightIK.state && CurrMachine != null) {
-                CurrMachine.InverseKinematics(RightIKSphere.transform.position);
+            // Perform IK on current menu machine if activated
+            if (CurrMachine?.GetType() == typeof(IInverseKinematics)) {   
+                if (ActivateLeftIK.state) { 
+                    ((IInverseKinematics)CurrMachine).InverseKinematics(LeftIKSphere.transform.position);
+                } else if (ActivateRightIK.state) {
+                    ((IInverseKinematics)CurrMachine).InverseKinematics(RightIKSphere.transform.position);
+                }
+
+                // Set sphere visualizer visibility
+                LeftIKSphere.SetActive(ActivateLeftIK.state);
+                RightIKSphere.SetActive(ActivateRightIK.state);
             }
-
-            // Set sphere visualizer visibility
-            LeftIKSphere.SetActive(ActivateLeftIK.state);
-            RightIKSphere.SetActive(ActivateRightIK.state);
-
+            
             // If menu panel is not active, disable axis handlers
             if (AxisHandlers.Count > 0 && gameObject.activeSelf == false)
                 DisableAxisHandlers();
         }
 
         /// <summary>Disables axis handlers</summary>
-        protected void OnDisable() {
+        protected override void OnDisable() {
+            base.OnDisable();
+
             DisableAxisHandlers();
-        }
-        #endregion
-
-        #region Public methods
-        /// <summary>Sets currMachine and displays all machines</summary>
-        /// <exception cref="ArgumentException">Thrown if <paramref name="m"/>
-        /// is null or not type of Machine.
-        /// </exception>
-        public void DisplayMachine(Machine m) {
-            // Safety checks
-            if ((_currMachine = m) != null && CurrMachine.GetType() == typeof(Machine))
-                throw new ArgumentException("Invalid machine! Skipping...");
-
-            // Delete all previous elements
             foreach (Transform t in machineElementParent)
                 Destroy(t.gameObject);
-
-            // Generate string fields
-            foreach (string s in StringFieldNamesToGenerate)
-                GenerateStringElement(s);
-
-            // Generate float fields
-            foreach (string s in FloatFieldNamesToGenerate)
-                GenerateFloatElement(s);
-
-            // Generate angles
-            if (GenerateAxisElements)
-                foreach (Machine.Axis a in CurrMachine.Axes)
-                    GenerateAxisElement(a);
-
-            // Generate circular axis handle gameObjects
-            if (GenerateAxisHandlers) {
-                DisableAxisHandlers();
-                foreach (Machine.Axis a in CurrMachine.Axes)
-                    GenerateAxisHandle(a);
-            }
+            LeftIKSphere.SetActive(false);
+            RightIKSphere.SetActive(false);
         }
         #endregion
 
@@ -170,38 +204,41 @@ namespace NERVV.Menu {
             GameObject g = Instantiate(machineElementAxisPrefab, machineElementParent);
             g.transform.SetAsLastSibling();
 
-            MachineAxisElement e = g.GetComponent<MachineAxisElement>();
+            MachineAxisElement e = g.GetComponentInChildren<MachineAxisElement>();
             Debug.Assert(e != null);
 
-            e.InitializeElement(a);
+            e.InitializeElement(a); // Set fields
         }
 
         /// <summary>
         /// Generates handler that allows for modification of the corresponding float field
         /// </summary>
         /// <param name="fieldName">Name of field to modify</param>
-        void GenerateFloatElement(string fieldName) {
+        void GenerateFloatElement(PropertyInfo propertyInfo) {
             GameObject g = Instantiate(machineElementFloatPrefab, machineElementParent);
             g.transform.SetAsLastSibling();
 
-            MachineFloatElement e = g.GetComponent<MachineFloatElement>();
+            MachineFloatElement e = g.GetComponentInChildren<MachineFloatElement>();
             Debug.Assert(e != null);
 
-            e.InitializeElement(fieldName, CurrMachine);
+            e.InitializeElement(propertyInfo, CurrMachine);
+            g.SetActive(true);
         }
 
         /// <summary>
         /// Generates handler that allows for modification of the corresponding string field 
         /// </summary>
         /// <param name="fieldName">Name of field to modify</param>
-        void GenerateStringElement(string fieldName) {
+        /// <exception cref="FieldAccessException">Could not get fieldInfo for field</exception>
+        void GenerateStringElement(PropertyInfo propertyInfo) {
             GameObject g = Instantiate(machineElementStringPrefab, machineElementParent);
             g.transform.SetAsLastSibling();
 
-            MachineStringElement e = g.GetComponent<MachineStringElement>();
+            MachineStringElement e = g.GetComponentInChildren<MachineStringElement>();
             Debug.Assert(e != null);
 
-            e.InitializeElement(fieldName, CurrMachine);
+            e.InitializeElement(propertyInfo, CurrMachine);
+            g.SetActive(true);
         }
         #endregion
 
@@ -220,12 +257,9 @@ namespace NERVV.Menu {
             var handler = t.GetComponent<AxisHandler>();
             Debug.Assert(handler != null);
 
-            handler.Axis = a;
             handler.InteractUI = InteractUI;
-
-            handler.enabled = true;
-            t.gameObject.SetActive(true);
-
+            handler.Axis = a;
+            
             AxisHandlers.Add(handler);
             if (PrintDebugMessages) Debug.Log("Add Count: " + AxisHandlers.Count);
         }

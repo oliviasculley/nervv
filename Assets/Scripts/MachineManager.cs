@@ -1,4 +1,5 @@
 ﻿// System
+using System;
 using System.Collections.Generic;
 
 // Unity Engine
@@ -7,24 +8,23 @@ using UnityEngine;
 namespace NERVV {
     /// <summary>
     /// This class handles adding and removing machines from the scene.
-    /// It also handles sending data to the machines. Static reference
-    /// to self is set in Awake(), so any calls to Instance must happen
-    /// in Start() or later.
+    /// It also handles sending data to the machines. Static references
+    /// to self are added in Awake(), so any calls to Instance must
+    /// happen in Start() or later.
     /// </summary>
     public class MachineManager : MonoBehaviour {
         #region Static
-        public static MachineManager Instance;
+        public static List<MachineManager> Instances = new List<MachineManager>();
         #endregion
 
         #region Properties
-        [SerializeField,
-        Tooltip("List of machines in scene"), Header("Properties")]
-        protected List<IMachine> _machines;
+        [Tooltip("List of machines in scene"), Header("Properties")]
+        protected List<IMachine> _machines = new List<IMachine>();
         /// <summary>List of machines in scene</summary>
-        public List<IMachine> Machines {
-            get { return _machines; }
-            set { _machines = value; }
-        }
+        public List<IMachine> Machines => _machines;
+
+        public event EventHandler<MachineEventArgs> OnMachineAdded;
+        public event EventHandler<MachineEventArgs> OnMachineRemoved;
         #endregion
 
         #region Settings
@@ -33,13 +33,23 @@ namespace NERVV {
         #endregion
 
         #region Unity Methods
-        /// <summary>Initialize and set static ref to self</summary>
+        /// <summary>Add static ref to self and init vars</summary>
         protected virtual void Awake() {
-            _machines = new List<IMachine>();
+            // Init vars
+            Instances = Instances ?? new List<MachineManager>() ??
+                throw new ArgumentNullException();
+            _machines = _machines ?? new List<IMachine>() ??
+                throw new ArgumentNullException();
 
-            if (PrintDebugMessages && Instance != null)
-                Debug.LogWarning("Static ref to self was not null!\nOverriding...");
-            Instance = this;
+            // Add static ref to self
+            if (PrintDebugMessages && Instances.Contains(this))
+                Debug.LogWarning("Reference already exists in Instances list!");
+            Instances.Add(this);
+        }
+
+        /// <summary>Remove static ref to self</summary>
+        protected virtual void OnDestroy() {
+            Instances.Remove(this);
         }
         #endregion
 
@@ -68,26 +78,39 @@ namespace NERVV {
         /// <typeparam name="T">Type of machine to return</typeparam>
         /// <returns>List<Machine> of machines</returns>
         public virtual List<IMachine> GetMachines<T>() {
-            List<IMachine> foundMachines = new List<IMachine>();
-
-            foreach (IMachine m in Machines)
-                if (m.GetType() == typeof(T))
-                    foundMachines.Add(m);
-
-            return foundMachines;
+            return Machines.FindAll(x => x.GetType() == typeof(T));;
         }
 
         /// <summary>Returns machines of same type</summary>
         /// <param name="type">Type of machine to return</param>
         /// <returns>List<Machine> of machines</returns>
-        public virtual List<IMachine> GetMachines(System.Type type) {
-            List<IMachine> foundMachines = new List<IMachine>();
+        public virtual List<IMachine> GetMachines(string type) {
+            return Machines.FindAll(x => x.GetType().ToString() == type);
+        }
+        #endregion
 
-            foreach (IMachine m in Machines)
-                if (m.GetType() == type)
-                    foundMachines.Add(m);
+        #region Methods
+        /// <summary>Convenience method to trigger OnOutputAdded</summary>
+        protected virtual void TriggerOnMachineAdded(MachineEventArgs eventArgs) {
+            OnMachineAdded?.Invoke(this, eventArgs);
+        }
 
-            return foundMachines;
+        /// <summary>Convenience method to trigger OnOutputRemoved</summary>
+        protected virtual void TriggerOnMachineRemoved(MachineEventArgs eventArgs) {
+            OnMachineRemoved?.Invoke(this, eventArgs);
+        }
+        #endregion
+
+        #region EventTrigger Class
+        public class MachineEventArgs : EventArgs {
+            public IMachine Machine;
+
+            /// <exception cref="ArgumentNullException">
+            /// Thrown when <paramref name="machine"/> is null
+            /// </exception>
+            public MachineEventArgs(IMachine machine) {
+                Machine = machine ?? throw new ArgumentNullException();
+            }
         }
         #endregion
     }

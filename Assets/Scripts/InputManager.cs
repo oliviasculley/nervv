@@ -8,24 +8,23 @@ using UnityEngine;
 namespace NERVV {
     /// <summary>
     /// The InputManager handles different input sources and sends
-    /// the data to the machines through the MachineManager. There
-    /// should only be one instance of InputManager running at any
-    /// time, referenced by InputManager.Instance. Static reference
-    /// to self is set in Awake(), so any calls to Instance must
-    /// happen in Start() or later.
+    /// the data to the machines through the MachineManager. Static
+    /// references to self are added in Awake(), so any calls to
+    /// Instances must happen in Start() or later.
     /// </summary>
     public class InputManager : MonoBehaviour {
         #region Static
-        public static InputManager Instance;
+        public static List<InputManager> Instances = new List<InputManager>();
         #endregion
 
         #region Properties
         [SerializeField, Tooltip("List of input sources in scene"), Header("Properties")]
-        List<IInputSource> _inputs;
+        protected List<IInputSource> _inputs = new List<IInputSource>();
         /// <summary>List of input sources in scene</summary>
-        public List<IInputSource> Inputs {
-            get { return _inputs; }
-        }
+        public List<IInputSource> Inputs => _inputs;
+
+        public event EventHandler<InputEventArgs> OnInputAdded;
+        public event EventHandler<InputEventArgs> OnInputRemoved;
         #endregion
 
         #region Settings
@@ -36,32 +35,38 @@ namespace NERVV {
         [SerializeField, Tooltip("Inputs that won't get disabled by default" +
             " when an output source runs. Can still get disabled if " +
             "DisableInputs(true) is called!"), Header("Settings")]
-        public List<InputSource> DisableExceptions;
+        public List<InputSource> DisableExceptions = new List<InputSource>();
 
         public bool PrintDebugMessages = false;
         #endregion
 
         #region Vars
         /// <summary>Keeps track of exclusive types in inputs</summary>
-        protected List<System.Type> knownExclusives;
+        protected List<Type> knownExclusives = new List<Type>();
         #endregion
 
         #region Unity Methods
-        /// <summary>Set static reference to self and initialize variables</summary>
+        /// <summary>Add static ref to self and init vars</summary>
         protected virtual void OnEnable() {
-            // Initialize vars
-            knownExclusives = new List<System.Type>();
-            _inputs = new List<IInputSource>();
+            // Init vars
+            Instances = Instances ?? new List<InputManager>() ??
+                throw new ArgumentNullException();
+            knownExclusives = knownExclusives ?? new List<Type>() ??
+                throw new ArgumentNullException();
+            _inputs = _inputs ?? new List<IInputSource>() ??
+                throw new ArgumentNullException();
+            DisableExceptions = DisableExceptions ?? new List<InputSource>() ??
+                throw new ArgumentNullException();
 
-            // Add static reference to self
-            if (PrintDebugMessages && Instance != null)
-                Debug.LogWarning("[InputManager] Static ref to self was not null!\nOverriding...");
-            Instance = this;
+            // Add static ref to self
+            if (PrintDebugMessages && Instances.Contains(this))
+                Debug.LogWarning("Reference already exists in Instances list!");
+            Instances.Add(this);
         }
 
-        /// <summary>Sets instance to null</summary>
+        /// <summary>Remove static ref to self</summary>
         protected virtual void OnDisable() {
-            Instance = null;
+            Debug.Assert(Instances.Remove(this));
         }
         #endregion
 
@@ -84,6 +89,7 @@ namespace NERVV {
 
             // Add to list of inputs
             _inputs.Add(input);
+            TriggerOnInputAdded(new InputEventArgs(input));
             return true;
         }
 
@@ -96,33 +102,25 @@ namespace NERVV {
                 knownExclusives.Remove(input.GetType());
 
             // Remove from list of inputs
-            return _inputs.Remove(input);
+            if (_inputs.Remove(input)) {
+                TriggerOnInputRemoved(new InputEventArgs(input));
+                return true;
+            }
+            return false;
         }
 
         /// <summary>Returns inputs of same type</summary>
         /// <typeparam name="T">Type of input to return</typeparam>
         /// <returns>List<InputSource> of inputs</returns>
         public List<IInputSource> GetInputs<T>() {
-            List<IInputSource> foundInputs = new List<IInputSource>();
-
-            foreach (IInputSource i in _inputs)
-                if (i.GetType() == typeof(T))
-                    foundInputs.Add(i);
-
-            return foundInputs;
+            return Inputs.FindAll(x => x.GetType() == typeof(T));
         }
 
         /// <summary>Returns inputs of same type</summary>
         /// <param name="type">String of name of type of input to return</param>
         /// <returns>List<InputSource> of inputs</returns>
         public List<IInputSource> GetInputs(string type) {
-            List<IInputSource> foundInputs = new List<IInputSource>();
-
-            foreach (IInputSource i in _inputs)
-                if (i.GetType().ToString() == type)
-                    foundInputs.Add(i);
-
-            return foundInputs;
+            return Inputs.FindAll(x => x.GetType().ToString() == type);
         }
 
         /// <summary>Disables all inputs not in DisableExceptions List</summary>
@@ -132,13 +130,35 @@ namespace NERVV {
         /// </param>
         public void DisableInputs(bool forceDisable = false) {
             foreach (IInputSource i in Inputs) {
-                try {
-                    if (!forceDisable && DisableExceptions.Contains((InputSource)i)) continue;
-                } catch (InvalidCastException) {
-                    // continue since can't be in DisableExceptions by definition
-                    continue;
+                if (!forceDisable) {
+                    try {
+                        if (DisableExceptions.Contains((InputSource)i)) continue;
+                    } catch (InvalidCastException) {
+                        // Disable since can't be in DisableExceptions by definition
+                    }
                 }
                 i.InputEnabled = false;
+            }
+        }
+        #endregion
+
+        #region Methods
+        /// <summary>Convenience method to trigger OnInputAdded</summary>
+        protected virtual void TriggerOnInputAdded(InputEventArgs eventArgs) {
+            OnInputAdded?.Invoke(this, eventArgs);
+        }
+
+        /// <summary>Convenience method to trigger OnOutputRemoved</summary>
+        protected virtual void TriggerOnInputRemoved(InputEventArgs eventArgs) {
+            OnInputRemoved?.Invoke(this, eventArgs);
+        }
+        #endregion
+
+        #region EventTrigger Class
+        public class InputEventArgs : EventArgs {
+            public IInputSource InputSource;
+            public InputEventArgs(IInputSource InputSource) {
+                this.InputSource = InputSource ?? throw new ArgumentNullException();
             }
         }
         #endregion

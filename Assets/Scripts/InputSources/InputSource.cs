@@ -25,11 +25,11 @@ namespace NERVV {
         /// even when this is false, just not actively publishing.
         /// </summary>
         public virtual bool InputEnabled {
-            get { return _inputEnabled; }
+            get => _inputEnabled;
             set {
                 _inputEnabled = value;
-                if (OutputManager.Instance != null && _inputEnabled)
-                    OutputManager.Instance.DisableOutputs();
+                if (OutputManager != null && _inputEnabled)
+                    OutputManager.DisableOutputs();
             }
         }
         #endregion
@@ -37,8 +37,8 @@ namespace NERVV {
         #region Input Settings
         [SerializeField, Header("Input Settings")] protected string _name;
         public virtual string Name {
-            get { return _name; }
-            set { _name = value; }
+            get => _name;
+            set => _name = value;
         }
 
         [SerializeField,
@@ -53,23 +53,54 @@ namespace NERVV {
         /// if ExclusiveType is true when added to InputManager.
         /// </remarks>
         public virtual bool ExclusiveType {
-            get { return _exclusiveType; }
-            set { _exclusiveType = value; }
+            get => _exclusiveType;
+            set => _exclusiveType = value;
         }
 
         public bool PrintDebugMessages = false;
         #endregion
 
+        #region Input References
+        [SerializeField,
+        Tooltip("If null, will attempt to use global reference"), Header("Input References")]
+        protected InputManager _inputManager = null;
+        public InputManager InputManager {
+            get {
+                if (_inputManager == null) {
+                    if (InputManager.Instances.Count > 0)
+                        _inputManager = InputManager.Instances[0];
+                    else
+                        throw new ArgumentNullException("Could not get a ref to an InputManager!");
+                }
+                return _inputManager;
+            }
+            set => _inputManager = value;
+        }
+
+        [SerializeField,
+        Tooltip("If null, will attempt to use global reference")]
+        protected OutputManager _outputManager;
+        public OutputManager OutputManager {
+            get {
+                if (_outputManager == null) {
+                    if (OutputManager.Instances.Count > 0)
+                        _outputManager = OutputManager.Instances[0];
+                    else
+                        throw new ArgumentNullException("Could not get a ref to an OutputManager!");
+                }
+                return _outputManager;
+            }
+            set => _outputManager = value;
+        }
+        #endregion
+
         #region Unity Methods
         /// <summary>Add self to InputManager, disabling self if failure</summary>
         /// <exception cref="ArgumentNullException">
-        /// Throws if InputManager.Instance is null
+        /// Throws if InputManager is null
         /// </exception>
         protected virtual void OnEnable() {
-            if (InputManager.Instance == null)
-                throw new ArgumentNullException("InputManager.Instance is null!");
-
-            var success = InputManager.Instance.AddInput(this);
+            var success = InputManager.AddInput(this);
             if (PrintDebugMessages && !success)
                 Debug.LogError("Could not add self to InputManager!");
             InputEnabled &= success;
@@ -77,13 +108,10 @@ namespace NERVV {
 
         /// <summary>Removes input from InputManager</summary>
         /// <exception cref="ArgumentNullException">
-        /// Throws if InputManager.Instance is null
+        /// Throws if InputManager is null
         /// </exception>
         protected virtual void OnDisable() {
-            if (InputManager.Instance == null)
-                throw new ArgumentNullException("InputManager.Instance is null!");
-
-            if (PrintDebugMessages && !InputManager.Instance.RemoveInput(this))
+            if (PrintDebugMessages && !InputManager.RemoveInput(this))
                 Debug.LogError("Could not remove self from InputManager!");
         }
         #endregion

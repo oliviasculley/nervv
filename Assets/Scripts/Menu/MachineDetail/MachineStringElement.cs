@@ -1,20 +1,35 @@
 ﻿// System
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 
 // Unity Engine
 using UnityEngine;
 using TMPro;
 using Valve.VR;
-using System.Reflection;
 
-namespace NERVV.Menu {
+namespace NERVV.Menu.MachineDetailPanel {
     /// <summary>Machine element in machine properties for string</summary>
     public class MachineStringElement : MachineElement {
         #region Properties
-        [Header("Properties")]
-        public string fieldName;
-        public IMachine currMachine;
+        [SerializeField, Header("Properties")]
+        protected PropertyInfo _property = null;
+        public PropertyInfo Property {
+            get => _property; 
+            set {
+                if (value == null) throw new ArgumentNullException();
+                if (GetMemberType(value) != typeof(string)) throw new ArgumentException();
+                _property = value;
+            }
+        }
+
+        [SerializeField]
+        protected IMachine _currMachine = null;
+        public IMachine CurrMachine {
+            get => _currMachine;
+            set => _currMachine = value ?? throw new ArgumentNullException();
+        }
         #endregion
 
         #region Settings
@@ -34,63 +49,54 @@ namespace NERVV.Menu {
 
         #region Unity Methods
         /// <summary>Check references and start SteamVR keyboard</summary>
-        new void OnEnable() {
-            Debug.Assert(elementTitle != null);
+        /// <exception cref="ArgumentNullException">Thrown if elementTitle is null</exception>
+        /// <exception cref="ArgumentException">Thrown if field is not string type</exception>
+        protected override void OnEnable() {
+            base.OnEnable();
+
+            if (elementTitle == null) throw new ArgumentNullException();
+
+            // Ensure necessary fields are filled
+            if (Property == null || CurrMachine == null)
+                gameObject.SetActive(false);
 
             // Listen for keyboard
             SteamVR_Events.System(EVREventType.VREvent_KeyboardCharInput).Listen(OnKeyboard);
             SteamVR_Events.System(EVREventType.VREvent_KeyboardClosed).Listen(OnKeyboardClosed);
+
+            UpdateText();
         }
         #endregion
 
         #region Public Functions
         /// <summary>Initialize float element with needed parameters</summary>
         /// <param name="fieldName"></param>
-        /// <param name="currMachine"></param>
-        public void InitializeElement(string fieldName, IMachine currMachine) {
-            Debug.Assert(currMachine != null && !string.IsNullOrEmpty(fieldName));
+        /// <param name="CurrMachine"></param>
+        public void InitializeElement(PropertyInfo Property, IMachine CurrMachine) {
+            this.Property = Property;
+            this.CurrMachine = CurrMachine;
 
-            this.fieldName = fieldName;
-            this.currMachine = currMachine;
-
-            UpdateText();
+            gameObject.SetActive(true);
         }
         #endregion
 
         #region Methods
-        /// <summary>Gets field value with reflection</summary>
-        /// <returns>Field value, can return null!</returns>
-        string GetFieldValue() {
-            FieldInfo info;
-            if ((info = typeof(Machine).GetField(
-                    fieldName,
-                    BindingFlags.NonPublic | BindingFlags.Instance)
-                ) != null)
-                return (string)info.GetValue(currMachine);
-            Debug.LogError("Could not get field value: " + fieldName);
-            return null;
+        /// <summary>Gets string from field with reflection</summary>
+        protected string GetFieldValue() {
+            return (string)GetMemberValue(Property, CurrMachine);
         }
 
-        /// <summary>Sets field value with reflection</summary>
+        /// <summary>Sets string field with reflection</summary>
         /// <param name="value">Field value</param>
-        void SetField(string value) {
-            FieldInfo info;
-            if (currMachine != null &&
-                (info = typeof(Machine).GetField(
-                    fieldName,
-                    BindingFlags.NonPublic | BindingFlags.Instance)
-                ) != null)
-                info.SetValue(currMachine, value);
-            else
-                Debug.LogError("Could not set field value: " + fieldName);
+        protected void SetField(string value) {
+            SetMemberValue(Property, CurrMachine, value);
         }
 
         /// <summary>Update text readout with current value</summary>
-        void UpdateText() {
-            // Set text with current value
-            elementTitle.text = CapitalizeFirstLetter(fieldName.Substring(1)) + ": ";
-            if (GetFieldValue() != null)
-                elementTitle.text += GetFieldValue().ToString();
+        protected void UpdateText() {
+            // Set text with field name and current value
+            elementTitle.text =
+                CapitalizeFirstLetter(Property.Name) + ": " + GetFieldValue();
         }
         #endregion
 
@@ -114,7 +120,7 @@ namespace NERVV.Menu {
                 );
             } else {
                 if (GetFieldValue() == null)
-                    Debug.LogError("FieldValue null for: " + fieldName);
+                    Debug.LogError("FieldValue null for: " + Property.Name);
                 if (SteamVR.instance == null)
                     Debug.LogError("Could not get SteamVR Instance");
                 if (SteamVR.instance != null && SteamVR.instance.overlay == null)
@@ -123,15 +129,25 @@ namespace NERVV.Menu {
         }
 
         /// <summary>Callback when keyboard input is registered</summary>
+        /// <remarks>
+        /// Code used from OpenVR Samples. See: https://github.com/ValveSoftware/openvr/blob/41bfc14efef21b2959394d8b4c29b82c3bdd7d12/samples/unity_keyboard_sample/Assets/KeyboardSample.cs
+        /// </remarks>
         void OnKeyboard(VREvent_t args) {
             if (activeKeyboard != this)
                 return;
 
-            // Code used from OpenVR Samples
-            // https://github.com/ValveSoftware/openvr/blob/41bfc14efef21b2959394d8b4c29b82c3bdd7d12/samples/unity_keyboard_sample/Assets/KeyboardSample.cs
-
             VREvent_Keyboard_t keyboard = args.data.keyboard;
-            byte[] inputBytes = new byte[] { keyboard.cNewInput0, keyboard.cNewInput1, keyboard.cNewInput2, keyboard.cNewInput3, keyboard.cNewInput4, keyboard.cNewInput5, keyboard.cNewInput6, keyboard.cNewInput7 };
+            byte[] inputBytes = new byte[] {
+                keyboard.cNewInput0,
+                keyboard.cNewInput1,
+                keyboard.cNewInput2,
+                keyboard.cNewInput3,
+                keyboard.cNewInput4,
+                keyboard.cNewInput5,
+                keyboard.cNewInput6,
+                keyboard.cNewInput7
+            };
+
             int len = 0;
             for (; inputBytes[len] != 0 && len < 7; len++) ;
             string input = System.Text.Encoding.UTF8.GetString(inputBytes, 0, len);

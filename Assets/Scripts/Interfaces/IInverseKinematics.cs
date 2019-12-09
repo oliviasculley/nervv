@@ -7,6 +7,17 @@ namespace NERVV {
     /// activate InverseKinematics based on a target position
     /// </summary>
     public interface IInverseKinematics : IMachine {
+        #region Required Fields
+        /// <summary>Learning rate of gradient descent</summary>
+        float IKSpeed { get; set; }
+
+        /// <summary>Axis delta to check IK</summary>
+        float SamplingDistance { get; set; }
+
+        /// <summary>Minimum distance delta to apply IK</summary>
+        float IKEpsilon { get; set; }
+        #endregion
+
         #region Required methods
         /// <summary>
         /// Activate a small delta of inverse kinematics for the target position.

@@ -9,13 +9,27 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-namespace NERVV.Menu {
+namespace NERVV.Menu.MachineDetailPanel {
     /// <summary>Machine element in machine properties for float</summary>
     public class MachineFloatElement : MachineElement {
         #region Properties
-        [Header("Properties")]
-        public string fieldName;
-        public IMachine currMachine;
+        [SerializeField, Header("Properties")]
+        protected PropertyInfo _property = null;
+        public PropertyInfo Property {
+            get => _property;
+            set {
+                if (value == null) throw new ArgumentNullException();
+                if (GetMemberType(value) != typeof(float)) throw new ArgumentException();
+                _property = value;
+            }
+        }
+
+        [SerializeField]
+        protected IMachine _currMachine = null;
+        public IMachine CurrMachine {
+            get => _currMachine;
+            set => _currMachine = value ?? throw new ArgumentNullException();
+        }
         #endregion
 
         #region Settings
@@ -36,9 +50,15 @@ namespace NERVV.Menu {
         /// <exception cref="ArgumentNullException">
         /// Thrown if element title is null!
         /// </exception>
-        new void OnEnable() {
-            if (elementTitle == null)
-                throw new ArgumentNullException("Element title is null!");
+        protected override void OnEnable() {
+            base.OnEnable();
+
+            if (elementTitle == null) throw new ArgumentNullException("Element title is null!");
+
+            if (Property == null || CurrMachine == null)
+                gameObject.SetActive(false);
+
+            UpdateText();
         }
         #endregion
 
@@ -49,15 +69,13 @@ namespace NERVV.Menu {
         /// <exception cref="ArgumentNullException">
         /// Thrown when currMachine or fieldName is null
         /// </exception>
-        public void InitializeElement(string fieldName, IMachine currMachine, float minValue = default, float maxValue = default) {
-            if (string.IsNullOrEmpty(fieldName)) throw new ArgumentNullException("fieldName is null!");
-
-            this.fieldName = fieldName;
-            this.currMachine = currMachine ?? throw new ArgumentNullException("currMachine is null!");
+        public void InitializeElement(PropertyInfo Property, IMachine CurrMachine, float minValue = default, float maxValue = default) {
+            this.Property = Property;
+            this.CurrMachine = CurrMachine;
             this.minValue = minValue;
             this.maxValue = maxValue;
 
-            UpdateText();
+            gameObject.SetActive(true);
         }
 
         /// <summary>Increments float value</summary>
@@ -65,13 +83,8 @@ namespace NERVV.Menu {
         /// Thrown when currMachine or fieldName is null
         /// </exception>
         public void Increment() {
-            if (currMachine == null) throw new ArgumentNullException("currMachine is null!");
-            if (string.IsNullOrEmpty(fieldName)) throw new ArgumentNullException("fieldName is null!");
-
-            if (GetFieldValue() != null) {
-                SetField((float)GetFieldValue() + delta);
-                UpdateText();
-            }
+            SetField(GetFieldValue() + delta);
+            UpdateText();
         }
 
         /// <summary>Decrements float value</summary>
@@ -79,63 +92,29 @@ namespace NERVV.Menu {
         /// Thrown when currMachine or fieldName is null
         /// </exception>
         public void Decrement() {
-            if (currMachine == null) throw new ArgumentNullException("currMachine is null!");
-            if (string.IsNullOrEmpty(fieldName)) throw new ArgumentNullException("fieldName is null!");
-
-            if (GetFieldValue() != null) {
-                SetField((float)GetFieldValue() - delta);
-                UpdateText();
-            }
+            SetField(GetFieldValue() - delta);
+            UpdateText();
         }
         #endregion
 
         #region Methods
         /// <summary>Gets field value with reflection</summary>
         /// <returns>Field value</returns>
-        float? GetFieldValue() {
-            FieldInfo info;
-            if ((info = typeof(Machine).GetField(
-                    fieldName,
-                    BindingFlags.NonPublic | BindingFlags.Instance
-                )) != null)
-                return (float)info.GetValue(currMachine);
-            Debug.LogError("Could not get field value: " + fieldName);
-            return null;
+        protected float GetFieldValue() {
+            return (float)GetMemberValue(Property, CurrMachine);
         }
 
         /// <summary>Sets field value with reflection</summary>
         /// <param name="value">Field value</param>
-        void SetField(float value) {
-            FieldInfo info;
-            if (currMachine != null &&
-                (info = typeof(Machine).GetField(
-                    fieldName,
-                    BindingFlags.NonPublic | BindingFlags.Instance)
-                ) != null) {
-                // Use min/max if values are available
-                if (minValue != default || maxValue != default)
-                    typeof(Machine).GetField(
-                        fieldName,
-                        BindingFlags.NonPublic | BindingFlags.Instance
-                    ).SetValue(currMachine,
-                        Mathf.Clamp(value, minValue, maxValue)
-                    );
-                else
-                    typeof(Machine).GetField(
-                        fieldName,
-                        BindingFlags.NonPublic | BindingFlags.Instance
-                    ).SetValue(currMachine, value);
-            } else {
-                Debug.LogError("Could not set field value: " + fieldName);
-            }
+        protected void SetField(float value) {
+            SetMemberValue(Property, CurrMachine, value);
         }
 
         /// <summary>Update text readout with current value</summary>
-        void UpdateText() {
+        protected void UpdateText() {
             // Set text with current value
-            elementTitle.text = CapitalizeFirstLetter(fieldName.Substring(1)) + ": ";
-            if (GetFieldValue() != null)
-                elementTitle.text += GetFieldValue().ToString();
+            elementTitle.text =
+                CapitalizeFirstLetter(Property.Name) + ": " + GetFieldValue().ToString();
         }
         #endregion
     }

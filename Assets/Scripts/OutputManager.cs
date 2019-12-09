@@ -7,24 +7,24 @@ using UnityEngine;
 
 namespace NERVV {
     /// <summary>
-    /// This class handles different outputs sources. Static reference
-    /// to self is set in Awake(), so any calls to Instance must happen
-    /// in Start() or later.
+    /// This class handles different outputs sources. Static references
+    /// to self are added in Awake(), so any calls to Instance must
+    /// happen in Start() or later.
     /// </summary>
     public class OutputManager : MonoBehaviour {
         #region Static
-        public static OutputManager Instance;
+        public static List<OutputManager> Instances = new List<OutputManager>();
         #endregion
 
         #region Properties
         [SerializeField,
         Tooltip("List of output sources in scene"), Header("Properties")]
-        protected List<IOutputSource> _outputs;
+        protected List<IOutputSource> _outputs = new List<IOutputSource>();
         /// <summary>List of output sources in scene</summary>
-        public List<IOutputSource> Outputs {
-            get { return _outputs; }
-            set { _outputs = value; }
-        }
+        public List<IOutputSource> Outputs => _outputs;
+        
+        public event EventHandler<OutputEventArgs> OnOutputAdded;
+        public event EventHandler<OutputEventArgs> OnOutputRemoved;
         #endregion
 
         #region Settings
@@ -35,32 +35,38 @@ namespace NERVV {
         [Tooltip("Outputs that won't get disabled by default" +
             " when an input source initializes. Can still get disabled if " +
             "DisableOutputs(true) is called!"), Header("Settings")]
-        public List<OutputSource> DisableExceptions;
+        public List<OutputSource> DisableExceptions = new List<OutputSource>();
 
         public bool PrintDebugMessages = false;
         #endregion
 
         #region Vars
         /// <summary>Keeps track of exclusive types in outputs</summary>
-        protected List<System.Type> knownExclusives;
+        protected List<Type> knownExclusives = new List<Type>();
         #endregion
 
         #region Unity Methods
-        /// <summary>Set static ref to self and initialize vars</summary>
+        /// <summary>Init vars and add static ref to self</summary>
         protected virtual void OnEnable() {
-            // Initialize vars
-            knownExclusives = new List<System.Type>();
-            _outputs = new List<IOutputSource>();
+            // Init vars
+            Instances = Instances ?? new List<OutputManager>() ??
+                throw new ArgumentNullException();
+            knownExclusives = knownExclusives ?? new List<Type>() ??
+                throw new ArgumentNullException();
+            _outputs = _outputs ?? new List<IOutputSource>() ??
+                throw new ArgumentNullException();
+            DisableExceptions = DisableExceptions ?? new List<OutputSource>() ??
+                throw new ArgumentNullException();
 
-            // Add static reference to self
-            if (PrintDebugMessages && Instance != null)
-                Debug.LogWarning("[OutputManager] Static ref to self was not null!\nOverriding...");
-            Instance = this;
+            // Add static ref to self
+            if (PrintDebugMessages && Instances.Contains(this))
+                Debug.LogWarning("Reference already exists in Instances list!");
+            Instances.Add(this);
         }
 
-        /// <summary>Sets instance to null</summary>
+        /// <summary>Remove static ref to self</summary>
         protected virtual void OnDisable() {
-            Instance = null;
+            Debug.Assert(Instances.Remove(this));
         }
         #endregion
 
@@ -80,6 +86,7 @@ namespace NERVV {
 
             // Add to list of outputs
             Outputs.Add(output);
+            TriggerOnOutputAdded(new OutputEventArgs(output));
             return true;
         }
 
@@ -91,33 +98,25 @@ namespace NERVV {
             if (output.ExclusiveType) knownExclusives.Remove(output.GetType());
 
             // Remove from list of outputs
-            return Outputs.Remove(output);
+            if (Outputs.Remove(output)) {
+                TriggerOnOutputRemoved(new OutputEventArgs(output));
+                return true;
+            }
+            return false;
         }
 
         /// <summary>Returns outputs of same type</summary>
         /// <typeparam name="T">Type of output to return</typeparam>
         /// <returns>List<OutputSource> of outputs</returns>
         public virtual List<IOutputSource> GetOutputs<T>() {
-            List<IOutputSource> foundOutputs = new List<IOutputSource>();
-
-            foreach (IOutputSource i in Outputs)
-                if (i.GetType() == typeof(T))
-                    foundOutputs.Add(i);
-
-            return foundOutputs;
+            return Outputs.FindAll(x => x.GetType() == typeof(T));
         }
 
         /// <summary>Returns outputs of same type</summary>
         /// <param name="type">String of name of type of output to return</param>
         /// <returns>List<OutputSource> of outputs</returns>
         public virtual List<IOutputSource> GetOutputs(string type) {
-            List<IOutputSource> foundOutputs = new List<IOutputSource>();
-
-            foreach (IOutputSource i in Outputs)
-                if (i.GetType().ToString() == type)
-                    foundOutputs.Add(i);
-
-            return foundOutputs;
+            return Outputs.FindAll(x => x.GetType().ToString() == type);
         }
 
         /// <summary>Disables all outputs not in DisableExceptions List</summary>
@@ -127,13 +126,35 @@ namespace NERVV {
         /// </param>
         public void DisableOutputs(bool forceDisable = false) {
             foreach (IOutputSource o in Outputs) {
-                try {
-                    if (!forceDisable && DisableExceptions.Contains((OutputSource)o)) continue;
-                } catch (InvalidCastException) {
-                    // continue since can't be in DisableExceptions by definition
-                    continue;
+                if (!forceDisable) {
+                    try {
+                        if (DisableExceptions.Contains((OutputSource)o)) continue;
+                    } catch (InvalidCastException) {
+                        // Disable since can't be in DisableExceptions by definition
+                    }
                 }
                 o.OutputEnabled = false;
+            }
+        }
+        #endregion
+
+        #region Methods
+        /// <summary>Convenience method to trigger OnOutputAdded</summary>
+        protected virtual void TriggerOnOutputAdded(OutputEventArgs eventArgs) {
+            OnOutputAdded?.Invoke(this, eventArgs);
+        }
+
+        /// <summary>Convenience method to trigger OnOutputRemoved</summary>
+        protected virtual void TriggerOnOutputRemoved(OutputEventArgs eventArgs) {
+            OnOutputRemoved?.Invoke(this, eventArgs);
+        }
+        #endregion
+
+        #region EventTrigger Class
+        public class OutputEventArgs : EventArgs {
+            public IOutputSource OutputSource;
+            public OutputEventArgs(IOutputSource outputSource) {
+                OutputSource = outputSource ?? throw new ArgumentNullException();
             }
         }
         #endregion
