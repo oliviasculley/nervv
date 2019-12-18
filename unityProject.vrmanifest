@@ -2,10 +2,10 @@
   "source": "Unity",
   "applications": [
     {
-      "app_key": "application.generated.unity.mtconnectvr.exe",
+      "app_key": "application.generated.unity.nervv.exe",
       "launch_type": "url",
       "url": "steam://launch/",
-      "action_manifest_path": "C:\\Users\\csscu\\Documents\\NERVV\\Assets\\StreamingAssets\\SteamVR\\actions.json",
+      "action_manifest_path": "C:\\Users\\csscu\\Documents\\nervv\\Assets\\StreamingAssets\\SteamVR\\actions.json",
       "strings": {
         "en_us": {
           "name": "NERVV [Testing]"
