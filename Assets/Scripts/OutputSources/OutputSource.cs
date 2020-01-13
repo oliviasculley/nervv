@@ -100,6 +100,10 @@ namespace NERVV {
             if (!OutputManager.RemoveOutput(this) && PrintDebugMessages)
                 Debug.LogError("Could not remove self from OutputManager!");
         }
+
+        protected void Log(string s) { if (PrintDebugMessages) Debug.Log("<b>[" + GetType() + "]</b>" + s); }
+        protected void LogWarning(string s) { if (PrintDebugMessages) Debug.LogWarning("<b>[" + GetType() + "]</b>" + s); }
+        protected void LogError(string s) { if (PrintDebugMessages) Debug.LogError("<b>[" + GetType() + "]</b>" + s); }
         #endregion
     }
 }

@@ -14,6 +14,7 @@ using RosSharp.RosBridgeClient.Messages.Standard;
 using NERVV;
 using NERVV.Samples.Junlab;
 
+/// <summary>Example of ROS joint subscriber using a custom joint message</summary>
 public class KukaRosJointSubscriber : InputSource {
     #region Static
     public enum ProtocolSelection { WebSocketSharp, WebSocketNET };

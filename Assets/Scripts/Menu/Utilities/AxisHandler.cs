@@ -25,8 +25,6 @@ public class AxisHandler : MonoBehaviour {
             gameObject.SetActive(_axis != null);
         }
     }
-
-    public SteamVR_Action_Boolean InteractUI = null;
     #endregion
 
     #region Settings
@@ -43,6 +41,7 @@ public class AxisHandler : MonoBehaviour {
     #region References
     [Header("References")]
     public GameObject Torus;
+    public SteamVR_Action_Boolean InteractUI = null;
     #endregion
 
     #region Vars
@@ -74,7 +73,7 @@ public class AxisHandler : MonoBehaviour {
         availableHand = null;
         currHand = null;
         grabbing = false;
-        InteractUI = InteractUI ?? throw new ArgumentNullException();
+        if (InteractUI == null) throw new ArgumentNullException();
         InteractUI.onStateDown += OnGrabDown;
         InteractUI.onStateUp += OnGrabUp;
         InteractUI.onState += OnGrab;

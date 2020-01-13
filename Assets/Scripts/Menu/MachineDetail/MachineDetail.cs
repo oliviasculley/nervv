@@ -110,8 +110,6 @@ namespace NERVV.Menu.MachineDetailPanel {
         /// <summary>Generates circular axis interaction objects</summary>
         [Tooltip("Generates circular axis interaction objects")]
         public bool GenerateAxisHandlers = true;
-
-        public bool PrintDebugMessages = false;
         #endregion
 
         #region References

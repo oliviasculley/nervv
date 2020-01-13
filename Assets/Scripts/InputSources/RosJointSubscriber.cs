@@ -13,6 +13,9 @@ using RosSharp.RosBridgeClient.Messages.Standard;
 using NERVV;
 using System.Net.Sockets;
 
+/// <summary>
+/// Example of a ROS joint subscriber using Ros#'s default joint message
+/// </summary>
 public class RosJointSubscriber : InputSource {
     #region Classes
     [Serializable]
