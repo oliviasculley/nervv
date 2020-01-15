@@ -93,10 +93,13 @@ public class LaserPointer : MonoBehaviour {
         // Reset pointer length to shortest distance
         SetPointerLength(0, MAX_CAST_DIST, true);
 
-        // Pointer events
-        if (hits.Length == 0) return;   // No need to run pointer events if no pointers
+        // No need to run pointer events if no hits
+        if (hits.Length == 0) {
+            currentHovered = null;
+            return;
+        }
 
-        {
+        {   // Pointer events
             HashSet<Transform> foundHits = new HashSet<Transform>();
             IPointerEnterHandler onPointerIn;
             IPointerDownHandler onPointerDown;
@@ -111,6 +114,10 @@ public class LaserPointer : MonoBehaviour {
                 onPointerClick = h.transform.GetComponent<IPointerClickHandler>();
                 onPointerUp = h.transform.GetComponent<IPointerUpHandler>();
                 foundHits.Add(h.transform);
+                if (onPointerIn != null || onPointerDown != null ||
+                    onPointerClick != null || onPointerUp != null) {
+                    SetPointerLength(h.distance);
+                }
 
                 // Trigger OnPointerIn
                 if (h.transform != currentHovered && onPointerIn != null) {
@@ -122,15 +129,12 @@ public class LaserPointer : MonoBehaviour {
                     if (h.transform.GetComponent<IPointerExitHandler>() != null) {
                         enteredTransforms.Add(h.transform);
                     }
-
-                    SetPointerLength(h.distance);
                     timeToBreak = true;
                 }
 
                 // Trigger OnPointerDown
                 if (interactWithUI.GetStateDown(pose.inputSource) && onPointerDown != null) {
                     onPointerDown.OnPointerDown(new PointerEventData(EventSystem.current));
-                    SetPointerLength(h.distance);
                     timeToBreak = true;
                 }
 
@@ -138,13 +142,11 @@ public class LaserPointer : MonoBehaviour {
                 if (interactWithUI.GetStateUp(pose.inputSource)) {
                     if (onPointerClick != null) {
                         onPointerClick.OnPointerClick(new PointerEventData(EventSystem.current));
-                        SetPointerLength(h.distance);
                         timeToBreak = true;
                     }
 
                     if (onPointerUp != null) {
                         onPointerUp.OnPointerUp(new PointerEventData(EventSystem.current));
-                        SetPointerLength(h.distance);
                         timeToBreak = true;
                     }
                 }
@@ -171,9 +173,6 @@ public class LaserPointer : MonoBehaviour {
                         currentHovered = null;
                 }
             }
-
-            if (hits.Length == 0 || currentHovered == null)
-                currentHovered = null;
         }
     }
     #endregion

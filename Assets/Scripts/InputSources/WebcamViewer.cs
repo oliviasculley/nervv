@@ -175,7 +175,6 @@ public class WebcamViewer : InputSource {
 
         ImageRenderer.texture = w;
         ImageRenderer.material.mainTexture = w;
-        
         w.Play();
 
         if (!w.isPlaying)
