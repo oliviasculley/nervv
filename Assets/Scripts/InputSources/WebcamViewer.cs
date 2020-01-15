@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 // Unity
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using Valve.VR;
 
@@ -18,21 +19,38 @@ public class WebcamViewer : InputSource {
     public int DeviceID {
         get => _deviceID;
         protected set {
+            StopWebcamTexture();
+
+            if (value == -1) {
+                _deviceID = -1;
+                return;
+            }
+
+            if (cachedDevices == null)
+                throw new InvalidOperationException("Could not get any webcams!");
+
             if (value < 0 || value > cachedDevices.Length)
                 throw new ArgumentOutOfRangeException("Invalid webcam device ID");
             _deviceID = value;
             if (Dropdown != null)
                 Dropdown.SetValueWithoutNotify(_deviceID);
-            OnDisable();
-            currWebcamFeed = StartCoroutine(GetLocalWebcamFeed());
+
+            // Restart webcam feed
+            currWebcamFeed = StartCoroutine(GetCurrentDeviceFeed());
         }
     }
 
     /// <summary>Convenience function to get current device. Can be null!</summary>
     public WebCamDevice? CurrentDevice {
         get {
-            if (DeviceID < 0 || cachedDevices == null || DeviceID > cachedDevices.Length)
+            // If DeviceID is less than -1 or greater than cachedDevices' length
+            if (DeviceID < -1 ||
+                (cachedDevices != null && DeviceID >= cachedDevices.Length))
+                throw new ArgumentOutOfRangeException();
+
+            if (DeviceID == -1 || cachedDevices == null)
                 return null;
+
             return cachedDevices[DeviceID];
         }
     }
@@ -55,14 +73,32 @@ public class WebcamViewer : InputSource {
 
     #region References
     [Header("References")]
-    public Renderer PlaneRenderer = null;
+    public RawImage ImageRenderer = null;
     public WebcamViewerHandle HandleScript = null;
     public TMP_Dropdown Dropdown = null;
     #endregion
 
     #region Vars
     WebCamTexture w = null;
-    WebCamDevice[] cachedDevices = null;
+    WebCamDevice[] _cachedDevices = null;
+    WebCamDevice[] cachedDevices {
+        get {
+            if (_cachedDevices == null) {
+                Dropdown.options = Dropdown.options ?? new List<TMP_Dropdown.OptionData>();
+                Dropdown.options.Clear();
+                Dropdown.options.Capacity = WebCamTexture.devices.Length;
+
+                if (_cachedDevices == null || _cachedDevices.Length != WebCamTexture.devices.Length)
+                    _cachedDevices = new WebCamDevice[WebCamTexture.devices.Length];
+                
+                for (int i = 0; i < WebCamTexture.devices.Length; i++) {
+                    _cachedDevices[i] = WebCamTexture.devices[i];
+                    Dropdown.options[i] = new TMP_Dropdown.OptionData(_cachedDevices[i].name);
+                }
+            }
+            return _cachedDevices;
+        }
+    }
     Coroutine currWebcamFeed = null;
     #endregion
 
@@ -75,29 +111,31 @@ public class WebcamViewer : InputSource {
     /// If webcam DeviceID is out of range of WebCamTexture.devices
     /// </exception>
     protected override void OnEnable() {
-        if (PlaneRenderer == null) throw new ArgumentNullException("PlaneRenderer is null!");
+        if (ImageRenderer == null) throw new ArgumentNullException("PlaneRenderer is null!");
         if (HandleScript == null) throw new ArgumentNullException("HandleScript is null!");
         if (Dropdown == null) throw new ArgumentNullException("Dropdown is null!");
-        if (_deviceID < 0 || _deviceID >= WebCamTexture.devices.Length)
-            throw new ArgumentOutOfRangeException("Webcam DeviceID out of range!");
         base.OnEnable();
 
         // Initial InputSource fields
         ExclusiveType = false;
         _deviceID = -1;
-        HandleScript.OnGrab += MoveWebcamViewer;
 
         // Enumerates webcams and sets to first if available
         EnumerateWebcams();
+
+        // Set callback
+        HandleScript.OnGrab += MoveWebcamViewer;
     }
 
-    /// <summary>Disables existing coroutine and</summary>
+    /// <summary>Disables existing callback and coroutines</summary>
     protected override void OnDisable() {
-        HandleScript.OnGrab -= MoveWebcamViewer;
-        if (currWebcamFeed != null)
-            StopCoroutine(currWebcamFeed);
-        w?.Stop();
-        w = null;
+        // Remove callback
+        if (HandleScript != null)
+            HandleScript.OnGrab -= MoveWebcamViewer;
+
+        // Disable running webcam feeds or coroutines
+        StopWebcamTexture();
+
         base.OnDisable();
     }
     #endregion
@@ -111,30 +149,36 @@ public class WebcamViewer : InputSource {
     #endregion
 
     #region Methods
-    /// <summary>Unity Coroutine for streaming local webcam to plane</summary>
-    protected IEnumerator GetLocalWebcamFeed() {
+    /// <summary>Unity Coroutine for activating current device's webcam texture</summary>
+    protected IEnumerator GetCurrentDeviceFeed() {
         yield return Application.RequestUserAuthorization(UserAuthorization.WebCam);
-        if (Application.HasUserAuthorization(UserAuthorization.WebCam) && CurrentDevice != null) {
-            w = null;
-
-            WebCamDevice d = CurrentDevice.Value;
-            Resolution r = (d.availableResolutions?.Length ?? 0) > 0 ?
-                r = d.availableResolutions[d.availableResolutions.Length - 1] :
-                r = new Resolution() { width = 100, height = 100, refreshRate = 15 };
-            PlaneRenderer.material.mainTexture = w = new WebCamTexture(
-                deviceName: WebCamTexture.devices[DeviceID].name,
-                requestedWidth: r.width,
-                requestedHeight: r.height,
-                requestedFPS: r.refreshRate);
-            w?.Play();
-            Debug.Assert(w != null && w.isPlaying);
-            
-        } else {
-            if (PrintDebugMessages)
-                Debug.LogWarning("Webcam authorization denied for: \"" +
-                    (CurrentDevice.Value.name ?? "(null)") + "\"!");
+        if (!Application.HasUserAuthorization(UserAuthorization.WebCam)) {
+            LogWarning(
+                "Webcam authorization denied for: \"" +
+                (CurrentDevice.Value.name ?? "(null)") + "\"!");
             gameObject.SetActive(false);
         }
+        if (CurrentDevice == null) {
+            LogWarning("Current device is null!");
+            gameObject.SetActive(false);
+        }
+
+        WebCamDevice d = CurrentDevice.Value;
+        Resolution r = (d.availableResolutions?.Length ?? 0) > 0 ?
+            r = d.availableResolutions[d.availableResolutions.Length - 1] :
+            r = new Resolution() { width = 100, height = 100, refreshRate = 15 };
+        w = new WebCamTexture(
+            deviceName: WebCamTexture.devices[DeviceID].name,
+            requestedWidth: r.width,
+            requestedHeight: r.height,
+            requestedFPS: r.refreshRate);
+
+        ImageRenderer.texture = w;
+        ImageRenderer.material.mainTexture = w;
+        w.Play();
+
+        if (!w.isPlaying)
+            LogError("Webcam texture is not playing!");
     }
 
     /// <summary>
@@ -149,18 +193,12 @@ public class WebcamViewer : InputSource {
             Debug.Log(s);
         }
 
-        if (Dropdown.options == null)
-            Dropdown.options = new List<TMP_Dropdown.OptionData>();
-        if (cachedDevices == null || cachedDevices.Length != WebCamTexture.devices.Length)
-            cachedDevices = new WebCamDevice[WebCamTexture.devices.Length];
-        Dropdown.options.Clear();
-        for (int i = 0; i < WebCamTexture.devices.Length; i++) {
-            cachedDevices[i] = WebCamTexture.devices[i];
-            Dropdown.options.Add(new TMP_Dropdown.OptionData(cachedDevices[i].name));
-        }
+        // Enumerate webcams
+        if (cachedDevices == null)
+            LogError("cachedDevices is null!");
 
         // Set to first webcam if available
-        if (WebCamTexture.devices.Length > 0)
+        if (cachedDevices.Length > 0)
             DeviceID = 0;
     }
 
@@ -170,6 +208,14 @@ public class WebcamViewer : InputSource {
     protected void MoveWebcamViewer(object sender, EventArgs args) {
         transform.position = HandleScript.CurrentHand.position;
         transform.localPosition += GrabbingOffset;
+    }
+
+    /// <summary>Stops running coroutine and webcam texture</summary>
+    protected void StopWebcamTexture() {
+        if (currWebcamFeed != null)
+            StopCoroutine(currWebcamFeed);
+        w?.Stop();
+        w = null;
     }
     #endregion
 }

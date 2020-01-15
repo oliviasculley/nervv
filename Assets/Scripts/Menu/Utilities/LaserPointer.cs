@@ -1,4 +1,5 @@
 ﻿// System
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -11,7 +12,24 @@ using Valve.VR;
 using NERVV.Menu;
 
 [RequireComponent(typeof(SteamVR_Behaviour_Pose))]
+/// <summary>
+/// Raycasts all objects with layer "Menu" and triggers IPointerUpHandler,
+/// IPointerDownHandler, IPointerClickHandler, IPointerEnterHandler and
+/// IPointerExitHandler. Also generates cube object for visual pointer aid,
+/// as well. Mostly based off of SteamVR's laser pointer script, but fixed
+/// up where I could.
+/// </summary>
+/// <seealso cref="IPointerClickHandler"/>
+/// <seealso cref="IPointerUpHandler"/>
+/// <seealso cref="IPointerDownHandler"/>
+/// <seealso cref="IPointerEnterHandler"/>
+/// <seealso cref="IPointerExitHandler"/>
 public class LaserPointer : MonoBehaviour {
+    #region Static
+    public const string LAYER_TO_CAST = "Menu";
+    public const float MAX_CAST_DIST = 100;
+    #endregion
+
     #region Settings
     [Header("Settings")]
     public SteamVR_Action_Boolean interactWithUI =
@@ -21,27 +39,21 @@ public class LaserPointer : MonoBehaviour {
     public Color clickColor = Color.green;
     #endregion
 
-    #region References
-    [Header("References")]
-    public Menu menu;
-    #endregion
-
     #region Vars
-    List<Transform> enteredTransforms;
-    Transform currentHovered;
-    SteamVR_Behaviour_Pose pose;
-    RaycastHit[] hits;
-    GameObject holder;
-    GameObject pointer;
+    protected List<Transform> enteredTransforms;
+    protected Transform currentHovered;
+    protected SteamVR_Behaviour_Pose pose;
+    protected RaycastHit[] hits;
+    protected GameObject holder;
+    protected GameObject pointer;
     #endregion
 
     #region Unity Methods
     /// <summary>Safety checks and initial state</summary>
-    void OnEnable() {
+    protected void OnEnable() {
         pose = GetComponent<SteamVR_Behaviour_Pose>();
         Debug.Assert(pose != null);
         Debug.Assert(interactWithUI != null);
-        Debug.Assert(menu != null);
 
         // Init vars
         hits = null;
@@ -64,36 +76,121 @@ public class LaserPointer : MonoBehaviour {
     }
 
     /// <summary>Clean up laser pointer objects</summary>
-    void OnDisable() {
+    protected void OnDisable() {
         Destroy(holder);
         Destroy(pointer);
     }
 
     /// <summary>Perform raycasts</summary>
-    void Update() {
-        // Set self enabled or disabled from Menu state
-        holder.SetActive(menu.Visible);
-        pointer.SetActive(menu.Visible);
-        if (!menu.Visible)
-            return;
-
+    protected void Update() {
         // Raycast all objects in path
-        hits = Physics.RaycastAll(new Ray(transform.position, transform.forward), 100, LayerMask.GetMask("Menu"));
-        Debug.DrawRay(transform.position, transform.forward * 100, Color.red);
-        if (hits.Length == 0) {
-            SetPointerLength(0);
-        } else {
-            var max = 100f;
-            foreach (RaycastHit hit in hits)
-                max = hit.distance < max ? hit.distance : max;
-            SetPointerLength(max, true);
-        }
+        hits = Physics.RaycastAll(
+            ray: new Ray(transform.position, transform.forward),
+            maxDistance: MAX_CAST_DIST,
+            layerMask: LayerMask.GetMask(LAYER_TO_CAST));
+        Debug.DrawRay(transform.position, transform.forward * MAX_CAST_DIST, Color.red);
+        
+        // Reset pointer length to shortest distance
+        SetPointerLength(0, MAX_CAST_DIST, true);
 
         // Pointer events
-        OnPointerOut();
-        OnPointerIn();
-        OnPointerDown();
-        OnPointerClickUp();
+        if (hits.Length == 0) return;   // No need to run pointer events if no pointers
+
+        {
+            HashSet<Transform> foundHits = new HashSet<Transform>();
+            IPointerEnterHandler onPointerIn;
+            IPointerDownHandler onPointerDown;
+            IPointerClickHandler onPointerClick;
+            IPointerUpHandler onPointerUp;
+            bool timeToBreak = false;
+
+            foreach (RaycastHit h in hits) {
+                // Get handlers and add to hashset
+                onPointerIn = h.transform.GetComponent<IPointerEnterHandler>();
+                onPointerDown = h.transform.GetComponent<IPointerDownHandler>();
+                onPointerClick = h.transform.GetComponent<IPointerClickHandler>();
+                onPointerUp = h.transform.GetComponent<IPointerUpHandler>();
+                foundHits.Add(h.transform);
+
+                // Trigger OnPointerIn
+                if (h.transform != currentHovered && onPointerIn != null) {
+                    // Set current click
+                    currentHovered = h.transform;
+                    onPointerIn.OnPointerEnter(new PointerEventData(EventSystem.current));
+
+                    // If exit handler, add to be checked for exiting
+                    if (h.transform.GetComponent<IPointerExitHandler>() != null) {
+                        enteredTransforms.Add(h.transform);
+                    }
+
+                    SetPointerLength(h.distance);
+                    timeToBreak = true;
+                }
+
+                // Trigger OnPointerDown
+                if (interactWithUI.GetStateDown(pose.inputSource) && onPointerDown != null) {
+                    onPointerDown.OnPointerDown(new PointerEventData(EventSystem.current));
+                    SetPointerLength(h.distance);
+                    timeToBreak = true;
+                }
+
+                // Trigger OnPointerClickUp
+                if (interactWithUI.GetStateUp(pose.inputSource)) {
+                    if (onPointerClick != null) {
+                        onPointerClick.OnPointerClick(new PointerEventData(EventSystem.current));
+                        SetPointerLength(h.distance);
+                        timeToBreak = true;
+                    }
+
+                    if (onPointerUp != null) {
+                        onPointerUp.OnPointerUp(new PointerEventData(EventSystem.current));
+                        SetPointerLength(h.distance);
+                        timeToBreak = true;
+                    }
+                }
+
+                // After running through all pointer events, if triggered then lets break;
+                if (timeToBreak) break;
+            }
+
+            // Trigger OnPointerOut
+            foreach (Transform prevTransform in enteredTransforms.ToArray()) {
+                // Check if destroyed
+                if (prevTransform == null) {
+                    enteredTransforms.Remove(null);
+                    continue;
+                }
+
+                // If previousContact was not found, trigger OnPointerOut
+                if (!foundHits.Contains(prevTransform)) {
+                    IPointerExitHandler e = prevTransform.GetComponent<IPointerExitHandler>();
+                    Debug.Assert(e != null);
+                    e.OnPointerExit(new PointerEventData(EventSystem.current));
+                    enteredTransforms.Remove(prevTransform);
+                    if (prevTransform == currentHovered)
+                        currentHovered = null;
+                }
+            }
+
+            if (hits.Length == 0 || currentHovered == null)
+                currentHovered = null;
+        }
+    }
+    #endregion
+
+    #region Methods
+    /// <summary>
+    /// Will set pointer length to larger length unless otherwise specified
+    /// </summary>
+    /// <param name="dist">Length in Unity units to set pointer</param>
+    /// <param name="overwrite">Reset distance to a shorter distance</param>
+    protected void SetPointerLength(float dist, float maxDistance = 100, bool overwrite = true) {
+        if (dist < 0) throw new ArgumentOutOfRangeException();
+        var clamped = Mathf.Clamp(dist, 0, maxDistance);
+
+        // Set pointer visibility
+        holder.SetActive(clamped > Mathf.Epsilon);
+        pointer.SetActive(clamped > Mathf.Epsilon);
 
         // Set pointer click color
         pointer.GetComponent<MeshRenderer>().material.color =
@@ -103,104 +200,14 @@ public class LaserPointer : MonoBehaviour {
         pointer.transform.localScale = interactWithUI.GetState(pose.inputSource) ?
             new Vector3(thickness * 5f, thickness * 5f, pointer.transform.localScale.z) :
             new Vector3(thickness, thickness, pointer.transform.localScale.z);
-    }
-    #endregion
 
-    #region Methods
-    /// <summary>
-    /// Will set pointer length to smaller length unless otherwise specified
-    /// </summary>
-    /// <param name="dist">Length in Unity units to set pointer</param>
-    /// <param name="overwrite">Set distance to a longer distance</param>
-    void SetPointerLength(float dist, bool overwrite = true) {
-        if (dist < pointer.transform.localScale.z || overwrite) {
-            pointer.transform.localPosition = new Vector3(0f, 0f, dist / 2f);
-            pointer.transform.localScale = new Vector3(pointer.transform.localScale.x, pointer.transform.localScale.y, dist);
-        }
-    }
-    #endregion
-
-    #region EventHandlers
-    void OnPointerClickUp() {
-        IPointerClickHandler onPointerClick;
-        IPointerUpHandler onPointerUp;
-        if (interactWithUI.GetStateUp(pose.inputSource)) {
-            foreach (RaycastHit h in hits)
-                if ((onPointerClick = h.transform.GetComponent<IPointerClickHandler>()) != null) {
-                    onPointerClick.OnPointerClick(new PointerEventData(EventSystem.current));
-                    break;
-                }
-
-            foreach (RaycastHit h in hits)
-                if ((onPointerUp = h.transform.GetComponent<IPointerUpHandler>()) != null) {
-                    onPointerUp.OnPointerUp(new PointerEventData(EventSystem.current));
-                    break;
-                }
-        }
-    }
-
-    void OnPointerDown() {
-        IPointerDownHandler onPointerDown;
-        if (interactWithUI.GetStateDown(pose.inputSource))
-            foreach (RaycastHit h in hits)
-                if ((onPointerDown = h.transform.GetComponent<IPointerDownHandler>()) != null) {
-                    onPointerDown.OnPointerDown(new PointerEventData(EventSystem.current));
-                    break;
-                }
-    }
-
-    void OnPointerOut() {
-        foreach (Transform prevTransform in enteredTransforms.ToArray()) {
-            // Check if destroyed
-            if (prevTransform == null) {
-                enteredTransforms.Remove(null);
-                continue;
-            }
-
-            bool found = false; // is prevTransform in list of raycasts?
-
-            // Go through all hits and find found
-            foreach (RaycastHit h in hits) {
-                if (h.transform == prevTransform) {
-                    found = true;
-                    break;
-                }
-            }
-
-            // If previousContact was not found, trigger OnPointerOut
-            if (!found) {
-                IPointerExitHandler e = prevTransform.GetComponent<IPointerExitHandler>();
-                Debug.Assert(e != null);
-                e.OnPointerExit(
-                    new PointerEventData(EventSystem.current)
-                );
-                enteredTransforms.Remove(prevTransform);
-                if (prevTransform == currentHovered)
-                    currentHovered = null;
-            }
-        }
-    }
-
-    void OnPointerIn() {
-        // OnPointerIn for first object with IPointerEnterHandler
-        IPointerEnterHandler onPointerIn;
-        foreach (RaycastHit h in hits) {
-            if (h.transform != currentHovered &&
-                (onPointerIn = h.transform.GetComponent<IPointerEnterHandler>()) != null) {
-
-                // Set current click
-                currentHovered = h.transform;
-                onPointerIn.OnPointerEnter(new PointerEventData(EventSystem.current));
-
-                // If exit handler, add to be checked for exiting
-                if (h.transform.GetComponent<IPointerExitHandler>() != null) {
-                    enteredTransforms.Add(h.transform);
-                }
-                break;
-            }
-        }
-        if (hits.Length == 0) {
-            currentHovered = null;
+        // Set pointer length
+        if (clamped > pointer.transform.localScale.z || overwrite) {
+            pointer.transform.localPosition = new Vector3(0f, 0f, clamped / 2f);
+            pointer.transform.localScale = new Vector3(
+                pointer.transform.localScale.x,
+                pointer.transform.localScale.y,
+                clamped);
         }
     }
     #endregion

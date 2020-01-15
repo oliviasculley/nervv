@@ -147,13 +147,13 @@ public class AxisHandler : MonoBehaviour {
     #region Trigger Collider Methods
     /// <summary>Register incoming hand object</summary>
     protected void OnTriggerEnter(Collider collider) {
-        var h = collider.GetComponent<Hand>();
+        var h = collider.GetComponentInParent<Hand>();
         if (h != null) availableHand = h.transform;
     }
 
     /// <summary>Unregister incoming hand object</summary>
     protected void OnTriggerExit(Collider collider) {
-        var h = collider.GetComponent<Hand>();
+        var h = collider.GetComponentInParent<Hand>();
         if (h != null) availableHand = null;
     }
     #endregion

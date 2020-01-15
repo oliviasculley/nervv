@@ -32,29 +32,39 @@ public class WebcamViewerHandle : MonoBehaviour {
     #endregion
 
     #region Unity Methods
-    protected void Start() {
+    /// <summary>Initializes state and enables callbacks</summary>
+    protected void OnEnable() {
         if (InteractUI == null) throw new ArgumentNullException("No InteractUI set for SteamVR!");
 
         // Initial state
         availableHand = null;
         currHand = null;
         grabbing = false;
-        if (InteractUI == null) throw new ArgumentNullException();
+
+        // Enable callbacks
         InteractUI.onStateDown += SteamVROnGrabDown;
         InteractUI.onStateUp += SteamVROnGrabUp;
         InteractUI.onState += SteamVROnGrab;
     }
 
+    /// <summary>Removes callbacks from InteractUI</summary>
+    protected void OnDisable() {
+        if (InteractUI != null) {
+            InteractUI.onStateDown -= SteamVROnGrabDown;
+            InteractUI.onStateUp -= SteamVROnGrabUp;
+            InteractUI.onState -= SteamVROnGrab;
+        }
+    }
 
     /// <summary>Register incoming hand object</summary>
     protected void OnTriggerEnter(Collider collider) {
-        var h = collider.GetComponent<Hand>();
+        var h = collider.GetComponentInParent<Hand>();
         if (h != null) availableHand = h.transform;
     }
 
     /// <summary>Unregister incoming hand object</summary>
     protected void OnTriggerExit(Collider collider) {
-        var h = collider.GetComponent<Hand>();
+        var h = collider.GetComponentInParent<Hand>();
         if (h != null) availableHand = null;
     }
     #endregion
