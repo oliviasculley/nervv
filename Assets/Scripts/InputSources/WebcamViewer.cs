@@ -121,7 +121,7 @@ public class WebcamViewer : InputSource {
         _deviceID = -1;
 
         // Enumerates webcams and sets to first if available
-        EnumerateWebcams();
+        GetFirstWebcamDevice();
 
         // Set callback
         HandleScript.OnGrab += MoveWebcamViewer;
@@ -175,6 +175,7 @@ public class WebcamViewer : InputSource {
 
         ImageRenderer.texture = w;
         ImageRenderer.material.mainTexture = w;
+        
         w.Play();
 
         if (!w.isPlaying)
@@ -184,7 +185,7 @@ public class WebcamViewer : InputSource {
     /// <summary>
     /// Enumerates webcams in cachedDevices and sets to first webcam feed if available
     /// </summary>
-    protected void EnumerateWebcams() {
+    protected void GetFirstWebcamDevice() {
         // Debug.Log listing of webcams
         if (printAvailableWebcams) {
             string s = "Available Webcam Devices:";
