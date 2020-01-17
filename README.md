@@ -1,3 +1,5 @@
+![JunLab Screenshot](https://gitlab.com/csculley/nervv/raw/master/doc/images/outputExample.png)
+
 # NERVV (Novel Environment for Robotics VR Visualization)
 NERVV is a standardized Unity platform for easily creating robotic simulations
 with virtual reality.\
