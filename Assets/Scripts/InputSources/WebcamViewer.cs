@@ -76,6 +76,7 @@ public class WebcamViewer : InputSource {
     public RawImage ImageRenderer = null;
     public WebcamViewerHandle HandleScript = null;
     public TMP_Dropdown Dropdown = null;
+    public Material WebcamMaterial = null;
     #endregion
 
     #region Vars
@@ -114,6 +115,7 @@ public class WebcamViewer : InputSource {
         if (ImageRenderer == null) throw new ArgumentNullException("PlaneRenderer is null!");
         if (HandleScript == null) throw new ArgumentNullException("HandleScript is null!");
         if (Dropdown == null) throw new ArgumentNullException("Dropdown is null!");
+        if (WebcamMaterial == null) throw new ArgumentNullException("WebcamRT is null!");
         base.OnEnable();
 
         // Initial InputSource fields
@@ -164,18 +166,19 @@ public class WebcamViewer : InputSource {
         }
 
         WebCamDevice d = CurrentDevice.Value;
-        //Resolution r = (d.availableResolutions?.Length ?? 0) > 0 ?
-        //    r = d.availableResolutions[d.availableResolutions.Length^1] :
-        //    r = new Resolution() { width = 100, height = 100, refreshRate = 15 };
-        //w = new WebCamTexture(
-        //    deviceName: WebCamTexture.devices[DeviceID].name,
-        //    requestedWidth: r.width,
-        //    requestedHeight: r.height,
-        //    requestedFPS: r.refreshRate);
-        w = new WebCamTexture(d.name);
+        Resolution r = (d.availableResolutions?.Length ?? 0) > 0 ?
+            r = d.availableResolutions[0] :
+            r = new Resolution() { width = 1280, height = 720, refreshRate = 30 };
+        w = new WebCamTexture(
+            deviceName: WebCamTexture.devices[DeviceID].name,
+            requestedWidth: r.width,
+            requestedHeight: r.height,
+            requestedFPS: r.refreshRate);
 
+        Log("FPS: " + w.requestedFPS + ", H: " + w.requestedHeight + ", w: " + w.requestedWidth);
+
+        (ImageRenderer.material = WebcamMaterial).mainTexture = w;
         ImageRenderer.texture = w;
-        ImageRenderer.material.mainTexture = w;
         w.Play();
 
         if (!w.isPlaying)
