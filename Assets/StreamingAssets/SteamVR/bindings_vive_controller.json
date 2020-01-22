@@ -1,7 +1,7 @@
 {
    "action_manifest_version" : 0,
    "alias_info" : {},
-   "app_key" : "application.generated.unity.mtconnectvr.exe",
+   "app_key" : "application.generated.unity.nervv.exe",
    "bindings" : {
       "/actions/buggy" : {
          "chords" : [],
@@ -46,16 +46,10 @@
             {
                "inputs" : {
                   "click" : {
-                     "output" : "/actions/default/in/interactui"
-                  }
-               },
-               "mode" : "trigger",
-               "path" : "/user/hand/left/input/trigger"
-            },
-            {
-               "inputs" : {
-                  "click" : {
                      "output" : "/actions/default/in/callmenu"
+                  },
+                  "held" : {
+                     "output" : "/actions/default/in/activateleftik"
                   }
                },
                "mode" : "button",
@@ -64,11 +58,11 @@
             {
                "inputs" : {
                   "click" : {
-                     "output" : "/actions/default/in/callmenu"
+                     "output" : "/actions/default/in/teleport"
                   }
                },
-               "mode" : "button",
-               "path" : "/user/hand/right/input/application_menu"
+               "mode" : "trigger",
+               "path" : "/user/hand/left/input/trigger"
             },
             {
                "inputs" : {
@@ -82,16 +76,19 @@
             {
                "inputs" : {
                   "click" : {
-                     "output" : "/actions/default/in/activateleftik"
+                     "output" : "/actions/default/in/callmenu"
+                  },
+                  "held" : {
+                     "output" : "/actions/default/in/activaterightik"
                   }
                },
                "mode" : "button",
-               "path" : "/user/hand/left/input/grip"
+               "path" : "/user/hand/right/input/application_menu"
             },
             {
                "inputs" : {
                   "click" : {
-                     "output" : "/actions/default/in/activaterightik"
+                     "output" : "/actions/default/in/grab"
                   }
                },
                "mode" : "button",
@@ -100,20 +97,11 @@
             {
                "inputs" : {
                   "click" : {
-                     "output" : "/actions/default/in/teleport"
+                     "output" : "/actions/default/in/grab"
                   }
                },
-               "mode" : "trigger",
-               "path" : "/user/hand/left/input/trigger"
-            },
-            {
-               "inputs" : {
-                  "click" : {
-                     "output" : "/actions/default/in/teleport"
-                  }
-               },
-               "mode" : "trigger",
-               "path" : "/user/hand/right/input/trigger"
+               "mode" : "button",
+               "path" : "/user/hand/left/input/grip"
             }
          ]
       },
@@ -128,7 +116,7 @@
    "category" : "steamvr_input",
    "controller_type" : "vive_controller",
    "description" : "Default NERVV binding for HTC Vive and Vive Pro",
-   "name" : "NERVV configuration for HTC Vive and Vive Pro",
+   "name" : "NERVV Default Vive",
    "options" : {},
    "simulated_actions" : []
 }

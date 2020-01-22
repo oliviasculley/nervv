@@ -255,7 +255,7 @@ namespace NERVV.Menu.MachineDetailPanel {
             var handler = t.GetComponent<AxisHandler>();
             Debug.Assert(handler != null);
 
-            handler.InteractUI = InteractUI;
+            handler.GrabAction = InteractUI;
             handler.Axis = a;
             
             AxisHandlers.Add(handler);

@@ -93,7 +93,7 @@ public class WebcamViewer : InputSource {
                 
                 for (int i = 0; i < WebCamTexture.devices.Length; i++) {
                     _cachedDevices[i] = WebCamTexture.devices[i];
-                    Dropdown.options[i] = new TMP_Dropdown.OptionData(_cachedDevices[i].name);
+                    Dropdown.options.Add(new TMP_Dropdown.OptionData(_cachedDevices[i].name));
                 }
             }
             return _cachedDevices;
@@ -164,14 +164,15 @@ public class WebcamViewer : InputSource {
         }
 
         WebCamDevice d = CurrentDevice.Value;
-        Resolution r = (d.availableResolutions?.Length ?? 0) > 0 ?
-            r = d.availableResolutions[d.availableResolutions.Length - 1] :
-            r = new Resolution() { width = 100, height = 100, refreshRate = 15 };
-        w = new WebCamTexture(
-            deviceName: WebCamTexture.devices[DeviceID].name,
-            requestedWidth: r.width,
-            requestedHeight: r.height,
-            requestedFPS: r.refreshRate);
+        //Resolution r = (d.availableResolutions?.Length ?? 0) > 0 ?
+        //    r = d.availableResolutions[d.availableResolutions.Length^1] :
+        //    r = new Resolution() { width = 100, height = 100, refreshRate = 15 };
+        //w = new WebCamTexture(
+        //    deviceName: WebCamTexture.devices[DeviceID].name,
+        //    requestedWidth: r.width,
+        //    requestedHeight: r.height,
+        //    requestedFPS: r.refreshRate);
+        w = new WebCamTexture(d.name);
 
         ImageRenderer.texture = w;
         ImageRenderer.material.mainTexture = w;

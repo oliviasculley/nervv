@@ -33,7 +33,7 @@ namespace Valve.VR
         
         private static SteamVR_Action_Boolean p_default_Teleport;
         
-        private static SteamVR_Action_Boolean p_default_HeadsetOnHead;
+        private static SteamVR_Action_Boolean p_default_Grab;
         
         private static SteamVR_Action_Vibration p_default_Haptic;
         
@@ -101,11 +101,11 @@ namespace Valve.VR
             }
         }
         
-        public static SteamVR_Action_Boolean default_HeadsetOnHead
+        public static SteamVR_Action_Boolean default_Grab
         {
             get
             {
-                return SteamVR_Actions.p_default_HeadsetOnHead.GetCopy<SteamVR_Action_Boolean>();
+                return SteamVR_Actions.p_default_Grab.GetCopy<SteamVR_Action_Boolean>();
             }
         }
         
@@ -128,7 +128,7 @@ namespace Valve.VR
                     SteamVR_Actions.default_LeftSkeleton,
                     SteamVR_Actions.default_RightSkeleton,
                     SteamVR_Actions.default_Teleport,
-                    SteamVR_Actions.default_HeadsetOnHead,
+                    SteamVR_Actions.default_Grab,
                     SteamVR_Actions.default_Haptic};
             Valve.VR.SteamVR_Input.actionsIn = new Valve.VR.ISteamVR_Action_In[] {
                     SteamVR_Actions.default_CallMenu,
@@ -139,7 +139,7 @@ namespace Valve.VR
                     SteamVR_Actions.default_LeftSkeleton,
                     SteamVR_Actions.default_RightSkeleton,
                     SteamVR_Actions.default_Teleport,
-                    SteamVR_Actions.default_HeadsetOnHead};
+                    SteamVR_Actions.default_Grab};
             Valve.VR.SteamVR_Input.actionsOut = new Valve.VR.ISteamVR_Action_Out[] {
                     SteamVR_Actions.default_Haptic};
             Valve.VR.SteamVR_Input.actionsVibration = new Valve.VR.SteamVR_Action_Vibration[] {
@@ -152,7 +152,7 @@ namespace Valve.VR
                     SteamVR_Actions.default_ActivateLeftIK,
                     SteamVR_Actions.default_ActivateRightIK,
                     SteamVR_Actions.default_Teleport,
-                    SteamVR_Actions.default_HeadsetOnHead};
+                    SteamVR_Actions.default_Grab};
             Valve.VR.SteamVR_Input.actionsSingle = new Valve.VR.SteamVR_Action_Single[0];
             Valve.VR.SteamVR_Input.actionsVector2 = new Valve.VR.SteamVR_Action_Vector2[0];
             Valve.VR.SteamVR_Input.actionsVector3 = new Valve.VR.SteamVR_Action_Vector3[0];
@@ -165,21 +165,21 @@ namespace Valve.VR
                     SteamVR_Actions.default_ActivateLeftIK,
                     SteamVR_Actions.default_ActivateRightIK,
                     SteamVR_Actions.default_Teleport,
-                    SteamVR_Actions.default_HeadsetOnHead};
+                    SteamVR_Actions.default_Grab};
         }
         
         private static void PreInitActions()
         {
-            SteamVR_Actions.p_default_CallMenu = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Default/in/CallMenu")));
-            SteamVR_Actions.p_default_InteractUI = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Default/in/InteractUI")));
-            SteamVR_Actions.p_default_Pose = ((SteamVR_Action_Pose)(SteamVR_Action.Create<SteamVR_Action_Pose>("/actions/Default/in/Pose")));
-            SteamVR_Actions.p_default_ActivateLeftIK = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Default/in/ActivateLeftIK")));
-            SteamVR_Actions.p_default_ActivateRightIK = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Default/in/ActivateRightIK")));
-            SteamVR_Actions.p_default_LeftSkeleton = ((SteamVR_Action_Skeleton)(SteamVR_Action.Create<SteamVR_Action_Skeleton>("/actions/Default/in/LeftSkeleton")));
-            SteamVR_Actions.p_default_RightSkeleton = ((SteamVR_Action_Skeleton)(SteamVR_Action.Create<SteamVR_Action_Skeleton>("/actions/Default/in/RightSkeleton")));
-            SteamVR_Actions.p_default_Teleport = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Default/in/Teleport")));
-            SteamVR_Actions.p_default_HeadsetOnHead = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/Default/in/HeadsetOnHead")));
-            SteamVR_Actions.p_default_Haptic = ((SteamVR_Action_Vibration)(SteamVR_Action.Create<SteamVR_Action_Vibration>("/actions/Default/out/Haptic")));
+            SteamVR_Actions.p_default_CallMenu = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/default/in/CallMenu")));
+            SteamVR_Actions.p_default_InteractUI = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/default/in/InteractUI")));
+            SteamVR_Actions.p_default_Pose = ((SteamVR_Action_Pose)(SteamVR_Action.Create<SteamVR_Action_Pose>("/actions/default/in/Pose")));
+            SteamVR_Actions.p_default_ActivateLeftIK = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/default/in/ActivateLeftIK")));
+            SteamVR_Actions.p_default_ActivateRightIK = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/default/in/ActivateRightIK")));
+            SteamVR_Actions.p_default_LeftSkeleton = ((SteamVR_Action_Skeleton)(SteamVR_Action.Create<SteamVR_Action_Skeleton>("/actions/default/in/LeftSkeleton")));
+            SteamVR_Actions.p_default_RightSkeleton = ((SteamVR_Action_Skeleton)(SteamVR_Action.Create<SteamVR_Action_Skeleton>("/actions/default/in/RightSkeleton")));
+            SteamVR_Actions.p_default_Teleport = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/default/in/Teleport")));
+            SteamVR_Actions.p_default_Grab = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/default/in/Grab")));
+            SteamVR_Actions.p_default_Haptic = ((SteamVR_Action_Vibration)(SteamVR_Action.Create<SteamVR_Action_Vibration>("/actions/default/out/Haptic")));
         }
     }
 }

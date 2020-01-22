@@ -1,56 +1,56 @@
 {
   "actions": [
     {
-      "name": "/actions/Default/in/CallMenu",
+      "name": "/actions/default/in/CallMenu",
       "type": "boolean",
       "requirement": "suggested"
     },
     {
-      "name": "/actions/Default/in/InteractUI",
+      "name": "/actions/default/in/InteractUI",
       "type": "boolean",
       "requirement": "mandatory"
     },
     {
-      "name": "/actions/Default/in/Pose",
+      "name": "/actions/default/in/Pose",
       "type": "pose",
       "requirement": "mandatory"
     },
     {
-      "name": "/actions/Default/in/ActivateLeftIK",
+      "name": "/actions/default/in/ActivateLeftIK",
       "type": "boolean",
       "requirement": "suggested"
     },
     {
-      "name": "/actions/Default/in/ActivateRightIK",
+      "name": "/actions/default/in/ActivateRightIK",
       "type": "boolean"
     },
     {
-      "name": "/actions/Default/in/LeftSkeleton",
+      "name": "/actions/default/in/LeftSkeleton",
       "type": "skeleton",
       "skeleton": "/skeleton/hand/left"
     },
     {
-      "name": "/actions/Default/in/RightSkeleton",
+      "name": "/actions/default/in/RightSkeleton",
       "type": "skeleton",
       "skeleton": "/skeleton/hand/right"
     },
     {
-      "name": "/actions/Default/in/Teleport",
+      "name": "/actions/default/in/Teleport",
       "type": "boolean"
     },
     {
-      "name": "/actions/Default/in/HeadsetOnHead",
+      "name": "/actions/default/in/Grab",
       "type": "boolean"
     },
     {
-      "name": "/actions/Default/out/Haptic",
+      "name": "/actions/default/out/Haptic",
       "type": "vibration",
       "requirement": "suggested"
     }
   ],
   "action_sets": [
     {
-      "name": "/actions/Default",
+      "name": "/actions/default",
       "usage": "leftright"
     }
   ],

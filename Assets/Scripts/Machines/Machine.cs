@@ -183,10 +183,14 @@ namespace NERVV {
             Header("Properties")]protected float _externalValue;
             public virtual float ExternalValue {
                 get => _externalValue;
-                set => _externalValue = Mathf.Clamp(
-                    value,
-                    MinExternalValue,
-                    MaxExternalValue);
+                set {
+                    _externalValue = ValueRestricted ?
+                        Mathf.Clamp(
+                            value,
+                            MinExternalValue,
+                            MaxExternalValue) :
+                        value;
+                } 
             }
 
             /// <summary>Value of axis in Unity worldspace</summary>
@@ -243,6 +247,13 @@ namespace NERVV {
             public virtual string Description {
                 get => _desc;
                 set => _desc = value;
+            }
+
+            [SerializeField, Tooltip("Is value restricted by min and max?")]
+            protected bool _valueRestricted = false;
+            public virtual bool ValueRestricted {
+                get => _valueRestricted;
+                set => _valueRestricted = value;
             }
 
             [SerializeField,

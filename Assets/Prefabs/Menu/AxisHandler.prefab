@@ -12753,12 +12753,12 @@ MonoBehaviour:
     _type: 0
     _axisVector3: {x: 0, y: 0, z: 0}
     _axisTransform: {fileID: 0}
-  InteractUI:
-    actionPath: /actions/Default/in/InteractUI
-    needsReinit: 0
   MaxDeltaPerFrameFactor: 100
   MaxOpacity: 1
   MinOpacity: 0.1
   ColorBlendSpeed: 30
   PrintDebugMessages: 0
   Torus: {fileID: 11821252}
+  GrabAction:
+    actionPath: /actions/Default/in/Grab
+    needsReinit: 0
