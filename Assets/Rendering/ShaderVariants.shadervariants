@@ -17,31 +17,75 @@ ShaderVariantCollection:
     second:
       variants:
       - keywords: 
-        passType: 0
-      - keywords: 
-        passType: 8
-      - keywords: INSTANCING_ON
         passType: 8
       - keywords: 
+        passType: 13
+      - keywords: UNITY_SINGLE_PASS_STEREO
         passType: 13
       - keywords: _MAIN_LIGHT_SHADOWS
         passType: 13
+      - keywords: UNITY_SINGLE_PASS_STEREO _MAIN_LIGHT_SHADOWS
+        passType: 13
+      - keywords: _ADDITIONAL_LIGHTS
+        passType: 13
+      - keywords: _ADDITIONAL_LIGHTS _EMISSION
+        passType: 13
+      - keywords: _ADDITIONAL_LIGHTS _EMISSION _NORMALMAP
+        passType: 13
+      - keywords: _ADDITIONAL_LIGHTS _ALPHAPREMULTIPLY_ON _EMISSION
+        passType: 13
+      - keywords: _ADDITIONAL_LIGHTS _EMISSION _METALLICSPECGLOSSMAP _NORMALMAP
+        passType: 13
+      - keywords: _ADDITIONAL_LIGHTS _ALPHAPREMULTIPLY_ON _EMISSION _METALLICSPECGLOSSMAP
+          _NORMALMAP
+        passType: 13
+      - keywords: _ADDITIONAL_LIGHTS _EMISSION _METALLICSPECGLOSSMAP _NORMALMAP _OCCLUSIONMAP
+        passType: 13
+      - keywords: _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS
+        passType: 13
+      - keywords: UNITY_SINGLE_PASS_STEREO _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS
+        passType: 13
+      - keywords: _ADDITIONAL_LIGHTS _ENVIRONMENTREFLECTIONS_OFF
+        passType: 13
+      - keywords: _ADDITIONAL_LIGHTS _EMISSION _SPECULAR_SETUP
+        passType: 13
       - keywords: _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS _SPECULAR_SETUP
+        passType: 13
+      - keywords: UNITY_SINGLE_PASS_STEREO _ENVIRONMENTREFLECTIONS_OFF _MAIN_LIGHT_SHADOWS
+          _SPECULAR_SETUP
+        passType: 13
+      - keywords: _ADDITIONAL_LIGHTS _ENVIRONMENTREFLECTIONS_OFF _SPECULAR_SETUP
         passType: 13
   - first: {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
     second:
       variants:
       - keywords: 
         passType: 0
+      - keywords: INSTANCING_ON
+        passType: 0
+      - keywords: UNITY_SINGLE_PASS_STEREO
+        passType: 0
+      - keywords: INSTANCING_ON UNITY_SINGLE_PASS_STEREO
+        passType: 0
+      - keywords: ETC1_EXTERNAL_ALPHA
+        passType: 0
   - first: {fileID: 10770, guid: 0000000000000000f000000000000000, type: 0}
     second:
       variants:
       - keywords: 
         passType: 0
+      - keywords: UNITY_SINGLE_PASS_STEREO
+        passType: 0
+      - keywords: UNITY_UI_ALPHACLIP
+        passType: 0
+      - keywords: UNITY_SINGLE_PASS_STEREO UNITY_UI_ALPHACLIP
+        passType: 0
   - first: {fileID: 66, guid: 0000000000000000f000000000000000, type: 0}
     second:
       variants:
       - keywords: 
+        passType: 0
+      - keywords: UNITY_SINGLE_PASS_STEREO
         passType: 0
   - first: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
     second:
@@ -67,6 +111,8 @@ ShaderVariantCollection:
     second:
       variants:
       - keywords: _SUNDISK_SIMPLE
+        passType: 0
+      - keywords: UNITY_SINGLE_PASS_STEREO _SUNDISK_SIMPLE
         passType: 0
   - first: {fileID: 200, guid: 0000000000000000f000000000000000, type: 0}
     second:
@@ -123,6 +169,8 @@ ShaderVariantCollection:
       variants:
       - keywords: 
         passType: 0
+      - keywords: UNITY_SINGLE_PASS_STEREO
+        passType: 0
   - first: {fileID: 10755, guid: 0000000000000000f000000000000000, type: 0}
     second:
       variants:
@@ -156,9 +204,14 @@ ShaderVariantCollection:
   - first: {fileID: 4800000, guid: e260cfa7296ee7642b167f1eb5be5023, type: 3}
     second:
       variants:
-      - keywords: ETC1_EXTERNAL_ALPHA
-        passType: 0
+      - keywords: 
+        passType: 13
   - first: {fileID: 4800000, guid: 6337aa7e7823eee43af8ffe676935e74, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: 0406db5a14f94604a8c57ccfbc9f3b46, type: 3}
     second:
       variants:
       - keywords: 
@@ -168,7 +221,17 @@ ShaderVariantCollection:
       variants:
       - keywords: 
         passType: 0
+  - first: {fileID: 4800000, guid: 650dd9526735d5b46b79224bc6e94025, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
   - first: {fileID: 4800000, guid: 86212504c7e9f468db2300dc5932dc17, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+  - first: {fileID: 4800000, guid: e6e9a19c3678ded42a3bc431ebef7dbd, type: 3}
     second:
       variants:
       - keywords: 
@@ -188,34 +251,15 @@ ShaderVariantCollection:
       variants:
       - keywords: 
         passType: 8
-  - first: {fileID: 4800000, guid: 0c1cf10ea69e60e4f9eb8955749f88ec, type: 3}
-    second:
-      variants:
-      - keywords: 
-        passType: 0
-  - first: {fileID: 4800000, guid: 1ccecd9b89b8a4f14bfb64f29ddfcc81, type: 3}
-    second:
-      variants:
-      - keywords: DIRECTIONAL LIGHTPROBE_SH
-        passType: 4
-      - keywords: DIRECTIONAL
-        passType: 5
-      - keywords: SHADOWS_DEPTH
-        passType: 8
+      - keywords: _ADDITIONAL_LIGHTS
+        passType: 13
   - first: {fileID: 4800000, guid: 8d2bb70cbf9db8d4da26e15b26e74248, type: 3}
     second:
       variants:
       - keywords: _GLOSSINESS_FROM_BASE_ALPHA
         passType: 8
-  - first: {fileID: 4800000, guid: 0eda13fed4d1be14aa1ab948b08aef30, type: 3}
-    second:
-      variants:
-      - keywords: DIRECTIONAL LIGHTPROBE_SH
-        passType: 4
-      - keywords: DIRECTIONAL
-        passType: 5
-      - keywords: SHADOWS_DEPTH
-        passType: 8
+      - keywords: _ADDITIONAL_LIGHTS _GLOSSINESS_FROM_BASE_ALPHA _SPECULAR_COLOR
+        passType: 13
   - first: {fileID: 4800000, guid: de053fb214897cc439db35fc0361a282, type: 3}
     second:
       variants:
@@ -243,5 +287,9 @@ ShaderVariantCollection:
         passType: 0
       - keywords: 
         passType: 8
+      - keywords: 
+        passType: 13
+      - keywords: _ADDITIONAL_LIGHTS
+        passType: 13
       - keywords: _ADDITIONAL_LIGHTS_VERTEX _MAIN_LIGHT_SHADOWS
         passType: 13
