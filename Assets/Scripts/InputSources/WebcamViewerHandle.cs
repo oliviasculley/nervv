@@ -14,6 +14,13 @@ public class WebcamViewerHandle : MonoBehaviour {
     public bool IsGrabbing => grabbing;
     public Transform CurrentHand => currHand;
     public event EventHandler OnGrab;
+    public event EventHandler OnGrabDown;
+    public event EventHandler OnGrabUp;
+    #endregion
+
+    #region Settings
+    [Header("Settings")]
+    public bool PrintDebugMessages = false;
     #endregion
 
     #region References
@@ -59,28 +66,35 @@ public class WebcamViewerHandle : MonoBehaviour {
     /// <summary>Register incoming hand object</summary>
     protected void OnTriggerEnter(Collider collider) {
         var h = collider.GetComponentInParent<Hand>();
-        if (h != null) availableHand = h.transform;
+        if (h != null) {
+            availableHand = h.transform;
+        }
     }
 
     /// <summary>Unregister incoming hand object</summary>
     protected void OnTriggerExit(Collider collider) {
         var h = collider.GetComponentInParent<Hand>();
-        if (h != null) availableHand = null;
+        if (h != null) {
+            availableHand = null;
+        }
     }
     #endregion
 
     #region Grab Callbacks
     /// <summary>OnGrabDown register starting hand pos and grabbing bool</summary>
     public void SteamVROnGrabDown(SteamVR_Action_Boolean b, SteamVR_Input_Sources inputSource) {
+        Log("Grab down");
         if (availableHand == null) return;
         if (currHand != null)
-            Debug.LogError("Currhand is not null: " + currHand.name + "!");
+            LogError($"Currhand is not null: {currHand.name}!");
         prevHandPos = (currHand = availableHand).position;
         grabbing = true;
+        OnGrabDown?.Invoke(this, null);
     }
 
     /// <summary>If input triggered and is grabbing, add rotation delta to joint</summary>
     public void SteamVROnGrab(SteamVR_Action_Boolean b, SteamVR_Input_Sources inputSource) {
+        Log("OnGrabbing!");
         if (!grabbing) return;
         Debug.Assert(currHand != null);
 
@@ -91,10 +105,18 @@ public class WebcamViewerHandle : MonoBehaviour {
     /// <summary>Stop grabbing</summary>
     public void SteamVROnGrabUp(SteamVR_Action_Boolean b, SteamVR_Input_Sources inputSource) {
         if (!grabbing) return;
+        Log("Grab up!");
 
         grabbing = false;
         Debug.Assert(currHand != null);
         currHand = null;
+        OnGrabUp?.Invoke(this, null);
     }
+    #endregion
+
+    #region Methods
+    protected void Log(string s) { if (PrintDebugMessages) Debug.Log($"<b>[{GetType()}]</b> " + s); }
+    protected void LogWarning(string s) { if (PrintDebugMessages) Debug.LogWarning($"<b>[{GetType()}]</b> " + s); }
+    protected void LogError(string s) { if (PrintDebugMessages) Debug.LogError($"<b>[{GetType()}]</b> " + s); }
     #endregion
 }

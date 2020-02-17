@@ -16,6 +16,9 @@ namespace NERVV {
 
         /// <summary>Minimum distance delta to apply IK</summary>
         float IKEpsilon { get; set; }
+
+        /// <summary>Starting axis used to begin forward kinematics</summary>
+        Machine.Axis StartingAxis { get; set; }
         #endregion
 
         #region Required methods

@@ -87,8 +87,8 @@ namespace NERVV {
         /// </exception>
         protected virtual void Start() {
             bool success = OutputManager.AddOutput(this);
-            if (PrintDebugMessages && !success)
-                Debug.LogError("Could not add self to OutputManager!");
+            if (!success)
+                LogError("Could not add self to OutputManager!");
             OutputEnabled &= success;
         }
 
@@ -97,13 +97,13 @@ namespace NERVV {
         /// Thrown if OutputManager is null
         /// </exception>
         protected virtual void OnDisable() {
-            if (!OutputManager.RemoveOutput(this) && PrintDebugMessages)
-                Debug.LogError("Could not remove self from OutputManager!");
+            if (!OutputManager.RemoveOutput(this))
+                LogError("Could not remove self from OutputManager!");
         }
 
-        protected void Log(string s) { if (PrintDebugMessages) Debug.Log("<b>[" + GetType() + "]</b>" + s); }
-        protected void LogWarning(string s) { if (PrintDebugMessages) Debug.LogWarning("<b>[" + GetType() + "]</b>" + s); }
-        protected void LogError(string s) { if (PrintDebugMessages) Debug.LogError("<b>[" + GetType() + "]</b>" + s); }
+        protected void Log(string s) { if (PrintDebugMessages) Debug.Log($"<b>[{GetType()}]</b> " + s); }
+        protected void LogWarning(string s) { if (PrintDebugMessages) Debug.LogWarning($"<b>[{GetType()}]</b> " + s); }
+        protected void LogError(string s) { if (PrintDebugMessages) Debug.LogError($"<b>[{GetType()}]</b> " + s); }
         #endregion
     }
 }

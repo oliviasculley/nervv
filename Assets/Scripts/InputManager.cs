@@ -59,8 +59,8 @@ namespace NERVV {
                 throw new ArgumentNullException();
 
             // Add static ref to self
-            if (PrintDebugMessages && Instances.Contains(this))
-                Debug.LogWarning("Reference already exists in Instances list!");
+            if (Instances.Contains(this))
+                LogWarning("Reference already exists in Instances list!");
             Instances.Add(this);
         }
 
@@ -153,9 +153,9 @@ namespace NERVV {
             OnInputRemoved?.Invoke(this, eventArgs);
         }
 
-        protected void Log(string s) { if (PrintDebugMessages) Debug.Log("<b>[" + GetType() + "]</b>" + s); }
-        protected void LogWarning(string s) { if (PrintDebugMessages) Debug.LogWarning("<b>[" + GetType() + "]</b>" + s); }
-        protected void LogError(string s) { if (PrintDebugMessages) Debug.LogError("<b>[" + GetType() + "]</b>" + s); }
+        protected void Log(string s) { if (PrintDebugMessages) Debug.Log($"<b>[{GetType()}]</b> " + s); }
+        protected void LogWarning(string s) { if (PrintDebugMessages) Debug.LogWarning($"<b>[{GetType()}]</b> " + s); }
+        protected void LogError(string s) { if (PrintDebugMessages) Debug.LogError($"<b>[{GetType()}]</b> " + s); }
         #endregion
 
         #region EventTrigger Class

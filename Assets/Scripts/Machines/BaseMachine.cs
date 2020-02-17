@@ -21,6 +21,15 @@ namespace NERVV {
             get => _axes;
             set => _axes = value;
         }
+
+        /// <summary>
+        /// Invoked when any field value is updated.
+        /// Changes to axis values will NOT invoke this!
+        /// </summary>
+        public EventHandler OnMachineUpdated {
+            get;
+            set;
+        }
         #endregion
 
         #region Machine Settings
@@ -32,7 +41,10 @@ namespace NERVV {
         /// <see cref="IMachine"/>
         public virtual string Name {
             get => _name;
-            set => _name = value;
+            set {
+                _name = value;
+                TriggerOnMachineUpdated(this);
+            }
         }
 
         [SerializeField,
@@ -42,7 +54,10 @@ namespace NERVV {
         /// <see cref="IMachine"/>
         public virtual string UUID {
             get => _uuid;
-            set => _uuid = value;
+            set {
+                _uuid = value;
+                TriggerOnMachineUpdated(this);
+            }
         }
 
         [SerializeField, Tooltip("Name of machine manufacturer")]
@@ -51,7 +66,10 @@ namespace NERVV {
         /// <see cref="IMachine"/>
         public virtual string Manufacturer {
             get => _manufacturer;
-            set => _manufacturer = value;
+            set {
+                _manufacturer = value;
+                TriggerOnMachineUpdated(this);
+            }
         }
 
         [SerializeField, Tooltip("Model of machine")]
@@ -60,7 +78,10 @@ namespace NERVV {
         /// <see cref="IMachine"/>
         public virtual string Model {
             get => _model;
-            set => _model = value;
+            set {
+                _model = value;
+                TriggerOnMachineUpdated(this);
+            }
         }
 
         public bool PrintDebugMessages = false;
@@ -98,7 +119,13 @@ namespace NERVV {
             // Safety checks
             for (int i = 0; i < Axes.Count; i++)
                 if (Axes[i].AxisTransform == null)
-                    throw new ArgumentNullException("Could not find Transform for axis " + i + "!");
+                    
+
+            foreach (var a in Axes) {
+                if (a.AxisTransform == null)
+                    throw new ArgumentNullException($"Could not find Transform for {a.ID}!");
+                a.OnValueUpdated += TriggerOnMachineUpdated;
+            }
 
             // Link to MachineManager
             if (MachineManager == null)
@@ -108,10 +135,15 @@ namespace NERVV {
         }
         #endregion
 
+        #region Public Methods
+        public void TriggerOnMachineUpdated(object sender, EventArgs args = null) =>
+            OnMachineUpdated?.Invoke(sender, args);
+        #endregion
+
         #region Methods
-        protected void Log(string s) { if (PrintDebugMessages) Debug.Log("<b>[" + GetType() + "]</b>" + s); }
-        protected void LogWarning(string s) { if (PrintDebugMessages) Debug.LogWarning("<b>[" + GetType() + "]</b>" + s); }
-        protected void LogError(string s) { if (PrintDebugMessages) Debug.LogError("<b>[" + GetType() + "]</b>" + s); }
+        protected void Log(string s) { if (PrintDebugMessages) Debug.Log($"<b>[{GetType()}]</b> " + s); }
+        protected void LogWarning(string s) { if (PrintDebugMessages) Debug.LogWarning($"<b>[{GetType()}]</b> " + s); }
+        protected void LogError(string s) { if (PrintDebugMessages) Debug.LogError($"<b>[{GetType()}]</b> " + s); }
         #endregion
     }
 }

@@ -96,8 +96,8 @@ public class KukaRosJointSubscriber : InputSource {
 
         base.OnEnable();
 
-        if (PrintDebugMessages && rosConnect != null)
-            Debug.LogWarning("Socket not null! Overwriting...");
+        if (rosConnect != null)
+            LogWarning("Socket not null! Overwriting...");
         rosConnect = null;
 
         // Get protocol object
@@ -151,8 +151,7 @@ public class KukaRosJointSubscriber : InputSource {
             try {
                 rosSocket = new RosSocket(p, SerializationMode);
             } catch (SocketException e) {
-                if (PrintDebugMessages)
-                    Debug.LogError("SocketException, trying again in one second...\n" +
+                LogError("SocketException, trying again in one second...\n" +
                         "----------------------------------------------\n" + e.Message);
             }
             if (rosSocket != null) break;
@@ -168,8 +167,8 @@ public class KukaRosJointSubscriber : InputSource {
             ReceiveMessage,
             0   // the rate(in ms in between messages) at which to throttle the topics
         );
-        if (PrintDebugMessages && !string.IsNullOrEmpty(topicID))
-            Debug.Log("Subscribed to socket!");
+        if (!string.IsNullOrEmpty(topicID))
+            Log("Subscribed to socket!");
     }
 
     /// <summary>Called when RosSocket receieves messages</summary>
@@ -192,24 +191,20 @@ public class KukaRosJointSubscriber : InputSource {
 
         for (int i = 0; i < message.angles.Length; i++) {
             Machine.Axis a = machineToSet.Axes.Find(x => x.ID == axesToBind[i].ID);
-            if (a == null) throw new KeyNotFoundException("Axis not found for axis ID: " + axesToBind[i].ID);
+            if (a == null) throw new KeyNotFoundException($"Axis not found for axis ID: {axesToBind[i].ID}");
 
             a.ExternalValue = ((float)message.angles[i] + axesToBind[i].Offset) * axesToBind[i].ScaleFactor;
             a.Torque = (float)message.torques[i];
-            if (PrintDebugMessages) Debug.Log("Kuka ROS Input: " + a.Name + " has " + message.angles[i]);
+            Log($"Kuka ROS Input: {a.Name} has {message.angles[i]}");
         }
     }
 
     /// <summary>Callback when websocket is connected</summary>
-    protected void OnConnected(object sender, EventArgs e) {
-        if (PrintDebugMessages)
-            Debug.Log("Kuka ROS Joint Subscriber connected to RosBridge: " + URL);
-    }
+    protected void OnConnected(object sender, EventArgs e) =>
+        Log($"Kuka ROS Joint Subscriber connected to RosBridge: {URL}");
 
     /// <summary>Callback when websocket is disconnected</summary>
-    protected void OnDisconnected(object sender, EventArgs e) {
-        if (PrintDebugMessages)
-            Debug.Log("Kuka ROS Joint Subscriber disconnected from RosBridge: " + URL);
-    }
+    protected void OnDisconnected(object sender, EventArgs e) =>
+        Log($"Kuka ROS Joint Subscriber disconnected from RosBridge: {URL}");
     #endregion
 }

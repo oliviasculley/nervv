@@ -38,24 +38,27 @@ namespace NERVV.Menu.MachineDetailPanel {
         #endregion
 
         #region Unity Methods
+        /// <summary>Checks references and adds axis value callback</summary>
         protected override void OnEnable() {
             if (ElementTitle == null) throw new ArgumentNullException();
 
             if (Axis == null) gameObject.SetActive(false);
+            Axis.OnValueUpdated += UpdateAxisText;
 
             base.OnEnable();
         }
 
-        /// <summary>Update text elements</summary>
+        /// <summary>Set axis value depending on direction</summary>
         protected void Update() {
-            // Set axis value depending on direction
             if (changingAxis)
                 Axis.Value += (axisDirection ? Time.deltaTime : -Time.deltaTime) * AxisSpeed;
+        }
 
-            // Live update angles
-            ElementTitle.text =
-                Axis.Name + ": " + Axis.Value + "\n" +  // Axis 1: <value>
-                "Torque: " + Axis.Torque;               // Torque: <value>
+        /// <summary>Removes axis value callback</summary>
+        protected override void OnDisable() {
+            Axis.OnValueUpdated -= UpdateAxisText;
+
+            base.OnDisable();
         }
         #endregion
 
@@ -68,13 +71,20 @@ namespace NERVV.Menu.MachineDetailPanel {
         }
 
         /// <summary>Stops modifying axis value</summary>
-        public void StopChanging() {
-            changingAxis = false;
-        }
+        public void StopChanging() => changingAxis = false;
 
         public void InitializeElement(Machine.Axis Axis) {
             this.Axis = Axis;
             gameObject.SetActive(true);
+        }
+
+        /// <summary>Function to update axis text element values</summary>
+        /// <param name="sender">Unused</param>
+        /// <param name="args">Unused</param>
+        public void UpdateAxisText(object sender, EventArgs args) {
+            ElementTitle.text =
+                Axis.Name + ": " + Axis.Value + "\n" +  // Axis 1: <value>
+                "Torque: " + Axis.Torque;               // Torque: <value>
         }
         #endregion
     }

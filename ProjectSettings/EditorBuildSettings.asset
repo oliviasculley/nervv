@@ -8,4 +8,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/JunLab Sample.unity
     guid: 57e776f409174c74ab50b5317c344cf2
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 8d136de070da9f9438eb460daa75b09b,
+      type: 2}

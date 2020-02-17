@@ -101,8 +101,8 @@ namespace NERVV {
         /// </exception>
         protected virtual void OnEnable() {
             var success = InputManager.AddInput(this);
-            if (PrintDebugMessages && !success)
-                Debug.LogError("Could not add self to InputManager!");
+            if (!success)
+                LogError("Could not add self to InputManager!");
             InputEnabled &= success;
         }
 
@@ -111,13 +111,13 @@ namespace NERVV {
         /// Throws if InputManager is null
         /// </exception>
         protected virtual void OnDisable() {
-            if (PrintDebugMessages && !InputManager.RemoveInput(this))
-                Debug.LogError("Could not remove self from InputManager!");
+            if (!InputManager.RemoveInput(this))
+                LogError("Could not remove self from InputManager!");
         }
 
-        protected void Log(string s) { if (PrintDebugMessages) Debug.Log("<b>[" + GetType() + "]</b>" + s); }
-        protected void LogWarning(string s) { if (PrintDebugMessages) Debug.LogWarning("<b>[" + GetType() + "]</b>" + s); }
-        protected void LogError(string s) { if (PrintDebugMessages) Debug.LogError("<b>[" + GetType() + "]</b>" + s); }
+        protected void Log(string s) { if (PrintDebugMessages) Debug.Log($"<b>[{GetType()}]</b> " + s); }
+        protected void LogWarning(string s) { if (PrintDebugMessages) Debug.LogWarning($"<b>[{GetType()}]</b> " + s); }
+        protected void LogError(string s) { if (PrintDebugMessages) Debug.LogError($"<b>[{GetType()}]</b> " + s); }
         #endregion
     }
 }

@@ -47,9 +47,6 @@
                "inputs" : {
                   "click" : {
                      "output" : "/actions/default/in/callmenu"
-                  },
-                  "held" : {
-                     "output" : "/actions/default/in/activateleftik"
                   }
                },
                "mode" : "button",
@@ -77,9 +74,6 @@
                "inputs" : {
                   "click" : {
                      "output" : "/actions/default/in/callmenu"
-                  },
-                  "held" : {
-                     "output" : "/actions/default/in/activaterightik"
                   }
                },
                "mode" : "button",
@@ -102,6 +96,24 @@
                },
                "mode" : "button",
                "path" : "/user/hand/left/input/grip"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/default/in/activateleftik"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/trackpad"
+            },
+            {
+               "inputs" : {
+                  "click" : {
+                     "output" : "/actions/default/in/activaterightik"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/right/input/trackpad"
             }
          ]
       },

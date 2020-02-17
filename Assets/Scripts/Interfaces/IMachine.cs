@@ -1,4 +1,5 @@
 ﻿// System
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -26,6 +27,8 @@ namespace NERVV {
 
         /// <summary></summary>
         string Model { get; set; }
+
+        EventHandler OnMachineUpdated { get; set; }
         #endregion
     }
 }

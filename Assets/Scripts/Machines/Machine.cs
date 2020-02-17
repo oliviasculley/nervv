@@ -44,6 +44,7 @@ namespace NERVV {
             set => _ikSpeed = value;
         }
 
+
         /// <summary>Axis delta to check IK</summary>
         [SerializeField, Tooltip("Axis delta to check IK")]
         protected float _samplingDistance = 0.01f;
@@ -59,6 +60,19 @@ namespace NERVV {
             get => _ikEpsilon;
             set => _ikEpsilon = value;
         }
+
+        [SerializeField, Tooltip("Base axis to start IK from")]
+        protected string _startingAxisID;
+        /// <summary>Base axis to start IK from</summary>
+        ///<seealso cref="IInverseKinematics"/>
+        public Axis StartingAxis {
+            get => Axes.Find(x => x.ID == _startingAxisID);
+            set => _startingAxisID = value.ID;
+        }
+        #endregion
+
+        #region Vars
+        protected List<Axis> ForwardKinematicAxes;
         #endregion
 
         #region Unity Methods
@@ -73,6 +87,35 @@ namespace NERVV {
                     Debug.LogWarning("IK Learning rate is zero, IK will not move!");
                 if (BlendSpeed == 0)
                     Debug.LogWarning("BlendSpeed is 0, will never move!");
+            }
+
+            // Axes safety checks
+            HashSet<string> seenIDs = new HashSet<string>();
+            foreach (var a in Axes) {
+                if (a.AxisTransform == null)
+                    throw new ArgumentNullException($"Axis transform null for axis {a.ID}!");
+                if (seenIDs.Contains(a.ID))
+                    throw new ArgumentException($"Axis {a.ID} has identical axis ID! These must be unique.");
+                seenIDs.Add(a.ID);
+                foreach (var id in a.ChildAxisID)
+                    if (Axes.FindIndex(x => x.ID == id) == -1)
+                        throw new KeyNotFoundException($"Could not find childAxis with ID {id}!");
+            }
+
+            // Setup forward kinematic axes
+            ForwardKinematicAxes = ForwardKinematicAxes ?? new List<Axis>();
+            ForwardKinematicAxes.Clear();
+
+            var currAxis = StartingAxis;
+            ForwardKinematicAxes.Add(currAxis);
+            while (currAxis.ChildAxisID != null && currAxis.ChildAxisID.Length > 0) {
+                if (currAxis.ChildAxisID.Length != 1)
+                    throw new NotImplementedException();
+
+                var nextAxis = Axes.Find(x => x.ID == currAxis.ChildAxisID[0]);
+                Debug.Assert(nextAxis != null);
+                ForwardKinematicAxes.Add(nextAxis);
+                currAxis = nextAxis;
             }
         }
 
@@ -91,7 +134,7 @@ namespace NERVV {
             }
 
             // DEBUG: Draw forward kinematics every frame
-            ForwardKinematics(Axes.ToArray());
+            ForwardKinematics(ForwardKinematicAxes.ToArray());
         }
         #endregion
 
@@ -136,13 +179,13 @@ namespace NERVV {
         /// <see cref="IInverseKinematics"/>
         public virtual void InverseKinematics(Vector3 target) {
             // If close enough to the target, don't need to IK anymore
-            if (Vector3.SqrMagnitude(target - ForwardKinematics(Axes.ToArray())) < IKEpsilon)
+            if (Vector3.SqrMagnitude(target - ForwardKinematics(ForwardKinematicAxes.ToArray())) < IKEpsilon)
                 return;
 
             // Run linear IK with each angle
             float delta;
             for (int i = 0; i < Axes.Count; i++) {
-                delta = ((PartialGradient(target, Axes, i) > 0) ? IKSpeed : -IKSpeed) * Time.deltaTime;
+                delta = ((PartialGradient(target, ForwardKinematicAxes, i) > 0) ? IKSpeed : -IKSpeed) * Time.deltaTime;
                 Axes[i].Value -= delta;
             }
         }
@@ -175,12 +218,13 @@ namespace NERVV {
 
         #region Axis Class
         /// <summary>Axis class, controls robot's dimensions of movement.</summary>
-        [System.Serializable]
+        [Serializable]
         public class Axis {
             #region Properties
-            [SerializeField,
-            Tooltip("Value of axis in external worldspace"),
-            Header("Properties")]protected float _externalValue;
+            [SerializeField, Tooltip("Value of axis in external worldspace"),
+            Header("Properties")]
+            protected float _externalValue;
+            /// <summary>Value of axis in external worldspace</summary>
             public virtual float ExternalValue {
                 get => _externalValue;
                 set {
@@ -190,8 +234,14 @@ namespace NERVV {
                             MinExternalValue,
                             MaxExternalValue) :
                         value;
+
+                    // Trigger callback if present
+                    OnValueUpdated?.Invoke(this, null);
                 } 
             }
+
+            /// <summary>Callback when ExternalValue is modified</summary>
+            public EventHandler OnValueUpdated;
 
             /// <summary>Value of axis in Unity worldspace</summary>
             public virtual float Value {
@@ -337,6 +387,15 @@ namespace NERVV {
             public virtual Transform AxisTransform {
                 get => _axisTransform;
                 set => _axisTransform = value;
+            }
+
+            [SerializeField,
+            Tooltip("If nested, ID of each child axis")]
+            protected string[] _childAxesID;
+            /// <summary>If nested, ID of each child axis</summary>
+            public virtual string[] ChildAxisID {
+                get => _childAxesID;
+                set => _childAxesID = value;
             }
             #endregion
         }

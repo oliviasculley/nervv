@@ -22,14 +22,24 @@ namespace NERVV.Menu.MachineDetailPanel {
         public IMachine CurrMachine {
             get => _currMachine;
             set {
-                _currMachine = value ?? throw new ArgumentNullException();
+                if (_currMachine != null) {
+                    _currMachine.OnMachineUpdated -= ResetMachine;
 
-                // Disable old components
-                DisableAxisHandlers();
-                foreach (Transform t in machineElementParent)
-                    Destroy(t.gameObject);
-                LeftIKSphere.SetActive(false);
-                RightIKSphere.SetActive(false);
+                    foreach (var s in stringElements)
+                        Destroy(s.gameObject);
+                    foreach (var f in floatElements)
+                        Destroy(f.gameObject);
+                    foreach (var a in axisElements)
+                        Destroy(a.gameObject);
+
+                    // Disable old components
+                    DisableAxisHandlers();
+                    LeftIKSphere.SetActive(false);
+                    RightIKSphere.SetActive(false);
+                }
+
+                _currMachine = value ?? throw new ArgumentNullException();
+                _currMachine.OnMachineUpdated += ResetMachine;
 
                 // Generate string fields
                 if (GenerateStringElements) {
@@ -80,7 +90,8 @@ namespace NERVV.Menu.MachineDetailPanel {
                 if (GenerateAxisHandlers) {
                     DisableAxisHandlers();
                     foreach (Machine.Axis a in CurrMachine.Axes)
-                        GenerateAxisHandle(a);
+                        if (a.Type == Machine.Axis.AxisType.Rotary)
+                            GenerateAxisHandle(a);
                 }
             }
         }
@@ -140,6 +151,12 @@ namespace NERVV.Menu.MachineDetailPanel {
         public GameObject machineElementAxisPrefab;
         #endregion
 
+        #region Vars
+        protected List<MachineStringElement> stringElements;
+        protected List<MachineFloatElement> floatElements;
+        protected List<MachineAxisElement> axisElements;
+        #endregion
+
         #region Unity Methods
         /// <summary>Check references and safety checks</summary>
         protected override void OnEnable() {
@@ -157,6 +174,10 @@ namespace NERVV.Menu.MachineDetailPanel {
             if (PrintDebugMessages) Debug.Log("OnEnable() run!");
             AxisHandlers = AxisHandlers ?? new List<AxisHandler>();
             Debug.Assert(AxisHandlers != null);
+
+            stringElements = stringElements ?? new List<MachineStringElement>();
+            floatElements = floatElements ?? new List<MachineFloatElement>();
+            axisElements = axisElements ?? new List<MachineAxisElement>();
 
             base.OnEnable();
         }
@@ -183,22 +204,32 @@ namespace NERVV.Menu.MachineDetailPanel {
 
         /// <summary>Disables axis handlers</summary>
         protected override void OnDisable() {
-            base.OnDisable();
-
             DisableAxisHandlers();
-            foreach (Transform t in machineElementParent)
-                Destroy(t.gameObject);
+            foreach (var s in stringElements)
+                Destroy(s.gameObject);
+            foreach (var f in floatElements)
+                Destroy(f.gameObject);
+            foreach (var a in axisElements)
+                Destroy(a.gameObject);
             LeftIKSphere.SetActive(false);
             RightIKSphere.SetActive(false);
+
+            base.OnDisable();
         }
         #endregion
 
         #region UI Element Generators
+        /// <summary>Regenerates current machine on value changes</summary>
+        /// <param name="sender">Unused</param>
+        /// <param name="args">Unused</param>
+        protected void ResetMachine(object sender, EventArgs args) => CurrMachine = CurrMachine;
+
         /// <summary>
         /// Generates handler that allows for modification of the corresponding axis field
         /// </summary>
         /// <param name="axisName">axis to create handler for</param>
-        void GenerateAxisElement(Machine.Axis a) {
+        /// <see cref="MachineAxisElement"/>
+        protected void GenerateAxisElement(Machine.Axis a) {
             GameObject g = Instantiate(machineElementAxisPrefab, machineElementParent);
             g.transform.SetAsLastSibling();
 
@@ -206,13 +237,15 @@ namespace NERVV.Menu.MachineDetailPanel {
             Debug.Assert(e != null);
 
             e.InitializeElement(a); // Set fields
+            axisElements.Add(e);
         }
 
         /// <summary>
         /// Generates handler that allows for modification of the corresponding float field
         /// </summary>
         /// <param name="fieldName">Name of field to modify</param>
-        void GenerateFloatElement(PropertyInfo propertyInfo) {
+        /// <see cref="MachineFloatElement"/>
+        protected void GenerateFloatElement(PropertyInfo propertyInfo) {
             GameObject g = Instantiate(machineElementFloatPrefab, machineElementParent);
             g.transform.SetAsLastSibling();
 
@@ -221,6 +254,7 @@ namespace NERVV.Menu.MachineDetailPanel {
 
             e.InitializeElement(propertyInfo, CurrMachine);
             g.SetActive(true);
+            floatElements.Add(e);
         }
 
         /// <summary>
@@ -228,7 +262,8 @@ namespace NERVV.Menu.MachineDetailPanel {
         /// </summary>
         /// <param name="fieldName">Name of field to modify</param>
         /// <exception cref="FieldAccessException">Could not get fieldInfo for field</exception>
-        void GenerateStringElement(PropertyInfo propertyInfo) {
+        /// <see cref="MachineStringElement"/>
+        protected void GenerateStringElement(PropertyInfo propertyInfo) {
             GameObject g = Instantiate(machineElementStringPrefab, machineElementParent);
             g.transform.SetAsLastSibling();
 
@@ -237,12 +272,16 @@ namespace NERVV.Menu.MachineDetailPanel {
 
             e.InitializeElement(propertyInfo, CurrMachine);
             g.SetActive(true);
+            stringElements.Add(e);
         }
-        #endregion
 
-        #region AxisHandler Methods
-        /// <summary>Finds JointAxisHandler in scene</summary>
-        public void GenerateAxisHandle(Machine.Axis a) {
+        /// <summary>
+        /// Tries to find a AxisHandler around machine to allow direct axis rotation,
+        /// or if it can't, then generates a new one
+        /// </summary>
+        /// <param name="a">Axis to generate display for</param>
+        /// <see cref="AxisHandler"/>
+        protected void GenerateAxisHandle(Machine.Axis a) {
             Transform t = a.AxisTransform.Find("AxisHandler");
             if (t == null) { // Generate new AxisHandle object from prefab if can't find it
                 GameObject g = Instantiate(AxisHandlerPrefab, a.AxisTransform);
@@ -250,19 +289,22 @@ namespace NERVV.Menu.MachineDetailPanel {
                 g.transform.localPosition = Vector3.zero;
                 t = g.transform;
             }
-            
+
             Debug.Assert(t != null);
             var handler = t.GetComponent<AxisHandler>();
             Debug.Assert(handler != null);
 
             handler.GrabAction = InteractUI;
             handler.Axis = a;
-            
+
             AxisHandlers.Add(handler);
             if (PrintDebugMessages) Debug.Log("Add Count: " + AxisHandlers.Count);
         }
+        #endregion
 
+        #region AxisHandler Methods
         /// <summary>Disables all axis handlers and clears AxisHandlers list</summary>
+        /// <see cref="AxisHandler"/>
         public void DisableAxisHandlers() {
             if (PrintDebugMessages) Debug.Log("Disable Count: " + AxisHandlers.Count);
             if (AxisHandlers.Count == 0) return;

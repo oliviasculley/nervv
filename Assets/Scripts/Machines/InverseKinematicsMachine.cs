@@ -34,6 +34,15 @@ namespace NERVV {
             get => _ikEpsilon;
             set => _ikEpsilon = value;
         }
+
+        [SerializeField, Tooltip("Base axis to start IK from")]
+        protected Machine.Axis _startingAxis;
+        /// <summary>Base axis to start IK from</summary>
+        ///<seealso cref="IInverseKinematics"/>
+        public Machine.Axis StartingAxis {
+            get => _startingAxis;
+            set => _startingAxis = value;
+        }
         #endregion
 
         #region Unity Methods

@@ -65,7 +65,7 @@ public class DoosanROSJointService : OutputSource {
 
         // Safety checks
         if (machineToPublish == null) {
-            Debug.LogError("Machine null, disabling self...");
+            LogError("Machine null, disabling self...");
             OutputEnabled = false;
         }
     }
@@ -73,7 +73,7 @@ public class DoosanROSJointService : OutputSource {
     /// <summary>Initializes socket connection when object is enabled</summary>
     void OnEnable() {
         if (rosSocket != null)
-            Debug.LogWarning("Socket not null! Overwriting...");
+            LogWarning("Socket not null! Overwriting...");
         rosSocket = null;
 
         // Get protocol object
@@ -128,11 +128,11 @@ public class DoosanROSJointService : OutputSource {
         // Safety checks
         if (!OutputEnabled) return;
         if (!rosSocket.protocol.IsAlive()) {
-            Debug.LogError("RosSocket is not active!");
+            LogError("RosSocket is not active!");
             return;
         }
         if (!string.IsNullOrEmpty(serviceID)) {
-            Debug.Log("ServiceID not null, not calling again");
+            Log("ServiceID not null, not calling again");
             return;
         }
 
@@ -163,20 +163,16 @@ public class DoosanROSJointService : OutputSource {
     /// <summary>Callback with response from Doosan MoveJoint Service</summary>
     void VerifySuccess(MoveJointResponse r) {
         if (!r.success)
-            Debug.LogWarning("Could not successfully move angles to new joint!");
+            LogWarning("Could not successfully move angles to new joint!");
         serviceID = null;
     }
 
     /// <summary>Callback when socket is connected</summary>
-    void OnConnected(object sender, EventArgs e) {
-        if (PrintDebugMessages)
-            Debug.Log("Doosan ROS Joint Service connected to RosBridge: " + URL);
-    }
+    void OnConnected(object sender, EventArgs e) =>
+        Log($"Doosan ROS Joint Service connected to RosBridge: {URL}");
 
     /// <summary>Callback when socket is disconnected</summary>
-    void OnDisconnected(object sender, EventArgs e) {
-        if (PrintDebugMessages)
-            Debug.Log("Doosan ROS Joint Service disconnected from RosBridge: " + URL);
-    }
+    void OnDisconnected(object sender, EventArgs e) =>
+        Log($"Doosan ROS Joint Service disconnected from RosBridge: {URL}");
     #endregion
 }
