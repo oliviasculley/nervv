@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: 94b113e3f1820e5439460e32c21280f4
 ModelImporter:
-  serializedVersion: 28
+  serializedVersion: 19300
   internalIDToNameTable:
   - first:
       1: 100000
@@ -41,6 +41,11 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: Steel_-_Satin
     second: {fileID: 2100000, guid: 33f498e1d290c8b45bffcd87546bce3e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: defaultMat
+    second: {fileID: 2100000, guid: 0b300ff9989a47546a37c19cda79f03b, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
@@ -123,6 +128,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 0
   humanoidOversampling: 1
   avatarSetup: 0

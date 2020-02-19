@@ -41,6 +41,11 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: Steel_-_Satin
     second: {fileID: 2100000, guid: 33f498e1d290c8b45bffcd87546bce3e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: defaultMat
+    second: {fileID: 2100000, guid: 0b300ff9989a47546a37c19cda79f03b, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0

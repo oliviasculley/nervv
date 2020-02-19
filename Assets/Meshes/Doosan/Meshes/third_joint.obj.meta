@@ -35,8 +35,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: MeshBody1Mat
-    second: {fileID: 8975861568064652488, guid: c645d3bb77521414aadb8da3daa75475,
-      type: 3}
+    second: {fileID: 2100000, guid: d22647ade42ef8015b8d3825ee232afa, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
