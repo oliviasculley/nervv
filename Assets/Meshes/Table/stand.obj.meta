@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: ede0577703865c543a47c132c6cabebd
 ModelImporter:
-  serializedVersion: 28
+  serializedVersion: 19300
   internalIDToNameTable:
   - first:
       1: 100000
@@ -30,7 +30,12 @@ ModelImporter:
   - first:
       41386430: 2186277476908879412
     second: ImportLogs
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: MeshBody1Mat
+    second: {fileID: 2100000, guid: 745bea3aadafe47a4af306fab5c5536a, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
@@ -113,6 +118,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 0
   humanoidOversampling: 1
   avatarSetup: 0
