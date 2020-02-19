@@ -12,7 +12,6 @@ namespace NERVV {
     /// be considered as a machine.
     /// </summary>
     public interface IMachine {
-        #region Required Fields
         /// <summary>List of axes of movement</summary>
         List<Machine.Axis> Axes { get; set; }
 
@@ -29,6 +28,5 @@ namespace NERVV {
         string Model { get; set; }
 
         EventHandler OnMachineUpdated { get; set; }
-        #endregion
     }
 }

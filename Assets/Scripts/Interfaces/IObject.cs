@@ -3,16 +3,16 @@ using UnityEngine;
 
 namespace NERVV {
     /// <summary>
-    /// Interface that must be implemented in order to
-    /// enable interpolation.
+    /// Interface that must be implemented in order to become an object
     /// </summary>
     public interface IObject {
-        #region Required Fields
-        /// <summary>transform of object</summary>
-        Transform transform { get; }
+        /// <summary>Transform for object</summary>
+        Transform Transform { get; }
 
-        /// <summary>Toggles lerping to final position</summary>
-        bool Interpolation { get; set; }
-        #endregion
+        /// <summary>Collider for object</summary>
+        Collider Collider { get; }
+
+        /// <summary>Mesh for object</summary>
+        Mesh Mesh { get; }
     }
 }

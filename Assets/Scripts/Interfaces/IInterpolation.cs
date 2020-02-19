@@ -7,12 +7,10 @@ namespace NERVV {
     /// enable interpolation.
     /// </summary>
     public interface IInterpolation : IMachine {
-        #region Required Fields
         /// <summary>Speed to lerp to blend position</summary>
         float BlendSpeed { get; set; }
 
         /// <summary>Toggles lerping to final position</summary>
         bool Interpolation { get; set; }
-        #endregion
     }
 }
