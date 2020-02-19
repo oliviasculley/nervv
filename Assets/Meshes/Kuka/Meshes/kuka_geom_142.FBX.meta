@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: 7317375fb250b024d872ed842ade1ce0
 ModelImporter:
-  serializedVersion: 28
+  serializedVersion: 19300
   internalIDToNameTable:
   - first:
       1: 100000
@@ -39,12 +39,22 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Fbx Default Material.004
+    second: {fileID: 2100000, guid: 745bea3aadafe47a4af306fab5c5536a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: color_55b0ffff
     second: {fileID: 2100000, guid: 5eec451533c422444b0fee391a82fe4e, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: color_999999ff
+    second: {fileID: 2100000, guid: e469fcdcfe7b11c42b4b96f5e0128572, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: color_999999ff.003
     second: {fileID: 2100000, guid: e469fcdcfe7b11c42b4b96f5e0128572, type: 2}
   - first:
       type: UnityEngine:Material
@@ -133,6 +143,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 0
   humanoidOversampling: 1
   avatarSetup: 0
