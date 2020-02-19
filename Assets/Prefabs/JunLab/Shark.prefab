@@ -1061,44 +1061,55 @@ MonoBehaviour:
     _id: x
     _name: The x axis of the Shark
     _desc: 
-    _maxDelta: 0
+    _valueRestricted: 0
+    _maxExternalValue: 0
+    _minExternalValue: 0
     _offset: 0
     _scaleFactor: 0
     _type: 0
     _axisVector3: {x: 0, y: 0, z: 0}
     _axisTransform: {fileID: 0}
+    _childAxesID: []
   - _externalValue: 0
     _torque: 0
     _id: y
     _name: The y axis of the Shark
     _desc: 
-    _maxDelta: 0
+    _valueRestricted: 0
+    _maxExternalValue: 0
+    _minExternalValue: 0
     _offset: 0
     _scaleFactor: 0
     _type: 0
     _axisVector3: {x: 0, y: 0, z: 0}
     _axisTransform: {fileID: 0}
+    _childAxesID: []
   - _externalValue: 0
     _torque: 0
     _id: z
     _name: The z axis of the Shark
     _desc: 
-    _maxDelta: 0
+    _valueRestricted: 0
+    _maxExternalValue: 0
+    _minExternalValue: 0
     _offset: 0
     _scaleFactor: 0
     _type: 0
     _axisVector3: {x: 0, y: 0, z: 0}
     _axisTransform: {fileID: 0}
-  _name: 
-  _uuid: 
-  _manufacturer: 
+    _childAxesID: []
+  _name: Shark
+  _uuid: Shark
+  _manufacturer: Shark
   _model: 
   PrintDebugMessages: 0
-  _lerpSpeed: 10
+  _machineManager: {fileID: 0}
+  _blendSpeed: 10
   _interpolation: 1
-  IKSpeed: 10
-  SamplingDistance: 0.01
-  IKEpsilon: 0.0001
+  _ikSpeed: 10
+  _samplingDistance: 0.01
+  _ikEpsilon: 0.0001
+  _startingAxisID: x
 --- !u!1 &3935998331109424834
 GameObject:
   m_ObjectHideFlags: 0

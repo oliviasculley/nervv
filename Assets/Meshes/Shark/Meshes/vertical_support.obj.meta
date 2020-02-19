@@ -1,82 +1,41 @@
 fileFormatVersion: 2
-guid: 1484785e419bda94da6810878245ef0b
+guid: b161bad9f7f169047ba7a43039a0c74f
 ModelImporter:
   serializedVersion: 19300
   internalIDToNameTable:
   - first:
       1: 100000
+    second: MeshBody14
+  - first:
+      1: 100002
     second: //RootNode
   - first:
       4: 400000
+    second: MeshBody14
+  - first:
+      4: 400002
     second: //RootNode
   - first:
       21: 2100000
-    second: color_81b5c3ff
-  - first:
-      21: 2100002
-    second: color_333333ff
-  - first:
-      21: 2100004
-    second: color_666666ff
-  - first:
-      21: 2100006
-    second: color_999999ff
-  - first:
-      21: 2100008
-    second: color_e0f4ffff
-  - first:
-      21: 2100010
-    second: Fbx Default Material
+    second: MeshBody14Mat
   - first:
       23: 2300000
-    second: //RootNode
+    second: MeshBody14
   - first:
       33: 3300000
-    second: //RootNode
+    second: MeshBody14
   - first:
       43: 4300000
-    second: Imported8
+    second: MeshBody14
+  - first:
+      41386430: 2186277476908879412
+    second: ImportLogs
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Fbx Default Material
-    second: {fileID: 2100000, guid: 745bea3aadafe47a4af306fab5c5536a, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Fbx Default Material.001
-    second: {fileID: 2100000, guid: c60acf03f14fc3547b179b202238f9bc, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: color_333333ff
-    second: {fileID: 2100000, guid: ccb276f686f45ca42bceca5a7806aac6, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: color_333333ff.001
-    second: {fileID: 2100000, guid: ccb276f686f45ca42bceca5a7806aac6, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: color_666666ff
-    second: {fileID: 2100000, guid: 12a3336ee87081b43867b4e1bc12fe36, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: color_81b5c3ff
-    second: {fileID: 2100000, guid: c60acf03f14fc3547b179b202238f9bc, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: color_999999ff
-    second: {fileID: 2100000, guid: e469fcdcfe7b11c42b4b96f5e0128572, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: color_e0f4ffff
-    second: {fileID: 2100000, guid: 2e2fe05b8ec2b6445b93ba3d583f24ce, type: 2}
+      name: MeshBody14Mat
+    second: {fileID: 2100000, guid: d5ccd84d577ee6d4b9ca3c8035a5a078, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
@@ -104,20 +63,20 @@ ModelImporter:
     extraExposedTransformPaths: []
     extraUserProperties: []
     clipAnimations: []
-    isReadable: 1
+    isReadable: 0
   meshes:
     lODScreenPercentages: []
     globalScale: 1
-    meshCompression: 3
-    addColliders: 1
+    meshCompression: 0
+    addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
     importVisibility: 1
     importBlendShapes: 1
-    importCameras: 0
-    importLights: 0
-    swapUVChannels: 1
-    generateSecondaryUV: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
     useFileUnits: 1
     keepQuads: 0
     weldVertices: 1
@@ -125,7 +84,7 @@ ModelImporter:
     skinWeightsMode: 0
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
-    meshOptimizationFlags: -1
+    meshOptimizationFlags: 0
     indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
@@ -134,14 +93,14 @@ ModelImporter:
     useFileScale: 1
   tangentSpace:
     normalSmoothAngle: 60
-    normalImportMode: 1
+    normalImportMode: 0
     tangentImportMode: 3
-    normalCalculationMode: 3
+    normalCalculationMode: 4
     legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
   referencedClips: []
-  importAnimation: 0
+  importAnimation: 1
   humanDescription:
     serializedVersion: 3
     human: []
