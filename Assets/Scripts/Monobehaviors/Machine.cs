@@ -1,6 +1,5 @@
 ﻿// System
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 // Unity Engine
@@ -47,18 +46,26 @@ namespace NERVV {
 
         /// <summary>Axis delta to check IK</summary>
         [SerializeField, Tooltip("Axis delta to check IK")]
-        protected float _samplingDistance = 0.01f;
-        public float SamplingDistance {
-            get => _samplingDistance;
-            set => _samplingDistance = value;
+        protected float _ikSamplingDistance = 0.01f;
+        public float IKSamplingDistance {
+            get => _ikSamplingDistance;
+            set => _ikSamplingDistance = value;
         }
 
-        /// <summary>Minimum distance delta to apply IK</summary>
+        /// <summary>Minimum distance delta to apply IK in meters</summary>
         [SerializeField, Tooltip("Minimum distance delta to apply IK")]
-        protected float _ikEpsilon = 0.0001f;
-        public float IKEpsilon {
-            get => _ikEpsilon;
-            set => _ikEpsilon = value;
+        protected float _ikEpsilonDistance = 0.0001f;
+        public float IKEpsilonDistance {
+            get => _ikEpsilonDistance;
+            set => _ikEpsilonDistance = value;
+        }
+
+        /// <summary>Minimum angle delta to apply IK in degrees</summary>
+        [SerializeField, Tooltip("Minimum angle delta to apply IK")]
+        protected float _ikEpsilonAngle = 0.0001f;
+        public float IKEpsilonAngle {
+            get => _ikEpsilonAngle;
+            set => _ikEpsilonAngle = value;
         }
 
         [SerializeField, Tooltip("Base axis to start IK from")]
@@ -119,7 +126,7 @@ namespace NERVV {
             }
         }
 
-        protected virtual void Update() {
+        protected virtual void FixedUpdate() {
             if (Interpolation) {
                 // Continually lerp towards final position
                 for (int i = 0; i < Axes.Count; i++)
@@ -133,19 +140,22 @@ namespace NERVV {
                     Axes[i].AxisTransform.localEulerAngles = Axes[i].AxisVector3;
             }
 
-            // DEBUG: Draw forward kinematics every frame
-            ForwardKinematics(ForwardKinematicAxes.ToArray());
+            // DEBUG: Draw forward kinematics lines in scene view
+            if (PrintDebugMessages)
+                ForwardKinematics(ForwardKinematicAxes.ToArray(), out _, out _);
         }
         #endregion
 
         #region Public Methods
         /// <summary>
-        /// Returns the final location of the robotic arm using forward kinematics
+        /// Returns the final location and orientation of the machine using forward kinematics.
+        /// If linear angles, does not modify the resultant vector from the previous angle.
         /// </summary>
         /// <param name="axes">Array of floats with axis values to calculate</param>
-        /// <returns>Vector3 of final position in world space</returns>
-        public virtual Vector3 ForwardKinematics(Axis[] axes) {
-            if (axes.Length == 0) return Vector3.zero;
+        /// <param name="resultPoint">Final position in world space</param>
+        /// <param name="resultOrientation">Final orientation in world space</param>
+        public virtual void ForwardKinematics(Axis[] axes, out Vector3 resultPoint, out Quaternion resultOrientation) {
+            if (axes.Length == 0) throw new ArgumentException();
 
             Vector3 prevPoint = axes[0].AxisTransform.position;
             Quaternion rotation = transform.rotation;
@@ -169,23 +179,28 @@ namespace NERVV {
                 }
                 prevPoint = nextPoint;
             }
-            return prevPoint;
+
+            // Return values
+            resultPoint = prevPoint;
+            resultOrientation = rotation;
         }
 
         /// <summary>
         /// When called, performs IK toward the target position by IKSpeed
         /// </summary>
-        /// <param name="target">Vector3 target position in worldspace</param>
+        /// <param name="targetPoint">Vector3 target position in worldspace</param>
         /// <see cref="IInverseKinematics"/>
-        public virtual void InverseKinematics(Vector3 target) {
+        public virtual void InverseKinematics(Vector3 targetPoint, Quaternion targetOrientation) {
             // If close enough to the target, don't need to IK anymore
-            if (Vector3.SqrMagnitude(target - ForwardKinematics(ForwardKinematicAxes.ToArray())) < IKEpsilon)
-                return;
+            ForwardKinematics(ForwardKinematicAxes.ToArray(), out Vector3 resultPoint, out Quaternion resultOrientation);
+            if (Vector3.SqrMagnitude(targetPoint - resultPoint) < IKEpsilonDistance) return;
+            if (Quaternion.Angle(targetOrientation, resultOrientation) < IKEpsilonAngle) return;
 
             // Run linear IK with each angle
-            float delta;
+            float delta, gradient;
             for (int i = 0; i < Axes.Count; i++) {
-                delta = ((PartialGradient(target, ForwardKinematicAxes, i) > 0) ? IKSpeed : -IKSpeed) * Time.deltaTime;
+                gradient = PartialGradient(targetPoint, targetOrientation, ForwardKinematicAxes, i);
+                delta = ((gradient > 0) ? IKSpeed : -IKSpeed) * Time.deltaTime;
                 Axes[i].Value -= delta;
             }
         }
@@ -193,26 +208,44 @@ namespace NERVV {
 
         #region Methods
         /// <summary>Returns the gradient for a specific angleID</summary>
-        /// <param name="target">Vector3 target location in worldspace</param>
+        /// <param name="targetPosition">Target location in worldspace</param>
+        /// <param name="targetOrientation">Target orientation in world space</param>
         /// <param name="axes">Angles to calculate from</param>
         /// <param name="axisID">Angle to return gradient for</param>
+        /// <param name="weight">Weight from 0 to 1 for position or orientation, respectively</param>
         /// <returns>Partial gradient as float</returns>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// Thrown when axisID is out of range</exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when axisID is out of range</exception>
+        /// <exception cref="ArgumentException">Thrown when IKSamplingDistance is 0</exception>
         /// <see cref="IInverseKinematics"/>
-        float PartialGradient(Vector3 target, List<Axis> axes, int axisID) {
+        protected float PartialGradient(
+            Vector3 targetPosition,
+            Quaternion targetOrientation,
+            List<Axis> axes,
+            int axisID,
+            float weight = 0.5f) {
             // Safety checks
             if (axisID < 0 || axisID >= axes.Count)
                 throw new ArgumentOutOfRangeException("Invalid axisID: " + axisID);
+            if (IKSamplingDistance == 0)
+                throw new ArgumentException("IKSamplingDistance must not be 0!");
 
             // Gradient : [F(x+Time per frame) - F(axisToCalculate)] / h
 
-            float f_x = Vector3.SqrMagnitude(target - ForwardKinematics(axes.ToArray()));
-            axes[axisID].Value += SamplingDistance;
-            float f_x_plus_d = Vector3.SqrMagnitude(target - ForwardKinematics(axes.ToArray()));
-            axes[axisID].Value -= SamplingDistance;
+            // Get original values
+            ForwardKinematics(axes.ToArray(), out Vector3 originalPoint, out Quaternion originalOrientation);
+            var originalDistance = Vector3.SqrMagnitude(targetPosition - originalPoint);
+            var originalAngle = Quaternion.Angle(targetOrientation, originalOrientation);
 
-            return (f_x_plus_d - f_x) / SamplingDistance;
+            // Get values modified by a delta
+            axes[axisID].Value += IKSamplingDistance;
+            ForwardKinematics(axes.ToArray(), out Vector3 modifiedPoint, out Quaternion modifiedOrientation);
+            var modifiedDistance = Vector3.SqrMagnitude(targetPosition - modifiedPoint);
+            var modifiedAngle = Quaternion.Angle(targetOrientation, modifiedOrientation);
+            axes[axisID].Value -= IKSamplingDistance;
+
+            var gradientDistance = modifiedDistance - originalDistance;
+            var gradientOrientation = modifiedAngle - originalAngle;
+            return Mathf.Lerp(gradientDistance, gradientOrientation, Mathf.Clamp01(weight)) / IKSamplingDistance;
         }
         #endregion
 

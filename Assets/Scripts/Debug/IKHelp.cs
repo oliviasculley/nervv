@@ -22,7 +22,7 @@ public class IKHelp : MonoBehaviour {
     /// <summary>Call InverseKinematics if machine is not null</summary>
     public void Update() {
         if (machine != null)
-            machine.InverseKinematics(transform.position);
+            machine.InverseKinematics(transform.position, transform.rotation);
     }
     #endregion
 }

@@ -70,8 +70,8 @@ namespace NERVV.Menu.MachineDetailPanel {
                     if (_currMachine is IInverseKinematics IKMachine) {
                         var fields = new string[] {
                             nameof(IKMachine.IKSpeed),
-                            nameof(IKMachine.IKEpsilon),
-                            nameof(IKMachine.SamplingDistance)
+                            nameof(IKMachine.IKEpsilonDistance),
+                            nameof(IKMachine.IKSamplingDistance)
                         };
                         foreach (var str in fields) {
                             var prop = typeof(IInverseKinematics).GetProperty(str);
@@ -187,9 +187,13 @@ namespace NERVV.Menu.MachineDetailPanel {
             // Perform IK on current menu machine if activated
             if (CurrMachine?.GetType() == typeof(IInverseKinematics)) {   
                 if (ActivateLeftIK.state) { 
-                    ((IInverseKinematics)CurrMachine).InverseKinematics(LeftIKSphere.transform.position);
+                    ((IInverseKinematics)CurrMachine).InverseKinematics(
+                        LeftIKSphere.transform.position,
+                        LeftIKSphere.transform.rotation);
                 } else if (ActivateRightIK.state) {
-                    ((IInverseKinematics)CurrMachine).InverseKinematics(RightIKSphere.transform.position);
+                    ((IInverseKinematics)CurrMachine).InverseKinematics(
+                        RightIKSphere.transform.position,
+                        RightIKSphere.transform.rotation);
                 }
 
                 // Set sphere visualizer visibility

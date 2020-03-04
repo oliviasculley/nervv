@@ -26,10 +26,7 @@ namespace NERVV {
         /// Invoked when any field value is updated.
         /// Changes to axis values will NOT invoke this!
         /// </summary>
-        public EventHandler OnMachineUpdated {
-            get;
-            set;
-        }
+        public EventHandler OnMachineUpdated { get; set; }
         #endregion
 
         #region Machine Settings
