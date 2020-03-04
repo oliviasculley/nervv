@@ -99,21 +99,21 @@
             },
             {
                "inputs" : {
-                  "click" : {
-                     "output" : "/actions/default/in/activateleftik"
-                  }
-               },
-               "mode" : "button",
-               "path" : "/user/hand/left/input/trackpad"
-            },
-            {
-               "inputs" : {
-                  "click" : {
+                  "touch" : {
                      "output" : "/actions/default/in/activaterightik"
                   }
                },
                "mode" : "button",
                "path" : "/user/hand/right/input/trackpad"
+            },
+            {
+               "inputs" : {
+                  "touch" : {
+                     "output" : "/actions/default/in/activateleftik"
+                  }
+               },
+               "mode" : "button",
+               "path" : "/user/hand/left/input/trackpad"
             }
          ]
       },
@@ -128,7 +128,7 @@
    "category" : "steamvr_input",
    "controller_type" : "vive_controller",
    "description" : "Default NERVV binding for HTC Vive and Vive Pro",
-   "name" : "NERVV Default Vive",
+   "name" : "NERVV default configuration for Vive Controller",
    "options" : {},
    "simulated_actions" : []
 }

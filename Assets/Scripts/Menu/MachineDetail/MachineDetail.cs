@@ -97,7 +97,7 @@ namespace NERVV.Menu.MachineDetailPanel {
         }
 
         /// <summary>List of angle controllers generated for new machine</summary>
-        public List<AxisHandler> AxisHandlers;
+        public List<AxisHandler> AxisHandlers = new List<AxisHandler>();
         #endregion
 
         #region Settings
@@ -152,9 +152,9 @@ namespace NERVV.Menu.MachineDetailPanel {
         #endregion
 
         #region Vars
-        protected List<MachineStringElement> stringElements;
-        protected List<MachineFloatElement> floatElements;
-        protected List<MachineAxisElement> axisElements;
+        protected List<MachineStringElement> stringElements = new List<MachineStringElement>();
+        protected List<MachineFloatElement> floatElements = new List<MachineFloatElement>();
+        protected List<MachineAxisElement> axisElements = new List<MachineAxisElement>();
         #endregion
 
         #region Unity Methods
@@ -172,12 +172,7 @@ namespace NERVV.Menu.MachineDetailPanel {
             if (InteractUI == null)                     throw new ArgumentNullException();
 
             if (PrintDebugMessages) Debug.Log("OnEnable() run!");
-            AxisHandlers = AxisHandlers ?? new List<AxisHandler>();
             Debug.Assert(AxisHandlers != null);
-
-            stringElements = stringElements ?? new List<MachineStringElement>();
-            floatElements = floatElements ?? new List<MachineFloatElement>();
-            axisElements = axisElements ?? new List<MachineAxisElement>();
 
             base.OnEnable();
         }

@@ -14577,7 +14577,7 @@ MonoBehaviour:
   ScrollViewParent: {fileID: 738490856}
   MachineListElementPrefab: {fileID: 5661292061500233096, guid: 70bbe43cb437ac57094709865bf5b9cd,
     type: 3}
-  _machineManager: {fileID: 0}
+  _machineManager: {fileID: 307011778}
 --- !u!114 &1922051098
 MonoBehaviour:
   m_ObjectHideFlags: 0
