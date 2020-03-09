@@ -106,6 +106,7 @@ public class WebcamViewer : InputSource {
     Coroutine rosConnect = null;
     RosSocket rosSocket = null;
     Coroutine displayMessage = null;
+    CompressedImage receivedMessage = null;
 
     /// <summary>Used to unsubscribe from topic on close</summary>
     string subscribedTopic = "";
@@ -226,21 +227,32 @@ public class WebcamViewer : InputSource {
     /// <summary>Called when RosSocket receieves messages</summary>
     /// <param name="message">Incoming image to display</param>
     protected void ReceiveMessage(CompressedImage message) {
-        Log("Received message");
+        Log("Message callback");
         if (!InputEnabled) return;
+
+        System.Diagnostics.Stopwatch stopWatch = new System.Diagnostics.Stopwatch();
+        stopWatch.Start();
 
         if (displayMessage != null)
             StopCoroutine(displayMessage);
-        displayMessage = StartCoroutine(DisplayImage(message));
+        receivedMessage = message;
+        displayMessage = StartCoroutine(DisplayImage());
 
-        Log($"Displayed message of format {message.format}");
+        stopWatch.Stop();
+
+        TimeSpan ts = stopWatch.Elapsed;
+        string elapsedTime = System.String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+            ts.Hours, ts.Minutes, ts.Seconds,
+            ts.Milliseconds / 10);
+        Log($"Received message of format {message.format} in {elapsedTime}");
     }
 
-    public IEnumerator DisplayImage(CompressedImage message) {
+    /// <summary>Doesn't return properly</summary>
+    public IEnumerator DisplayImage() {
         // Load image into Texture2D
         if (WebcamTexture == null)
             WebcamTexture = new Texture2D(640, 480);    // Sample size, may change after LoadImage
-        Debug.Assert(WebcamTexture.LoadImage(message.data));
+        Debug.Assert(WebcamTexture.LoadImage(receivedMessage.data));
 
         // Copy image from Texture2D to render texture
         RenderTexture currActive = RenderTexture.active;
@@ -253,6 +265,8 @@ public class WebcamViewer : InputSource {
         }
         Graphics.Blit(WebcamTexture, WebcamRT);
         RenderTexture.active = currActive;
+
+        Log("Displayed message");
         yield return null;
     }
 
