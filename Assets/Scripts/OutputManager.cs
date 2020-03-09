@@ -28,13 +28,16 @@ namespace NERVV {
         #endregion
 
         #region Settings
+        [Header("Settings")]
+        public string Name;
+
         /// <summary>
         /// Outputs that won't get disabled by default when an output source
         /// runs. Can still get disabled if DisableInputs(true) is called!
         /// </summary>
         [Tooltip("Outputs that won't get disabled by default" +
             " when an input source initializes. Can still get disabled if " +
-            "DisableOutputs(true) is called!"), Header("Settings")]
+            "DisableOutputs(true) is called!")]
         public List<OutputSource> DisableExceptions = new List<OutputSource>();
 
         public bool PrintDebugMessages = false;

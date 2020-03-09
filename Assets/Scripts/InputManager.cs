@@ -28,15 +28,17 @@ namespace NERVV {
         #endregion
 
         #region Settings
+        [Header("Settings")]
+        public string Name;
+
         /// <summary>
         /// Inputs that won't get disabled by default when an output source
         /// initializes. Can still get disabled if DisableInputs(true) is called!
         /// </summary>
         [SerializeField, Tooltip("Inputs that won't get disabled by default" +
             " when an output source runs. Can still get disabled if " +
-            "DisableInputs(true) is called!"), Header("Settings")]
+            "DisableInputs(true) is called!")]
         public List<InputSource> DisableExceptions = new List<InputSource>();
-
         public bool PrintDebugMessages = false;
         #endregion
 

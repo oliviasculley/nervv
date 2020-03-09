@@ -44,6 +44,7 @@ namespace NERVV {
 
         #region Settings
         [Header("Settings")]
+        public string Name;
         public bool PrintDebugMessages = false;
         #endregion
 

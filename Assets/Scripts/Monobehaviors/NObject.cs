@@ -89,10 +89,12 @@ namespace NERVV {
         public NObjectManager NObjectManager {
             get {
                 if (_nobjectManager == null) {
-                    if (NObjectManager.Instances.Count > 0)
+                    if (NObjectManager.Instances.Count > 0) {
                         _nobjectManager = NObjectManager.Instances[0];
-                    else
+                        LogWarning("Got first instance of NObjectManager");
+                    } else {
                         throw new ArgumentNullException("Could not get a ref to a NObjectManager!");
+                    }
                 }
                 return _nobjectManager;
             }

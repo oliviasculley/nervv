@@ -27,6 +27,13 @@ namespace NERVV {
         /// <summary></summary>
         string Model { get; set; }
 
+        /// <summary>Called when any Machine field is modified, except Axes!</summary>
         EventHandler OnMachineUpdated { get; set; }
+
+        /// <summary>Called when Machine should stop moving for any reason</summary>
+        EventHandler<BaseMachine.SafetyEventArgs> OnSafetyTriggered { get; set; }
+
+        /// <summary>Used to activate safety and invokes OnSafetyTriggered</summary>
+        void TriggerSafety(object sender, BaseMachine.SafetyEventArgs args);
     }
 }
