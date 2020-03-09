@@ -20,6 +20,6 @@ namespace NERVV {
         Collider Collider { get; }
 
         /// <summary>Mesh for object</summary>
-        Mesh Mesh { get; }
+        MeshFilter Mesh { get; }
     }
 }

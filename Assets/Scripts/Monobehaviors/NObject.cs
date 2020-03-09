@@ -11,7 +11,7 @@ namespace NERVV {
     /// Base implementation of a NObject. These are automatically
     /// added to NObjectManager when they are initialized.
     /// </summary>
-    public abstract class NObject : MonoBehaviour, INObject {
+    public class NObject : MonoBehaviour, INObject {
         #region NObject Properties
         /// <summary>Invoked when any field value is updated.</summary>
         public EventHandler OnNObjectUpdated { get; set; }
@@ -21,7 +21,10 @@ namespace NERVV {
         /// <summary>Transform for object</summary>
         public Transform Transform {
             get => _transform;
-            set => _transform = value;
+            set {
+                _transform = value;
+                TriggerOnNObjectUpdated(this);
+            }
         }
 
         [SerializeField]
@@ -29,15 +32,21 @@ namespace NERVV {
         /// <summary>Collider for object</summary>
         public Collider Collider {
             get => _collider;
-            set => _collider = value;
+            set {
+                _collider = value;
+                TriggerOnNObjectUpdated(this);
+            }
         }
 
         [SerializeField]
-        protected Mesh _mesh;
+        protected MeshFilter _mesh;
         /// <summary>Mesh for object</summary>
-        public Mesh Mesh {
+        public MeshFilter Mesh {
             get => _mesh;
-            set => _mesh = value;
+            set {
+                _mesh = value;
+                TriggerOnNObjectUpdated(this);
+            }
         }
         #endregion
 
