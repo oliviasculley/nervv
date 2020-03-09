@@ -204,12 +204,21 @@ namespace NERVV.Menu.MachineDetailPanel {
         /// <summary>Disables axis handlers</summary>
         protected override void OnDisable() {
             DisableAxisHandlers();
-            foreach (var s in stringElements)
+            foreach (var s in stringElements.ToArray()) {
                 Destroy(s.gameObject);
-            foreach (var f in floatElements)
+                stringElements.Remove(s);
+            }
+                
+            foreach (var f in floatElements.ToArray()) {
                 Destroy(f.gameObject);
-            foreach (var a in axisElements)
+                floatElements.Remove(f);
+            }
+            
+            foreach (var a in axisElements.ToArray()) {
                 Destroy(a.gameObject);
+                axisElements.Remove(a);
+            }
+            
             LeftIKSphere.SetActive(false);
             RightIKSphere.SetActive(false);
 
