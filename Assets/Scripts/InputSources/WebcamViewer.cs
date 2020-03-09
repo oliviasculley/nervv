@@ -105,6 +105,7 @@ public class WebcamViewer : InputSource {
     #region Vars
     Coroutine rosConnect = null;
     RosSocket rosSocket = null;
+    Coroutine displayMessage = null;
 
     /// <summary>Used to unsubscribe from topic on close</summary>
     string subscribedTopic = "";
@@ -153,6 +154,9 @@ public class WebcamViewer : InputSource {
         if (rosConnect != null)
             StopCoroutine(rosConnect);
         rosConnect = null;
+        if (displayMessage != null)
+            StopCoroutine(displayMessage);
+        displayMessage = null;
 
         if (rosSocket != null) {
             rosSocket.Close();
@@ -225,6 +229,14 @@ public class WebcamViewer : InputSource {
         Log("Received message");
         if (!InputEnabled) return;
 
+        if (displayMessage != null)
+            StopCoroutine(displayMessage);
+        displayMessage = StartCoroutine(DisplayImage(message));
+
+        Log($"Displayed message of format {message.format}");
+    }
+
+    public IEnumerator DisplayImage(CompressedImage message) {
         // Load image into Texture2D
         if (WebcamTexture == null)
             WebcamTexture = new Texture2D(640, 480);    // Sample size, may change after LoadImage
@@ -241,8 +253,7 @@ public class WebcamViewer : InputSource {
         }
         Graphics.Blit(WebcamTexture, WebcamRT);
         RenderTexture.active = currActive;
-
-        Log($"Displayed message of format {message.format}");
+        yield return null;
     }
 
     /// <summary>Stops current coroutine, unsubscribes from topic</summary>
