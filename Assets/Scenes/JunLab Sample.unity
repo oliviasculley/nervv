@@ -3869,7 +3869,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &393471028
 Transform:
   m_ObjectHideFlags: 0
@@ -3907,12 +3907,12 @@ MonoBehaviour:
   Topics:
   - /webcam/image_raw/compressed
   URL: ws://192.168.1.30:9090
-  Protocol: 1
+  Protocol: 0
   SerializationMode: 0
-  WebcamTexture: {fileID: 2800000, guid: 6292ae5178e11d345bb0334473f5f2e1, type: 3}
   HandleScript: {fileID: 376986489}
   Dropdown: {fileID: 374627761}
   WebcamRT: {fileID: 8400000, guid: 1dba3265cd9be6b499842fadbd779995, type: 2}
+  WebcamMat: {fileID: 2100000, guid: 7e5e81513ecd4774b88438996be5d3ed, type: 2}
 --- !u!1 &431572244
 GameObject:
   m_ObjectHideFlags: 0

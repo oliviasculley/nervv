@@ -10,7 +10,8 @@ using UnityEngine;
 using RosSharp.RosBridgeClient;
 using RosSharp.RosBridgeClient.Protocols;
 using RosSharp.RosBridgeClient.Services;
-using RosSharp.RosBridgeClient.Messages.Standard;
+using RosSharp.RosBridgeClient.MessageTypes.Sensor;
+using RosSharp.RosBridgeClient.MessageTypes.Std;
 
 // NERVV
 using NERVV;

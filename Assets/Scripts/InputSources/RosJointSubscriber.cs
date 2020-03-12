@@ -7,8 +7,8 @@ using System.Net.Sockets;
 using UnityEngine;
 using RosSharp.RosBridgeClient;
 using RosSharp.RosBridgeClient.Protocols;
-using RosSharp.RosBridgeClient.Messages.Sensor;
-using RosSharp.RosBridgeClient.Messages.Standard;
+using RosSharp.RosBridgeClient.MessageTypes.Sensor;
+using RosSharp.RosBridgeClient.MessageTypes.Std;
 
 // NERVV
 using NERVV;

@@ -13,8 +13,8 @@ using Valve.VR;
 using NERVV;
 using RosSharp.RosBridgeClient;
 using RosSharp.RosBridgeClient.Protocols;
-using RosSharp.RosBridgeClient.Messages.Sensor;
-using RosSharp.RosBridgeClient.Messages.Standard;
+using RosSharp.RosBridgeClient.MessageTypes.Sensor;
+using RosSharp.RosBridgeClient.MessageTypes.Std;
 
 public class WebcamViewer : InputSource {
     #region Static
@@ -96,21 +96,23 @@ public class WebcamViewer : InputSource {
 
     #region References
     [Header("References")]
-    public Texture2D WebcamTexture = null;
+    
     public WebcamViewerHandle HandleScript = null;
     public TMP_Dropdown Dropdown = null;
     public RenderTexture WebcamRT = null;
+    public Material WebcamMat = null;
     #endregion
 
     #region Vars
-    Coroutine rosConnect = null;
-    RosSocket rosSocket = null;
-    Coroutine displayMessage = null;
-    CompressedImage receivedMessage = null;
+    protected Coroutine rosConnect = null;
+    protected RosSocket rosSocket = null;
+    protected Coroutine displayMessage = null;
+    protected CompressedImage receivedMessage = null;
+    protected Texture2D TempTex2D = null;
 
     /// <summary>Used to unsubscribe from topic on close</summary>
-    string subscribedTopic = "";
-    Transform savedParent;
+    protected string subscribedTopic = "";
+    protected Transform savedParent;
     #endregion
 
     #region Unity Methods
@@ -122,7 +124,7 @@ public class WebcamViewer : InputSource {
     /// If webcam DeviceID is out of range of WebCamTexture.devices
     /// </exception>
     protected override void OnEnable() {
-        if (WebcamTexture == null) throw new ArgumentNullException("PlaneRenderer is null!");
+        if (WebcamMat == null) throw new ArgumentNullException("WebcamMat is null!");
         if (HandleScript == null) throw new ArgumentNullException("HandleScript is null!");
         if (Dropdown == null) throw new ArgumentNullException("Dropdown is null!");
         if (WebcamRT == null) throw new ArgumentNullException("Webcam RenderTexture is null!");
@@ -200,6 +202,8 @@ public class WebcamViewer : InputSource {
         currentProtocol.OnConnected += OnConnected;
         currentProtocol.OnClosed += OnDisconnected;
 
+        Log("Connecting to ros...");
+
         // Try for 50 seconds
         for (int i = 0; i < 50 && rosSocket == null; i++) {
             try {
@@ -217,6 +221,7 @@ public class WebcamViewer : InputSource {
             throw new OperationCanceledException("Could not connect rosSocket!");
 
         // Wait until socket is active
+        Log("rosSocket connected, waiting until active...");
         yield return new WaitUntil(() => rosSocket.protocol.IsAlive());
 
         Log("rosSocket active, subscribing to first topic if available");
@@ -249,21 +254,24 @@ public class WebcamViewer : InputSource {
 
     /// <summary>Doesn't return properly</summary>
     public IEnumerator DisplayImage() {
+        Log("Starting display...");
         // Load image into Texture2D
-        if (WebcamTexture == null)
-            WebcamTexture = new Texture2D(640, 480);    // Sample size, may change after LoadImage
-        Debug.Assert(WebcamTexture.LoadImage(receivedMessage.data));
+        if (TempTex2D == null)
+            TempTex2D = new Texture2D(640, 480);    // Sample size, may change after LoadImage
+        TempTex2D.LoadRawTextureData(receivedMessage.data);
+        TempTex2D.Apply();
+        WebcamMat.mainTexture = TempTex2D;
 
         // Copy image from Texture2D to render texture
         RenderTexture currActive = RenderTexture.active;
         RenderTexture.active = WebcamRT;
 
         // Ensure that render texture is same dimensions
-        if (WebcamRT.height != WebcamTexture.height || WebcamRT.width != WebcamTexture.width) {
-            WebcamRT.height = WebcamTexture.height;
-            WebcamRT.width = WebcamTexture.width;
+        if (WebcamRT.height != TempTex2D.height || WebcamRT.width != TempTex2D.width) {
+            WebcamRT.height = TempTex2D.height;
+            WebcamRT.width = TempTex2D.width;
         }
-        Graphics.Blit(WebcamTexture, WebcamRT);
+        Graphics.Blit(TempTex2D, WebcamRT);
         RenderTexture.active = currActive;
 
         Log("Displayed message");

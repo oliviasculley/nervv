@@ -3,7 +3,7 @@ using System;
 
 // Unity Engine
 using RosSharp.RosBridgeClient;
-using RosSharp.RosBridgeClient.Messages.Standard;
+using RosSharp.RosBridgeClient.MessageTypes.Std;
 
 namespace NERVV.Samples.Junlab {
     [Serializable]
