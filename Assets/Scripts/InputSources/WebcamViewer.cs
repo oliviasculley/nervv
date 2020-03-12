@@ -52,10 +52,12 @@ public class WebcamViewer : InputSource {
                 if (_topicID != null) {
                     subscribedTopic = rosSocket.Subscribe<CompressedImage>(
                         Topics[_topicID.Value],
-                        ReceiveMessage
-                    );
+                        ReceiveMessage);
 
-                    Log($"Subscribed to \"{Topics[_topicID.Value]}\"");
+                    if (string.IsNullOrEmpty(subscribedTopic))
+                        LogError("Returned subscribed topic is invalid!");
+
+                    Log($"Subscribed to \"{Topics[_topicID.Value]}\", with topicID: \"{subscribedTopic}\"");
                 } else {
                     LogError($"Current TopicID is null!");
                 }
@@ -71,7 +73,6 @@ public class WebcamViewer : InputSource {
             _inputEnabled = value;
             foreach (Transform t in transform)
                 t.gameObject.SetActive(_inputEnabled);
-            
         }
     }
     #endregion
@@ -111,7 +112,7 @@ public class WebcamViewer : InputSource {
     protected Texture2D TempTex2D = null;
 
     /// <summary>Used to unsubscribe from topic on close</summary>
-    protected string subscribedTopic = "";
+    protected string subscribedTopic = null;
     protected Transform savedParent;
     #endregion
 
@@ -221,12 +222,13 @@ public class WebcamViewer : InputSource {
             throw new OperationCanceledException("Could not connect rosSocket!");
 
         // Wait until socket is active
-        Log("rosSocket connected, waiting until active...");
-        yield return new WaitUntil(() => rosSocket.protocol.IsAlive());
-
-        Log("rosSocket active, subscribing to first topic if available");
-        if (Topics.Length > 0)
-            TopicID = 0;
+        //Log("rosSocket connected");
+        //while (!rosSocket.protocol.IsAlive()) {
+        //    Log("RosSocket is still not active....");
+        //    yield return new WaitForSeconds(1);
+        //}
+        //yield return new WaitUntil(() => rosSocket.protocol.IsAlive());
+        //Log("rosSocket active!");
     }
 
     /// <summary>Called when RosSocket receieves messages</summary>
@@ -249,18 +251,20 @@ public class WebcamViewer : InputSource {
         string elapsedTime = System.String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
             ts.Hours, ts.Minutes, ts.Seconds,
             ts.Milliseconds / 10);
-        Log($"Received message of format {message.format} in {elapsedTime}");
+        Log($"Received message of format {receivedMessage.format} in {elapsedTime}");
     }
 
     /// <summary>Doesn't return properly</summary>
     public IEnumerator DisplayImage() {
         Log("Starting display...");
-        // Load image into Texture2D
-        if (TempTex2D == null)
+        if (TempTex2D == null)                      // Load image into Texture2D
             TempTex2D = new Texture2D(640, 480);    // Sample size, may change after LoadImage
-        TempTex2D.LoadRawTextureData(receivedMessage.data);
+        TempTex2D.LoadImage(receivedMessage.data);
         TempTex2D.Apply();
+
+        // Copy from Texture2D to material
         WebcamMat.mainTexture = TempTex2D;
+        WebcamMat.SetTexture("_MainTex", TempTex2D);
 
         // Copy image from Texture2D to render texture
         RenderTexture currActive = RenderTexture.active;
@@ -293,8 +297,12 @@ public class WebcamViewer : InputSource {
     /// <summary>Callback when websocket is connected</summary>
     /// <param name="sender">Unused</param>
     /// <param name="e">Unused</param>
-    protected void OnConnected(object sender, EventArgs e) =>
+    protected void OnConnected(object sender, EventArgs e) {
         Log($"Connected to RosBridge: {URL}");
+        Log("Subscribing to first topic if available");
+        if (Topics.Length > 0)
+            TopicID = 0;
+    }
 
     /// <summary>Callback when websocket is disconnected</summary>
     /// /// <param name="sender">Unused</param>

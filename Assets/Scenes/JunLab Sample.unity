@@ -3906,6 +3906,7 @@ MonoBehaviour:
   _outputManager: {fileID: 988785423}
   Topics:
   - /webcam/image_raw/compressed
+  - /camera/rgb/image_rect_mono/compressed
   URL: ws://192.168.1.30:9090
   Protocol: 0
   SerializationMode: 0
