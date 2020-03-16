@@ -89,6 +89,7 @@ namespace NERVV.Menu.MachineDetailPanel {
         protected void SetField(string value) => SetMemberValue(Property, CurrMachine, value);
 
         /// <summary>Update text readout with field name and current value</summary>
+        /// <remarks>Format: "Name: value"</remarks>
         protected void UpdateText() =>
             elementTitle.text = $"{CapitalizeFirstLetter(Property.Name)}: {GetFieldValue()}";
         #endregion

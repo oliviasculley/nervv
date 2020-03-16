@@ -191,7 +191,7 @@ namespace NERVV {
             public virtual float Value {
                 get {
                     // Get value with offset and external value
-                    float value = (_externalValue + Offset) * ScaleFactor;
+                    float value = (ExternalValue + Offset) * ScaleFactor;
 
                     // If rotary, keep between 0 and 360
                     if (Type == AxisType.Rotary)
@@ -199,7 +199,7 @@ namespace NERVV {
 
                     return value;
                 }
-                set => _externalValue += (Value - value) / ScaleFactor;
+                set => ExternalValue += (Value - value) / ScaleFactor;
             }
 
             [SerializeField,

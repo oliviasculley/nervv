@@ -88,12 +88,14 @@ namespace NERVV.Menu.MachineDetailPanel {
         public void InitializeElement(BaseMachine.Axis axis) => Axis = axis;
 
         /// <summary>Function to update axis text element values</summary>
+        /// <remarks>Format:
+        /// AxisName: value
+        /// Torque: value
+        /// </remarks>
         /// <param name="sender">Unused</param>
         /// <param name="args">Unused</param>
         public void UpdateAxisText(object sender, EventArgs args) =>
-            ElementTitle.text =
-                Axis.Name + ": " + Axis.Value + "\n" +  // Axis 1: <value>
-                "Torque: " + Axis.Torque;               // Torque: <value>
+            ElementTitle.text = $"{Axis.Name}: {Axis.Value}\nTorque: {Axis.Torque}";
         #endregion
     }
 }
