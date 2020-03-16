@@ -36,3 +36,9 @@ Email: [mbgjun@purdue.edu](mailto:mbgjun@purdue.edu)
 ##### Chris Sculley
 Website: [https://csculley.com](https://csculley.com)\
 Email: [cs.sculley@gmail.com](mailto:cs.sculley@gmail.com)
+
+## Disclaimer
+Notice of Non-Affiliation and Disclaimer 
+
+We are not affiliated, associated, authorized, endorsed by, or in any way officially connected with Unity Technologies, or any of its subsidiaries, partners or its affiliates. The official Unity Technologies website can be found at https://unity.com/. "Unity", Unity logos, and other Unity trademarks are trademarks or registered trademarks of Unity Technologies or its affiliates in the U.S. and elsewhere.
+

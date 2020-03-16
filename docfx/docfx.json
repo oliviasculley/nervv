@@ -1,0 +1,61 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": [ "**.sln", "**.csproj", "**.cs" ],
+		  "src": "../",
+        }
+      ],
+      "dest": "api",
+      "disableGitFeatures": false,
+      "disableDefaultFilter": false
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [ "**.yml", "index.md" ],
+		"src": "api"
+      },
+      {
+        "files": [
+          "articles/**.md",
+          "articles/**/toc.yml",
+          "toc.yml",
+          "*.md"
+        ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [ "images/**" ]
+      }
+    ],
+    "overwrite": [
+      {
+        "files": [ "apidoc/**.md" ],
+        "exclude": [ "obj/**" ]
+      }
+    ],
+    "dest": "../docs",
+    "globalMetadata": {
+	  "_enableSearch": true,
+	  "_appTitle": "NERVV",
+	  "_gitContribute": {
+		"repo": "https://gitlab.com/csculley/nervv",
+		"branch": "master",
+		"apiSpecFolder": "docs-ref-overwrite"
+	  }
+	},
+    "fileMetadataFiles": [],
+	"template": [ "default", "templates/unity" ],
+	"postProcessors": [],
+    "markdownEngineName": "markdig",
+    "noLangKeyword": false,
+    "keepFileLink": false,
+    "cleanupCacheHistory": false,
+    "disableGitFeatures": false,
+	"xrefService": [ "https://xref.docs.microsoft.com/query?uid={uid}" ]
+  }
+}
