@@ -33,6 +33,10 @@ namespace NERVV.Menu.OutputsListPanel {
         }
         #endregion
 
+        #region Vars
+        protected List<OutputToggleElement> elements = new List<OutputToggleElement>();
+        #endregion
+
         #region Unity Methods
         /// <summary>Check references and generate buttons OnEnable</summary>
         protected override void OnEnable() {
@@ -67,6 +71,7 @@ namespace NERVV.Menu.OutputsListPanel {
                 AddOutputToggleElement(this, new OutputManager.OutputEventArgs(o));
         }
 
+        /// <summary>Adds an output toggle element</summary>
         protected void AddOutputToggleElement(object sender, OutputManager.OutputEventArgs args) {
             var gameObject = Instantiate(outputToggleElementPrefab, scrollViewParent);
             var toggleScript = gameObject.GetComponent<OutputToggleElement>();
@@ -74,11 +79,17 @@ namespace NERVV.Menu.OutputsListPanel {
 
             // Set toggle button initial values
             toggleScript.Initialize(args.OutputSource, args.OutputSource.OutputEnabled);
+            elements.Add(toggleScript);
         }
 
+        /// <summary>Destroys all output toggle elements</summary>
         protected void RemoveOutputToggleElement(object sender, OutputManager.OutputEventArgs args) {
-            foreach (var e in scrollViewParent.GetComponentsInChildren<OutputToggleElement>())
-                if (e != null && e.Output == args.OutputSource) Destroy(e.gameObject);
+            foreach (var e in elements.ToArray()) {
+                if (e != null && e.gameObject != null && e.Output == args.OutputSource)
+                    Destroy(e.gameObject);
+                elements.Remove(e);
+            }
+                
         }
         #endregion
     }

@@ -33,6 +33,10 @@ namespace NERVV.Menu.InputsListPanel {
         }
         #endregion
 
+        #region Vars
+        protected List<InputToggleElement> elements = new List<InputToggleElement>();
+        #endregion
+
         #region Unity Methods
         /// <summary>Check references and generate input button</summary>
         protected override void OnEnable() {
@@ -58,6 +62,7 @@ namespace NERVV.Menu.InputsListPanel {
                 AddInputToggleElement(this, new InputManager.InputEventArgs(i));
         }
 
+        /// <summary>Adds a toggle element</summary>
         protected void AddInputToggleElement(object sender, InputManager.InputEventArgs args) {
             var gameObject = Instantiate(inputToggleElementPrefab, scrollViewParent);
             var toggleScript = gameObject.GetComponent<InputToggleElement>();
@@ -65,11 +70,16 @@ namespace NERVV.Menu.InputsListPanel {
 
             // Set toggle button initial values
             toggleScript.Initialize(args.InputSource, args.InputSource.InputEnabled);
+            elements.Add(toggleScript);
         }
 
+        /// <summary>Removes all toggle elements</summary>
         protected void RemoveInputToggleElement(object sender, InputManager.InputEventArgs args) {
-            foreach (var e in scrollViewParent.GetComponentsInChildren<InputToggleElement>())
-                if (e != null && e.Input == args.InputSource) Destroy(e.gameObject);
+            foreach (var e in elements.ToArray()) {
+                if (e != null && e.gameObject != null && e.Input == args.InputSource)
+                    Destroy(e.gameObject);
+                elements.Remove(e);
+            }
         }
         #endregion
     }

@@ -5923,7 +5923,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9ca7b32782347f419e72040c6d6b0e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _inputEnabled: 1
+  _inputEnabled: 0
   _name: Kuka ROS Joint Subscriber
   _exclusiveType: 0
   PrintDebugMessages: 0
@@ -7708,7 +7708,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9bbdc82d6590624dac0352968cbf929, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _inputEnabled: 1
+  _inputEnabled: 0
   _name: ROSJointSub - Sawyer
   _exclusiveType: 0
   PrintDebugMessages: 0
@@ -13652,7 +13652,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9bbdc82d6590624dac0352968cbf929, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _inputEnabled: 1
+  _inputEnabled: 0
   _name: ROSJointSub - Doosan
   _exclusiveType: 0
   PrintDebugMessages: 0
