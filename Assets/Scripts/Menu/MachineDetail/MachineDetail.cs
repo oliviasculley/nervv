@@ -261,7 +261,6 @@ namespace NERVV.Menu.MachineDetailPanel {
             Debug.Assert(e != null);
 
             e.InitializeElement(propertyInfo, CurrMachine);
-            g.SetActive(true);
             floatElements.Add(e);
         }
 
@@ -279,7 +278,6 @@ namespace NERVV.Menu.MachineDetailPanel {
             Debug.Assert(e != null);
 
             e.InitializeElement(propertyInfo, CurrMachine);
-            g.SetActive(true);
             stringElements.Add(e);
         }
 

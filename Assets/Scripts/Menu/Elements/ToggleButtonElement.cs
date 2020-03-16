@@ -18,7 +18,7 @@ namespace NERVV.Menu.Elements {
             get => _toggled;
             set {
                 _toggled = value;
-                ToggleButton.isOn = _toggled;
+                ToggleButton.SetIsOnWithoutNotify(_toggled);
                 InvokeOnToggled();
             }
         }
@@ -62,8 +62,7 @@ namespace NERVV.Menu.Elements {
 
         #region Public Methods
         /// <summary>Invokes the OnToggled event</summary>
-        public virtual void InvokeOnToggled() =>
-            OnToggled?.Invoke(this, null);
+        public virtual void InvokeOnToggled() => OnToggled?.Invoke(this, null);
 
         /// <summary>Convenience method used to toggle element</summary>
         public virtual void Toggle() => Toggled = !Toggled;
@@ -71,7 +70,8 @@ namespace NERVV.Menu.Elements {
         /// <summary>Base method to initialize element</summary>
         /// <remarks>Don't use this one if there is another method with more parameters!</remarks>
         public virtual void Initialize(bool initialToggleState) {
-            ToggleButton.isOn = _toggled = initialToggleState;
+            _toggled = initialToggleState;
+            ToggleButton.SetIsOnWithoutNotify(_toggled);
             gameObject.SetActive(true);
         }
         #endregion

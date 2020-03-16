@@ -13,9 +13,16 @@ namespace NERVV.Menu {
         public event EventHandler OnComponentClose;
         #endregion
 
+        #region Settings
+        [Header("Settings")]
+        public bool PrintDebugMessages = false;
+        #endregion
+
         #region References
-        [SerializeField, Header("References")]
+        [SerializeField, Header("References"),
+        Tooltip("Will be filled if needed, or can be set in the Inspector")]
         protected Menu _menu = null;
+        /// <summary>Will be filled if needed, or can be set in the Inspector</summary>
         public Menu Menu {
             get {
                 if (_menu == null) {
@@ -29,14 +36,10 @@ namespace NERVV.Menu {
 
         #region Unity Methods
         /// <summary>Invoke OnComponentEnable on component enabled</summary>
-        protected virtual void OnEnable() {
-            InvokeOnComponentLoad(null);
-        }
+        protected virtual void OnEnable() => InvokeOnComponentLoad(null);
 
         /// <summary>Invoke OnComponentDisable on component disabled</summary>
-        protected virtual void OnDisable() {
-            InvokeOnComponentDisable(null);
-        }
+        protected virtual void OnDisable() => InvokeOnComponentDisable(null);
         #endregion
 
         #region Methods
@@ -49,6 +52,10 @@ namespace NERVV.Menu {
             EventHandler handler = OnComponentClose;
             handler?.Invoke(this, e);
         }
+
+        protected void Log(string s) { if (PrintDebugMessages) Debug.Log($"<b>[{GetType()}]</b> " + s); }
+        protected void LogWarning(string s) { if (PrintDebugMessages) Debug.LogWarning($"<b>[{GetType()}]</b> " + s); }
+        protected void LogError(string s) { if (PrintDebugMessages) Debug.LogError($"<b>[{GetType()}]</b> " + s); }
         #endregion
 
         #region Exception Class

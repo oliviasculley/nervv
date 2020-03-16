@@ -18,6 +18,7 @@ namespace NERVV {
                 Machine = GetComponentInParent<IMachine>();
             if (Machine == null)
                 throw new ArgumentNullException();
+            throw new NotImplementedException();
         }
 
         protected void OnCollisionEnter(Collision collision) {

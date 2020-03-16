@@ -12,10 +12,23 @@ namespace NERVV.Menu.MachineDetailPanel {
     public class MachineAxisElement : MachineElement {
         #region Properties
         [SerializeField, Header("Properties")]
-        protected Machine.Axis _axis;
-        public Machine.Axis Axis {
+        protected BaseMachine.Axis _axis;
+        public BaseMachine.Axis Axis {
             get => _axis;
-            set => _axis = value ?? throw new ArgumentNullException();
+            set {
+                // Remove old axis callback
+                if (_axis != null)
+                    _axis.OnValueUpdated -= UpdateAxisText;
+
+                // Set new value
+                _axis = value ?? throw new ArgumentNullException();
+
+                // Update text and add callback
+                UpdateAxisText(this, null);
+                _axis.OnValueUpdated += UpdateAxisText;
+
+                gameObject.SetActive(true);
+            }
         }
         #endregion
 
@@ -38,20 +51,18 @@ namespace NERVV.Menu.MachineDetailPanel {
         #endregion
 
         #region Unity Methods
-        /// <summary>Checks references and adds axis value callback</summary>
+        /// <summary>Checks references and disables element if axis is not specified</summary>
         protected override void OnEnable() {
             if (ElementTitle == null) throw new ArgumentNullException();
-
             if (Axis == null) gameObject.SetActive(false);
-            Axis.OnValueUpdated += UpdateAxisText;
 
             base.OnEnable();
         }
 
         /// <summary>Set axis value depending on direction</summary>
-        protected void Update() {
+        protected void FixedUpdate() {
             if (changingAxis)
-                Axis.Value += (axisDirection ? Time.deltaTime : -Time.deltaTime) * AxisSpeed;
+                Axis.Value += Time.deltaTime * (axisDirection ? 1 : -1) * AxisSpeed;
         }
 
         /// <summary>Removes axis value callback</summary>
@@ -73,19 +84,16 @@ namespace NERVV.Menu.MachineDetailPanel {
         /// <summary>Stops modifying axis value</summary>
         public void StopChanging() => changingAxis = false;
 
-        public void InitializeElement(Machine.Axis Axis) {
-            this.Axis = Axis;
-            gameObject.SetActive(true);
-        }
+        /// <summary>Method to initialize eleement</summary>
+        public void InitializeElement(BaseMachine.Axis axis) => Axis = axis;
 
         /// <summary>Function to update axis text element values</summary>
         /// <param name="sender">Unused</param>
         /// <param name="args">Unused</param>
-        public void UpdateAxisText(object sender, EventArgs args) {
+        public void UpdateAxisText(object sender, EventArgs args) =>
             ElementTitle.text =
                 Axis.Name + ": " + Axis.Value + "\n" +  // Axis 1: <value>
                 "Torque: " + Axis.Torque;               // Torque: <value>
-        }
         #endregion
     }
 }

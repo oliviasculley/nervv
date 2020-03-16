@@ -82,22 +82,15 @@ namespace NERVV.Menu.MachineDetailPanel {
 
         #region Methods
         /// <summary>Gets string from field with reflection</summary>
-        protected string GetFieldValue() {
-            return (string)GetMemberValue(Property, CurrMachine);
-        }
+        protected string GetFieldValue() => (string)GetMemberValue(Property, CurrMachine);
 
         /// <summary>Sets string field with reflection</summary>
         /// <param name="value">Field value</param>
-        protected void SetField(string value) {
-            SetMemberValue(Property, CurrMachine, value);
-        }
+        protected void SetField(string value) => SetMemberValue(Property, CurrMachine, value);
 
-        /// <summary>Update text readout with current value</summary>
-        protected void UpdateText() {
-            // Set text with field name and current value
-            elementTitle.text =
-                CapitalizeFirstLetter(Property.Name) + ": " + GetFieldValue();
-        }
+        /// <summary>Update text readout with field name and current value</summary>
+        protected void UpdateText() =>
+            elementTitle.text = $"{CapitalizeFirstLetter(Property.Name)}: {GetFieldValue()}";
         #endregion
 
         #region SteamVR Keyboard Helper functions
@@ -120,11 +113,11 @@ namespace NERVV.Menu.MachineDetailPanel {
                 );
             } else {
                 if (GetFieldValue() == null)
-                    Debug.LogError("FieldValue null for: " + Property.Name);
+                    LogError($"FieldValue null for: {Property.Name}");
                 if (SteamVR.instance == null)
-                    Debug.LogError("Could not get SteamVR Instance");
+                    LogError("Could not get SteamVR Instance");
                 if (SteamVR.instance != null && SteamVR.instance.overlay == null)
-                    Debug.LogError("Could not get SteamVR Instance Overlay");
+                    LogError("Could not get SteamVR Instance Overlay");
             }
         }
 

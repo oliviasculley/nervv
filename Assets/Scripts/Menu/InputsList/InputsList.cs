@@ -64,12 +64,12 @@ namespace NERVV.Menu.InputsListPanel {
             Debug.Assert(toggleScript != null);
 
             // Set toggle button initial values
-            toggleScript.Input = args.InputSource;  // Enables toggle button
+            toggleScript.Initialize(args.InputSource, args.InputSource.InputEnabled);
         }
 
         protected void RemoveInputToggleElement(object sender, InputManager.InputEventArgs args) {
             foreach (var e in scrollViewParent.GetComponentsInChildren<InputToggleElement>())
-                if (e.Input == args.InputSource) Destroy(e.gameObject);
+                if (e != null && e.Input == args.InputSource) Destroy(e.gameObject);
         }
         #endregion
     }

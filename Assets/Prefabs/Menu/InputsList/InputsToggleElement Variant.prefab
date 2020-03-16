@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a8e8f910e273a84e9523f065dc804ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PrintDebugMessages: 0
   _menu: {fileID: 0}
   _toggled: 0
-  _initialState: 0
   _title: 
   MainItemButton: {fileID: 7480902777357715192}
   ToggleButton: {fileID: 333629256937235230}
@@ -29,7 +29,7 @@ PrefabInstance:
     - target: {fileID: 872614302813203048, guid: 102559c851bc1b14b8cca1b3b8314b2f,
         type: 3}
       propertyPath: m_Name
-      value: InputsToggleElement
+      value: InputsToggleElement Variant
       objectReference: {fileID: 0}
     - target: {fileID: 872614302813203055, guid: 102559c851bc1b14b8cca1b3b8314b2f,
         type: 3}
@@ -136,16 +136,6 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 2448865614674160795, guid: 102559c851bc1b14b8cca1b3b8314b2f,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 869975165}
-    - target: {fileID: 2448865614674160795, guid: 102559c851bc1b14b8cca1b3b8314b2f,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: InvokeOnMainBodyClicked
-      objectReference: {fileID: 0}
     - target: {fileID: 872614303070184839, guid: 102559c851bc1b14b8cca1b3b8314b2f,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -170,6 +160,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_textInfo.pageCount
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2448865614674160795, guid: 102559c851bc1b14b8cca1b3b8314b2f,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 869975165}
+    - target: {fileID: 2448865614674160795, guid: 102559c851bc1b14b8cca1b3b8314b2f,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Toggle
       objectReference: {fileID: 0}
     - target: {fileID: 4795442136123853181, guid: 102559c851bc1b14b8cca1b3b8314b2f,
         type: 3}

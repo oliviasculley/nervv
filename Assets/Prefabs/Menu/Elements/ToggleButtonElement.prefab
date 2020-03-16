@@ -143,7 +143,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 887933305434412273}
-        m_MethodName: InvokeOnMainBodyClicked
+        m_MethodName: Toggle
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -180,7 +180,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _menu: {fileID: 0}
   _toggled: 0
-  _initialState: 0
   _title: 
   MainItemButton: {fileID: 2448865614674160795}
   ToggleButton: {fileID: 4795442136123853181}
@@ -475,7 +474,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 887933305434412273}
-        m_MethodName: InvokeOnToggled
+        m_MethodName: Toggle
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

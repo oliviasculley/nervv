@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6e60143ae13fea4ab18e2ddfdf5f9e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PrintDebugMessages: 0
   _menu: {fileID: 0}
   _toggled: 0
-  _initialState: 0
   _title: 
   MainItemButton: {fileID: 5598977117759827663}
   ToggleButton: {fileID: 3369637535416666921}
@@ -26,10 +26,20 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 333629256937235230, guid: 31130b540654eff4c8b337727a48fbe4,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 869975165}
+    - target: {fileID: 333629256937235230, guid: 31130b540654eff4c8b337727a48fbe4,
+        type: 3}
+      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: InvokeOnToggled
+      objectReference: {fileID: 0}
     - target: {fileID: 5346257815254761483, guid: 31130b540654eff4c8b337727a48fbe4,
         type: 3}
       propertyPath: m_Name
-      value: OutputsToggleElement
+      value: OutputsToggleElement Variant
       objectReference: {fileID: 0}
     - target: {fileID: 5346257815254761484, guid: 31130b540654eff4c8b337727a48fbe4,
         type: 3}
@@ -144,17 +154,7 @@ PrefabInstance:
     - target: {fileID: 7480902777357715192, guid: 31130b540654eff4c8b337727a48fbe4,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: InvokeOnMainBodyClicked
-      objectReference: {fileID: 0}
-    - target: {fileID: 333629256937235230, guid: 31130b540654eff4c8b337727a48fbe4,
-        type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 869975165}
-    - target: {fileID: 333629256937235230, guid: 31130b540654eff4c8b337727a48fbe4,
-        type: 3}
-      propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: InvokeOnToggled
+      value: Toggle
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 869975165, guid: 31130b540654eff4c8b337727a48fbe4, type: 3}

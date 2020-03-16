@@ -73,12 +73,12 @@ namespace NERVV.Menu.OutputsListPanel {
             Debug.Assert(toggleScript != null);
 
             // Set toggle button initial values
-            toggleScript.Output = args.OutputSource;    // Enables toggle button
+            toggleScript.Initialize(args.OutputSource, args.OutputSource.OutputEnabled);
         }
 
         protected void RemoveOutputToggleElement(object sender, OutputManager.OutputEventArgs args) {
             foreach (var e in scrollViewParent.GetComponentsInChildren<OutputToggleElement>())
-                if (e.Output == args.OutputSource) Destroy(e.gameObject);
+                if (e != null && e.Output == args.OutputSource) Destroy(e.gameObject);
         }
         #endregion
     }

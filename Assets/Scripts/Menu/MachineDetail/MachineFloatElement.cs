@@ -100,22 +100,15 @@ namespace NERVV.Menu.MachineDetailPanel {
         #region Methods
         /// <summary>Gets field value with reflection</summary>
         /// <returns>Field value</returns>
-        protected float GetFieldValue() {
-            return (float)GetMemberValue(Property, CurrMachine);
-        }
+        protected float GetFieldValue() => (float)GetMemberValue(Property, CurrMachine);
 
         /// <summary>Sets field value with reflection</summary>
         /// <param name="value">Field value</param>
-        protected void SetField(float value) {
-            SetMemberValue(Property, CurrMachine, value);
-        }
+        protected void SetField(float value) => SetMemberValue(Property, CurrMachine, value);
 
         /// <summary>Update text readout with current value</summary>
-        protected void UpdateText() {
-            // Set text with current value
-            elementTitle.text =
-                CapitalizeFirstLetter(Property.Name) + ": " + GetFieldValue().ToString();
-        }
+        protected void UpdateText() =>
+            elementTitle.text = $"{CapitalizeFirstLetter(Property.Name)}: {GetFieldValue()}";
         #endregion
     }
 }

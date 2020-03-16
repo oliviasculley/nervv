@@ -11,19 +11,13 @@ using NERVV;
 namespace NERVV.Menu.InputsListPanel {
     public class InputToggleElement : Elements.ToggleButtonElement {
         #region Properties
-        [SerializeField]
+        [SerializeField, Header("Input Toggle Properties")]
         protected IInputSource _input;
+        /// <summary>
+        /// The current input pointed to by the toggle element.
+        /// If set, enables the element!
+        /// </summary>
         public IInputSource Input => _input;
-        #endregion
-
-        #region Unity Methods
-        protected override void OnEnable() {
-            if (Input == null) {
-                Debug.LogError("Input not set onEnable!")
-            }
-
-            base.OnEnable();
-        }
         #endregion
 
         #region Public Methods
@@ -32,13 +26,19 @@ namespace NERVV.Menu.InputsListPanel {
         /// Thrown when Input source has not been initialized!
         /// </exception>
         public override void Toggle() {
+            if (Input == null) {
+                LogError("Input not set!");
+                return;
+            }
+
             Input.InputEnabled = !Input.InputEnabled;
-            base.InvokeOnToggled();
+            base.Toggle();
         }
 
         /// <summary>Method to initialize InputToggleButton</summary>
         public void Initialize(IInputSource input, bool initialToggleState) {
             _input = input;
+            Title = _input.Name;
             base.Initialize(initialToggleState);
         }
         #endregion
