@@ -13,33 +13,22 @@ namespace NERVV.Menu.Elements {
         #region Properties
         [SerializeField, Header("Properties")]
         protected bool _toggled = false;
+        /// <summary>Contains toggled state</summary>
         public bool Toggled {
             get => _toggled;
             set {
                 _toggled = value;
-                // No need to invoke OnToggled,
-                // toggle component will do that for us
+                ToggleButton.isOn = _toggled;
+                InvokeOnToggled();
             }
         }
 
-        public event EventHandler OnMainBodyClicked;
+        /// <summary>Invoked when button is toggled</summary>
         public event EventHandler OnToggled;
         #endregion
 
         #region Settings
         [SerializeField, Header("Settings")]
-        protected bool _initialState = false;
-        /// <summary>Initial state. Set this value in order to set element active!</summary>
-        public bool InitialState {
-            get => _initialState;
-            set {
-                _initialState = value;
-                ToggleButton.isOn = _initialState;
-                gameObject.SetActive(true);
-            }
-        }
-
-        [SerializeField]
         protected string _title = "";
         public string Title {
             get => _title;
@@ -53,8 +42,10 @@ namespace NERVV.Menu.Elements {
         #region References
         [SerializeField, Header("References")]
         protected Button MainItemButton;
+
         [SerializeField]
         protected Toggle ToggleButton;
+
         [SerializeField]
         protected TextMeshProUGUI TitleText;
         #endregion
@@ -70,16 +61,18 @@ namespace NERVV.Menu.Elements {
         #endregion
 
         #region Public Methods
-        /// <summary>Invokes the OnMainBodyClicked event</summary>
-        public virtual void InvokeOnMainBodyClicked() {
-            EventHandler handler = OnMainBodyClicked;
-            handler?.Invoke(this, null);
-        }
-
         /// <summary>Invokes the OnToggled event</summary>
-        public virtual void InvokeOnToggled() {
-            EventHandler handler = OnToggled;
-            handler?.Invoke(this, null);
+        public virtual void InvokeOnToggled() =>
+            OnToggled?.Invoke(this, null);
+
+        /// <summary>Convenience method used to toggle element</summary>
+        public virtual void Toggle() => Toggled = !Toggled;
+
+        /// <summary>Base method to initialize element</summary>
+        /// <remarks>Don't use this one if there is another method with more parameters!</remarks>
+        public virtual void Initialize(bool initialToggleState) {
+            ToggleButton.isOn = _toggled = initialToggleState;
+            gameObject.SetActive(true);
         }
         #endregion
     }

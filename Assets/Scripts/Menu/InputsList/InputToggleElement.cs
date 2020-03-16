@@ -11,34 +11,35 @@ using NERVV;
 namespace NERVV.Menu.InputsListPanel {
     public class InputToggleElement : Elements.ToggleButtonElement {
         #region Properties
-        [SerializeField, Header("Input Toggle Properties")]
+        [SerializeField]
         protected IInputSource _input;
-        /// <summary>
-        /// The current input pointed to by the toggle element.
-        /// If set, enables the toggle button!
-        /// </summary>
-        /// <exception cref="ArgumentNullException">Thrown if set to null</exception>
-        public IInputSource Input {
-            get => _input;
-            set {
-                _input = value ?? throw new ArgumentNullException();
-                Title = _input.Name;
-                InitialState = _input.InputEnabled;
+        public IInputSource Input => _input;
+        #endregion
+
+        #region Unity Methods
+        protected override void OnEnable() {
+            if (Input == null) {
+                Debug.LogError("Input not set onEnable!")
             }
+
+            base.OnEnable();
         }
         #endregion
 
         #region Public Methods
-        /// <summary>Invokes the OnMainBodyClicked event</summary>
-        public override void InvokeOnMainBodyClicked() {
-            ToggleButton.isOn = !ToggleButton.isOn;
-            base.InvokeOnMainBodyClicked();
-        }
-
         /// <summary>Invokes the OnToggled event</summary>
-        public override void InvokeOnToggled() {
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when Input source has not been initialized!
+        /// </exception>
+        public override void Toggle() {
             Input.InputEnabled = !Input.InputEnabled;
             base.InvokeOnToggled();
+        }
+
+        /// <summary>Method to initialize InputToggleButton</summary>
+        public void Initialize(IInputSource input, bool initialToggleState) {
+            _input = input;
+            base.Initialize(initialToggleState);
         }
         #endregion
     }

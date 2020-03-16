@@ -111,16 +111,14 @@ namespace NERVV {
         /// <summary>Returns outputs of same type</summary>
         /// <typeparam name="T">Type of output to return</typeparam>
         /// <returns>List<OutputSource> of outputs</returns>
-        public virtual List<IOutputSource> GetOutputs<T>() {
-            return Outputs.FindAll(x => x.GetType() == typeof(T));
-        }
+        public virtual List<IOutputSource> GetOutputs<T>() =>
+            Outputs.FindAll(x => x.GetType() == typeof(T));
 
         /// <summary>Returns outputs of same type</summary>
         /// <param name="type">String of name of type of output to return</param>
         /// <returns>List<OutputSource> of outputs</returns>
-        public virtual List<IOutputSource> GetOutputs(string type) {
-            return Outputs.FindAll(x => x.GetType().ToString() == type);
-        }
+        public virtual List<IOutputSource> GetOutputs(string type) =>
+            Outputs.FindAll(x => x.GetType().ToString() == type);
 
         /// <summary>Disables all outputs not in DisableExceptions List</summary>
         /// <param name="forceDisable">
@@ -138,19 +136,18 @@ namespace NERVV {
                 }
                 o.OutputEnabled = false;
             }
+            Log("Disabled all outputs!");
         }
         #endregion
 
         #region Methods
         /// <summary>Convenience method to trigger OnOutputAdded</summary>
-        protected virtual void TriggerOnOutputAdded(OutputEventArgs eventArgs) {
+        protected virtual void TriggerOnOutputAdded(OutputEventArgs eventArgs) =>
             OnOutputAdded?.Invoke(this, eventArgs);
-        }
 
         /// <summary>Convenience method to trigger OnOutputRemoved</summary>
-        protected virtual void TriggerOnOutputRemoved(OutputEventArgs eventArgs) {
+        protected virtual void TriggerOnOutputRemoved(OutputEventArgs eventArgs) =>
             OnOutputRemoved?.Invoke(this, eventArgs);
-        }
         #endregion
 
         #region EventTrigger Class

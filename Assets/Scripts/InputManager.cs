@@ -114,16 +114,14 @@ namespace NERVV {
         /// <summary>Returns inputs of same type</summary>
         /// <typeparam name="T">Type of input to return</typeparam>
         /// <returns>List<InputSource> of inputs</returns>
-        public List<IInputSource> GetInputs<T>() {
-            return Inputs.FindAll(x => x.GetType() == typeof(T));
-        }
+        public List<IInputSource> GetInputs<T>() =>
+            Inputs.FindAll(x => x.GetType() == typeof(T));
 
         /// <summary>Returns inputs of same type</summary>
         /// <param name="type">String of name of type of input to return</param>
         /// <returns>List<InputSource> of inputs</returns>
-        public List<IInputSource> GetInputs(string type) {
-            return Inputs.FindAll(x => x.GetType().ToString() == type);
-        }
+        public List<IInputSource> GetInputs(string type) =>
+            Inputs.FindAll(x => x.GetType().ToString() == type);
 
         /// <summary>Disables all inputs not in DisableExceptions List</summary>
         /// <param name="forceDisable">
@@ -141,19 +139,18 @@ namespace NERVV {
                 }
                 i.InputEnabled = false;
             }
+            Log("Disabled all inputs!");
         }
         #endregion
 
         #region Methods
         /// <summary>Convenience method to trigger OnInputAdded</summary>
-        protected virtual void TriggerOnInputAdded(InputEventArgs eventArgs) {
+        protected virtual void TriggerOnInputAdded(InputEventArgs eventArgs) =>
             OnInputAdded?.Invoke(this, eventArgs);
-        }
 
         /// <summary>Convenience method to trigger OnOutputRemoved</summary>
-        protected virtual void TriggerOnInputRemoved(InputEventArgs eventArgs) {
+        protected virtual void TriggerOnInputRemoved(InputEventArgs eventArgs) =>
             OnInputRemoved?.Invoke(this, eventArgs);
-        }
 
         protected void Log(string s) { if (PrintDebugMessages) Debug.Log($"<b>[{GetType()}]</b> " + s); }
         protected void LogWarning(string s) { if (PrintDebugMessages) Debug.LogWarning($"<b>[{GetType()}]</b> " + s); }
