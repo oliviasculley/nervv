@@ -20,6 +20,13 @@ namespace NERVV {
         /// <summary>Minimum angle delta to apply IK in degrees</summary>
         float IKEpsilonAngle { get; set; }
 
+        /// <summary>
+        /// Preference between distance or orientation for IK to use.
+        /// 0 means prefer distance every time, 1 is prefer orientation.
+        /// </summary>
+        /// <remarks>Should be between 0 and 1!</remarks>
+        float IKDistanceOrientationWeight { get; set; }
+
         /// <summary>Starting axis used to begin forward kinematics</summary>
         Machine.Axis StartingAxis { get; set; }
         #endregion

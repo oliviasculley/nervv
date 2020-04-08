@@ -51,6 +51,19 @@ namespace NERVV {
             get => _startingAxis;
             set => _startingAxis = value;
         }
+
+        /// <summary>
+        /// Preference between distance or orientation for IK to use.
+        /// 0 means prefer distance every time, 1 is prefer orientation.
+        /// </summary>
+        /// <remarks>Should be between 0 and 1!</remarks>
+        [SerializeField, Range(0, 1),
+        Tooltip("Preference between distance or orientation for IK to use.")]
+        protected float _ikDistanceOrientationWeight = 0.05f;
+        public float IKDistanceOrientationWeight {
+            get => _ikDistanceOrientationWeight;
+            set => _ikDistanceOrientationWeight = Mathf.Clamp01(value);
+        }
         #endregion
 
         #region Vars
@@ -110,34 +123,7 @@ namespace NERVV {
         /// <param name="resultPoint">Final position in world space</param>
         /// <param name="resultOrientation">Final orientation in world space</param>
         public virtual void ForwardKinematics(Machine.Axis[] axes, out Vector3 resultPoint, out Quaternion resultOrientation) {
-            if (axes.Length == 0) throw new ArgumentException();
-
-            Vector3 prevPoint = axes[0].AxisTransform.position;
-            Quaternion rotation = transform.rotation;
-            Vector3 nextPoint;
-            for (int i = 0; i < axes.Length - 1; i++) {
-                if (axes[i].Type == Machine.Axis.AxisType.Rotary) {
-                    // Rotary axes
-                    rotation *= Quaternion.AngleAxis(Mathf.Repeat(axes[i].Value, 360), Axes[i].AxisVector3);
-                    Debug.DrawRay(prevPoint, rotation * axes[i + 1].AxisTransform.localPosition, Color.red);
-                    nextPoint = prevPoint + (rotation * axes[i + 1].AxisTransform.localPosition);
-                } else if (axes[i].Type == Machine.Axis.AxisType.Linear) {
-                    // Linear Axes
-                    Debug.DrawRay(prevPoint, Axes[i].AxisVector3 * Axes[i].Value, Color.red);
-                    if (PrintDebugMessages) Debug.Log(Axes[i].AxisVector3 * Axes[i].Value);
-                    nextPoint = prevPoint + (Axes[i].AxisVector3 * Axes[i].Value);
-                } else {
-                    // Invalid axis type
-                    if (PrintDebugMessages)
-                        Debug.LogError("Invalid axis type, cannot perform forward kinematics on this axis! Skipping...");
-                    nextPoint = prevPoint;
-                }
-                prevPoint = nextPoint;
-            }
-
-            // Return values
-            resultPoint = prevPoint;
-            resultOrientation = rotation;
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -146,18 +132,7 @@ namespace NERVV {
         /// <param name="targetPoint">Vector3 target position in worldspace</param>
         /// <see cref="IInverseKinematics"/>
         public virtual void InverseKinematics(Vector3 targetPoint, Quaternion targetOrientation) {
-            // If close enough to the target, don't need to IK anymore
-            ForwardKinematics(ForwardKinematicAxes.ToArray(), out Vector3 resultPoint, out Quaternion resultOrientation);
-            if (Vector3.SqrMagnitude(targetPoint - resultPoint) < IKEpsilonDistance) return;
-            if (Quaternion.Angle(targetOrientation, resultOrientation) < IKEpsilonAngle) return;
-
-            // Run linear IK with each angle
-            float delta, gradient;
-            for (int i = 0; i < Axes.Count; i++) {
-                gradient = PartialGradient(targetPoint, targetOrientation, ForwardKinematicAxes, i);
-                delta = ((gradient > 0) ? IKSpeed : -IKSpeed) * Time.deltaTime;
-                Axes[i].Value -= delta;
-            }
+            throw new NotImplementedException();
         }
         #endregion
 
@@ -178,29 +153,7 @@ namespace NERVV {
             List<Machine.Axis> axes,
             int axisID,
             float weight = 0.5f) {
-            // Safety checks
-            if (axisID < 0 || axisID >= axes.Count)
-                throw new ArgumentOutOfRangeException("Invalid axisID: " + axisID);
-            if (IKSamplingDistance == 0)
-                throw new ArgumentException("IKSamplingDistance must not be 0!");
-
-            // Gradient : [F(x+Time per frame) - F(axisToCalculate)] / h
-
-            // Get original values
-            ForwardKinematics(axes.ToArray(), out Vector3 originalPoint, out Quaternion originalOrientation);
-            var originalDistance = Vector3.SqrMagnitude(targetPosition - originalPoint);
-            var originalAngle = Quaternion.Angle(targetOrientation, originalOrientation);
-
-            // Get values modified by a delta
-            axes[axisID].Value += IKSamplingDistance;
-            ForwardKinematics(axes.ToArray(), out Vector3 modifiedPoint, out Quaternion modifiedOrientation);
-            var modifiedDistance = Vector3.SqrMagnitude(targetPosition - modifiedPoint);
-            var modifiedAngle = Quaternion.Angle(targetOrientation, modifiedOrientation);
-            axes[axisID].Value -= IKSamplingDistance;
-
-            var gradientDistance = modifiedDistance - originalDistance;
-            var gradientOrientation = modifiedAngle - originalAngle;
-            return Mathf.Lerp(gradientDistance, gradientOrientation, Mathf.Clamp01(weight)) / IKSamplingDistance;
+            throw new NotImplementedException();
         }
         #endregion
     }

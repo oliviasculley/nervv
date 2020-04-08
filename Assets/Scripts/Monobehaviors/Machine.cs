@@ -43,7 +43,6 @@ namespace NERVV {
             set => _ikSpeed = value;
         }
 
-
         /// <summary>Axis delta to check IK</summary>
         [SerializeField, Tooltip("Axis delta to check IK")]
         protected float _ikSamplingDistance = 0.01f;
@@ -66,6 +65,19 @@ namespace NERVV {
         public float IKEpsilonAngle {
             get => _ikEpsilonAngle;
             set => _ikEpsilonAngle = value;
+        }
+
+        /// <summary>
+        /// Preference between distance or orientation for IK to use.
+        /// 0 means prefer distance every time, 1 is prefer orientation.
+        /// </summary>
+        /// <remarks>Should be between 0 and 1!</remarks>
+        [SerializeField, Range(0, 1),
+        Tooltip("Preference between distance or orientation for IK to use.")]
+        protected float _ikDistanceOrientationWeight = 0.5f;
+        public float IKDistanceOrientationWeight {
+            get => _ikDistanceOrientationWeight;
+            set => _ikDistanceOrientationWeight = Mathf.Clamp01(value);
         }
 
         [SerializeField, Tooltip("Base axis to start IK from")]
@@ -193,14 +205,28 @@ namespace NERVV {
         public virtual void InverseKinematics(Vector3 targetPoint, Quaternion targetOrientation) {
             // If close enough to the target, don't need to IK anymore
             ForwardKinematics(ForwardKinematicAxes.ToArray(), out Vector3 resultPoint, out Quaternion resultOrientation);
-            if (Vector3.SqrMagnitude(targetPoint - resultPoint) < IKEpsilonDistance) return;
-            if (Quaternion.Angle(targetOrientation, resultOrientation) < IKEpsilonAngle) return;
+            var distanceDelta = Vector3.SqrMagnitude(targetPoint - resultPoint);
+            var angleDelta = Quaternion.Angle(targetOrientation, resultOrientation);
+            if (distanceDelta < IKEpsilonDistance &&    // Check distance to target
+                angleDelta < IKEpsilonAngle) return;    // Check orientation to target
+            Debug.Log($"distanceDelta: {distanceDelta}, angleDelta: {angleDelta}");
 
             // Run linear IK with each angle
             float delta, gradient;
             for (int i = 0; i < Axes.Count; i++) {
-                gradient = PartialGradient(targetPoint, targetOrientation, ForwardKinematicAxes, i);
-                delta = ((gradient > 0) ? IKSpeed : -IKSpeed) * Time.deltaTime;
+                PartialGradient(    // Get partial gradient for both distance and orientation
+                    targetPoint,
+                    targetOrientation,
+                    ForwardKinematicAxes,
+                    i,
+                    out float gradientDistance,
+                    out float gradientOrientation);
+                
+                // If inside error radius, adjust orientation. Otherwise, get within distance delta
+                gradient = (gradientOrientation) / IKSamplingDistance;
+                //gradient = (Mathf.Lerp(gradientDistance, gradientOrientation, IKDistanceOrientationWeight)) / IKSamplingDistance;
+                //Debug.Log($"gradient: {gradient}, gOrientation: {gradientOrientation}, gDistance: {gradientDistance}");
+                delta = ((gradient > 0) ? 1 : -1) * IKSpeed * Time.deltaTime;
                 Axes[i].Value -= delta;
             }
         }
@@ -217,12 +243,13 @@ namespace NERVV {
         /// <exception cref="ArgumentOutOfRangeException">Thrown when axisID is out of range</exception>
         /// <exception cref="ArgumentException">Thrown when IKSamplingDistance is 0</exception>
         /// <see cref="IInverseKinematics"/>
-        protected float PartialGradient(
+        protected void PartialGradient(
             Vector3 targetPosition,
             Quaternion targetOrientation,
             List<Axis> axes,
             int axisID,
-            float weight = 0.5f) {
+            out float gradientDistance,
+            out float gradientOrientation) {
             // Safety checks
             if (axisID < 0 || axisID >= axes.Count)
                 throw new ArgumentOutOfRangeException("Invalid axisID: " + axisID);
@@ -234,18 +261,19 @@ namespace NERVV {
             // Get original values
             ForwardKinematics(axes.ToArray(), out Vector3 originalPoint, out Quaternion originalOrientation);
             var originalDistance = Vector3.SqrMagnitude(targetPosition - originalPoint);
-            var originalAngle = Quaternion.Angle(targetOrientation, originalOrientation);
 
             // Get values modified by a delta
             axes[axisID].Value += IKSamplingDistance;
             ForwardKinematics(axes.ToArray(), out Vector3 modifiedPoint, out Quaternion modifiedOrientation);
             var modifiedDistance = Vector3.SqrMagnitude(targetPosition - modifiedPoint);
-            var modifiedAngle = Quaternion.Angle(targetOrientation, modifiedOrientation);
             axes[axisID].Value -= IKSamplingDistance;
 
-            var gradientDistance = modifiedDistance - originalDistance;
-            var gradientOrientation = modifiedAngle - originalAngle;
-            return Mathf.Lerp(gradientDistance, gradientOrientation, Mathf.Clamp01(weight)) / IKSamplingDistance;
+            gradientDistance = modifiedDistance - originalDistance;
+            gradientOrientation =
+                Quaternion.Angle(modifiedOrientation, targetOrientation) - 
+                Quaternion.Angle(originalOrientation, targetOrientation);
+
+            Debug.Log($"grad: {gradientOrientation}, target: {targetOrientation.eulerAngles}");
         }
         #endregion
     }
