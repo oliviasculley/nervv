@@ -5672,7 +5672,7 @@ PrefabInstance:
     - target: {fileID: 6425718333199204020, guid: 3052f0910360e85408e7aa4b425e48ba,
         type: 3}
       propertyPath: _ikDistanceOrientationWeight
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 7042938983319914210, guid: 3052f0910360e85408e7aa4b425e48ba,
         type: 3}

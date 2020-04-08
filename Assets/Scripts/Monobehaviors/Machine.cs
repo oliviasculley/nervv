@@ -223,7 +223,10 @@ namespace NERVV {
                     out float gradientOrientation);
                 
                 // If inside error radius, adjust orientation. Otherwise, get within distance delta
-                gradient = (gradientOrientation) / IKSamplingDistance;
+                gradient = (
+                    gradientDistance * (1 - IKDistanceOrientationWeight) * 1000 +   // Magical number to "balance"
+                    gradientOrientation * IKDistanceOrientationWeight
+                    ) / IKSamplingDistance;
                 //gradient = (Mathf.Lerp(gradientDistance, gradientOrientation, IKDistanceOrientationWeight)) / IKSamplingDistance;
                 //Debug.Log($"gradient: {gradient}, gOrientation: {gradientOrientation}, gDistance: {gradientDistance}");
                 delta = ((gradient > 0) ? 1 : -1) * IKSpeed * Time.deltaTime;
