@@ -1,4 +1,4 @@
-![JunLab Screenshot](https://gitlab.com/csculley/nervv/raw/master/docfx/images/junlab.jpg)
+![JunLab Screenshot](https://github.com/oliviasculley/nervv/raw/master/docfx/images/junlab.jpg)
 
 # NERVV (Novel Environment for Robotics VR Visualization)
 NERVV is a standardized Unity platform for easily creating robotic simulations
@@ -9,11 +9,11 @@ manufacturing devices.
 
 ## Contribution
 NERVV is an evolving specification and gladly welcomes all
-[merge requests](https://gitlab.com/csculley/nervv/merge_requests).
+[merge requests](https://github.com/oliviasculley/nervv/merge_requests).
 Please follow the
-[contribution guide](https://gitlab.com/csculley/nervv/blob/master/CONTRIBUTING.md)
+[contribution guide](https://github.com/oliviasculley/nervv/blob/master/CONTRIBUTING.md)
 to allow for speedy integration!
-The [wiki](https://gitlab.com/csculley/nervv/wikis/Home)
+The [wiki](https://github.com/oliviasculley/nervv/wikis/Home)
 is also currently in development and contains helpful information and examples
 for integration and contribution.
 
@@ -33,9 +33,9 @@ Laboratory Website: [Jun Laboratory](https://web.ics.purdue.edu/~jun25)\
 Personal Website: [Purdue Faculty](https://engineering.purdue.edu/ME/People/ptProfile?resource_id=156378)\
 Email: [mbgjun@purdue.edu](mailto:mbgjun@purdue.edu)
 
-##### Chris Sculley
-Website: [https://csculley.com](https://csculley.com)\
-Email: [cs.sculley@gmail.com](mailto:cs.sculley@gmail.com)
+##### Olivia Sculley
+Website: [https://olivia.sculley.dev](https://olivia.sculley.dev)\
+Email: [olivia@sculley.dev](mailto:olivia@sculley.dev)
 
 ## Disclaimer
 Notice of Non-Affiliation and Disclaimer 
